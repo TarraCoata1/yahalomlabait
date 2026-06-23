@@ -47,7 +47,7 @@ function Shop() {
   const toggle = (arr: string[], v: string, set: (a: string[]) => void) =>
     set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
 
-  const setCat = (c?: CategoryId) => navigate({ search: (p) => ({ ...p, cat: c }) });
+  const setCat = (c?: CategoryId) => navigate({ search: (p: z.infer<typeof schema>) => ({ ...p, cat: c }) });
   const activeCat = categories.find((c) => c.id === cat);
 
   return (
