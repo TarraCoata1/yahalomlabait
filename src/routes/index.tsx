@@ -1,29 +1,118 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowLeft } from "lucide-react";
+import hero from "@/assets/hero-living-room.jpg";
+import { categories, products } from "@/lib/products";
+import { ProductCard } from "@/components/site/ProductCard";
+import { USPBar } from "@/components/site/USPBar";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "Yahalom La Bait | אמנות זכוכית יוקרתית בעיצוב אישי" },
+      { name: "description", content: "אוסף אקסקלוסיבי של תמונות זכוכית פרימיום — הדפסה דיגיטלית מתקדמת על זכוכית מחוסמת אקסטרה קלירית, בעיצוב אישי לכל חלל." },
+      { property: "og:title", content: "Yahalom La Bait | אמנות זכוכית יוקרתית" },
+      { property: "og:description", content: "תמונות זכוכית יוקרתיות שמשדרגות את חלל הבית." },
     ],
   }),
-  component: Index,
+  component: Home,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Home() {
+  const bestSellers = products.filter((p) => p.bestSeller);
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <>
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden">
+        <img src={hero} alt="" fetchPriority="high" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-60" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-l from-background via-background/60 to-background/30" />
+        <div className="mx-auto max-w-7xl px-4 py-28 md:px-8 md:py-44">
+          <div className="max-w-2xl">
+            <span className="inline-block rounded-full glass px-4 py-1.5 text-xs tracking-[0.3em] text-rose-gold">YAHALOM · LA · BAIT</span>
+            <h1 className="mt-6 font-serif text-4xl leading-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
+              אמנות יוקרתית על זכוכית
+              <span className="block text-gradient-rose">משדרגים את חלל הבית</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-base text-muted-foreground md:text-lg">
+              קולקציה אקסקלוסיבית של תמונות זכוכית מחוסמת בהדפסה דיגיטלית ברמת גלריה. כל יצירה נולדת מתוך הקשבה לחלל ולסיפור שלך.
+            </p>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link to="/shop" className="inline-flex items-center gap-2 rounded-full btn-rose px-7 py-3.5 font-semibold hover:btn-rose-hover">
+                לצפייה בקולקציה <ArrowLeft className="h-4 w-4" />
+              </Link>
+              <Link to="/custom" className="inline-flex items-center rounded-full glass px-7 py-3.5 font-medium hover:border-rose-gold/60">
+                הדפסה בעיצוב אישי
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <USPBar />
+
+      {/* Categories */}
+      <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
+        <div className="mb-10 flex items-end justify-between gap-4">
+          <div>
+            <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">קטגוריות</span>
+            <h2 className="mt-2 font-serif text-3xl md:text-4xl">בחרו את הסגנון שלכם</h2>
+          </div>
+          <Link to="/shop" className="hidden text-sm text-muted-foreground hover:text-primary md:inline">לכל הקטגוריות →</Link>
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {categories.map((c, i) => (
+            <Link key={c.id} to="/shop" search={{ cat: c.id }}
+              className={`group relative overflow-hidden rounded-2xl glass ${i === 0 ? "lg:col-span-2 lg:row-span-2" : ""}`}>
+              <div className={`overflow-hidden ${i === 0 ? "aspect-[16/12] lg:aspect-auto lg:h-full" : "aspect-[4/3]"}`}>
+                <img src={c.image} alt={c.name} loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+              <div className="absolute bottom-0 right-0 p-6">
+                <h3 className="font-serif text-2xl md:text-3xl">{c.name}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{c.tagline}</p>
+                <span className="mt-3 inline-block text-sm text-rose-gold">לקולקציה →</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Best Sellers */}
+      <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
+        <div className="mb-10 text-center">
+          <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">רבי המכר</span>
+          <h2 className="mt-2 font-serif text-3xl md:text-4xl">היצירות האהובות שלנו</h2>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {bestSellers.map((p) => <ProductCard key={p.id} product={p} />)}
+        </div>
+      </section>
+
+      {/* Story */}
+      <section className="mx-auto max-w-5xl px-4 py-20 text-center md:px-8">
+        <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">הסיפור שלנו</span>
+        <h2 className="mt-3 font-serif text-3xl md:text-5xl">לא מוצר מדף. <span className="text-gradient-rose">יצירה לחלל שלך.</span></h2>
+        <p className="mx-auto mt-6 max-w-3xl text-muted-foreground md:text-lg">
+          אנו מאמינים שלכל חלל יש אופי, קצב וסיפור משלו. תמונת זכוכית נכונה לא רק משתלבת — היא מדגישה, מאזנת, ומעצבת את התחושה שנוצרת ברגע שנכנסים אליו.
+        </p>
+        <Link to="/about" className="mt-8 inline-block text-rose-gold hover:underline">קראו את הסיפור המלא →</Link>
+      </section>
+
+      {/* Testimonials */}
+      <section className="mx-auto max-w-7xl px-4 pb-24 md:px-8">
+        <div className="grid gap-6 md:grid-cols-3">
+          {[
+            { q: "תמונת הזכוכית שינתה את כל האווירה בבית. עומק ונוכחות שקטה ומרשימה.", a: "מאי כ." },
+            { q: "התהליך היה אישי, מדויק וסבלני. איכות ההדפסה ברמה הגבוהה ביותר.", a: "יובל ד." },
+            { q: "קיבלנו אין סוף מחמאות מאורחים. ההשקעה בפרטים הקטנים מורגשת.", a: "רוני ח." },
+          ].map((t) => (
+            <blockquote key={t.a} className="rounded-2xl glass p-6">
+              <p className="font-serif text-lg leading-relaxed">"{t.q}"</p>
+              <footer className="mt-4 text-sm text-rose-gold">— {t.a}</footer>
+            </blockquote>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }
