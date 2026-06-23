@@ -40,6 +40,7 @@ export function Footer() {
       </div>
       <div className="border-t border-border/40 py-5 text-center text-xs text-muted-foreground">
         © {new Date().getFullYear()} Yahalom La Bait · כל הזכויות שמורות
+        <div className="mt-2 flex justify-center"><TarraCoataCredit /></div>
       </div>
     </footer>
   );
