@@ -34,10 +34,18 @@ function ProductPage() {
   const product = Route.useLoaderData();
   const [shape, setShape] = useState<"rect" | "square">("rect");
   const [sizeIdx, setSizeIdx] = useState(0);
+  const [screwColor, setScrewColor] = useState<"silver" | "gold" | "black">("silver");
   const [withInstall, setWithInstall] = useState(false);
   const [tab, setTab] = useState<"specs" | "shipping">("specs");
   const [activeMedia, setActiveMedia] = useState(0);
   const add = useCart((s) => s.add);
+
+  const SCREW_OPTIONS = [
+    { id: "silver" as const, label: "כסוף", swatch: "linear-gradient(135deg, #e8e8ea 0%, #b8b8bd 50%, #9a9aa1 100%)" },
+    { id: "gold" as const, label: "זהב", swatch: "linear-gradient(135deg, #f7e3a8 0%, #d4a85a 50%, #8c6a2d 100%)" },
+    { id: "black" as const, label: "שחור", swatch: "linear-gradient(135deg, #3a3a3c 0%, #1a1a1c 50%, #050505 100%)" },
+  ];
+  const screw = SCREW_OPTIONS.find((s) => s.id === screwColor)!;
 
   const sizeList = shape === "rect" ? RECT_SIZES : SQUARE_SIZES;
   const size = sizeList[sizeIdx] ?? sizeList[0];
@@ -128,6 +136,36 @@ function ProductPage() {
             </div>
           </div>
 
+          {/* Screw color */}
+          <div className="mt-6">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="font-medium">צבע ברגי תליה</h3>
+              <span className="text-xs text-muted-foreground">{screw.label}</span>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {SCREW_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => setScrewColor(opt.id)}
+                  aria-label={`בורג ${opt.label}`}
+                  aria-pressed={screwColor === opt.id}
+                  className={`flex items-center gap-2 rounded-full border-2 py-2 pl-4 pr-2 text-sm transition ${
+                    screwColor === opt.id
+                      ? "border-rose-gold bg-rose-gold/10 text-rose-gold"
+                      : "border-border hover:border-rose-gold/50"
+                  }`}
+                >
+                  <span
+                    className="h-6 w-6 rounded-full ring-1 ring-border shadow-inner"
+                    style={{ background: opt.swatch }}
+                  />
+                  <span>{opt.label}</span>
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">ללא תוספת מחיר — בחירה בהתאמה לעיצוב החלל.</p>
+          </div>
+
           {/* Installation upsell */}
           <label className={`mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border-2 p-4 transition ${withInstall ? "border-rose-gold bg-rose-gold/5" : "border-border hover:border-rose-gold/50"}`}>
             <input
@@ -157,7 +195,7 @@ function ProductPage() {
                 productId: product.id,
                 name: product.name,
                 image: product.image,
-                sizeLabel: withInstall ? `${size.label} · כולל התקנה` : size.label,
+                sizeLabel: `${size.label} · ברגים ${screw.label}${withInstall ? " · כולל התקנה" : ""}`,
                 unitPrice: total,
               })
             }
