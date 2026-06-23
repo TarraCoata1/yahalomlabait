@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import logo from "@/assets/logo.png.asset.json";
+import { TarraCoataCredit } from "./TarraCoataCredit";
 
 export function Footer() {
   return (
