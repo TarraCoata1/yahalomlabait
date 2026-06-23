@@ -5,8 +5,9 @@ import { useMemo, useState } from "react";
 import { products, categories, SIZES, type CategoryId } from "@/lib/products";
 import { ProductCard } from "@/components/site/ProductCard";
 
+const CATS = ["modern", "landscape", "abstract", "kodesh", "custom"] as const;
 const schema = z.object({
-  cat: z.enum(["modern", "landscape", "abstract", "kodesh", "custom"]).optional().catch(undefined),
+  cat: fallback(z.string(), "").default(""),
   sort: fallback(z.enum(["featured", "low", "high"]), "featured").default("featured"),
 });
 
