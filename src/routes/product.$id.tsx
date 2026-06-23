@@ -34,10 +34,18 @@ function ProductPage() {
   const product = Route.useLoaderData();
   const [shape, setShape] = useState<"rect" | "square">("rect");
   const [sizeIdx, setSizeIdx] = useState(0);
+  const [screwColor, setScrewColor] = useState<"silver" | "gold" | "black">("silver");
   const [withInstall, setWithInstall] = useState(false);
   const [tab, setTab] = useState<"specs" | "shipping">("specs");
   const [activeMedia, setActiveMedia] = useState(0);
   const add = useCart((s) => s.add);
+
+  const SCREW_OPTIONS = [
+    { id: "silver" as const, label: "כסוף", swatch: "linear-gradient(135deg, #e8e8ea 0%, #b8b8bd 50%, #9a9aa1 100%)" },
+    { id: "gold" as const, label: "זהב", swatch: "linear-gradient(135deg, #f7e3a8 0%, #d4a85a 50%, #8c6a2d 100%)" },
+    { id: "black" as const, label: "שחור", swatch: "linear-gradient(135deg, #3a3a3c 0%, #1a1a1c 50%, #050505 100%)" },
+  ];
+  const screw = SCREW_OPTIONS.find((s) => s.id === screwColor)!;
 
   const sizeList = shape === "rect" ? RECT_SIZES : SQUARE_SIZES;
   const size = sizeList[sizeIdx] ?? sizeList[0];
