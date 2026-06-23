@@ -1,14 +1,18 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Check, ShieldCheck, Truck, Sparkles, Wrench } from "lucide-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil } from "lucide-react";
 import hero from "@/assets/hero-living-room.jpg";
-import { getProduct, RECT_SIZES, SQUARE_SIZES, installationFee, products } from "@/lib/products";
+import { productQuery, productsQuery } from "@/lib/catalog";
+import { RECT_SIZES, SQUARE_SIZES, installationFee } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/site/ProductCard";
+import { useSession, useIsAdmin } from "@/hooks/use-auth";
+import { EditProductDialog } from "@/components/admin/EditProductDialog";
 
 export const Route = createFileRoute("/product/$id")({
-  loader: ({ params }) => {
-    const product = getProduct(params.id);
+  loader: async ({ params, context }) => {
+    const product = await context.queryClient.ensureQueryData(productQuery(params.id));
     if (!product) throw notFound();
     return product;
   },
@@ -27,23 +31,37 @@ export const Route = createFileRoute("/product/$id")({
       <Link to="/shop" className="mt-6 inline-block text-rose-gold hover:underline">חזרה לחנות</Link>
     </div>
   ),
+  errorComponent: () => (
+    <div className="mx-auto max-w-md px-4 py-24 text-center">
+      <h1 className="font-serif text-3xl">שגיאה בטעינת המוצר</h1>
+      <Link to="/shop" className="mt-6 inline-block text-rose-gold hover:underline">חזרה לחנות</Link>
+    </div>
+  ),
   component: ProductPage,
 });
 
 function ProductPage() {
-  const product = Route.useLoaderData();
+  const params = Route.useParams();
+  const { data: product } = useSuspenseQuery(productQuery(params.id));
+  const { data: allProducts = [] } = useSuspenseQuery(productsQuery);
+  const { user } = useSession();
+  const { data: isAdmin } = useIsAdmin(user);
+
   const [shape, setShape] = useState<"rect" | "square">("rect");
   const [sizeIdx, setSizeIdx] = useState(0);
   const [screwColor, setScrewColor] = useState<"silver" | "gold" | "black">("silver");
   const [withInstall, setWithInstall] = useState(false);
   const [tab, setTab] = useState<"specs" | "shipping">("specs");
   const [activeMedia, setActiveMedia] = useState(0);
+  const [editing, setEditing] = useState(false);
   const add = useCart((s) => s.add);
+
+  if (!product) return null;
 
   const SCREW_OPTIONS = [
     { id: "silver" as const, label: "כסוף", swatch: "linear-gradient(135deg, #e8e8ea 0%, #b8b8bd 50%, #9a9aa1 100%)" },
-    { id: "gold" as const, label: "זהב", swatch: "linear-gradient(135deg, #f7e3a8 0%, #d4a85a 50%, #8c6a2d 100%)" },
-    { id: "black" as const, label: "שחור", swatch: "linear-gradient(135deg, #3a3a3c 0%, #1a1a1c 50%, #050505 100%)" },
+    { id: "gold" as const,   label: "זהב",  swatch: "linear-gradient(135deg, #f7e3a8 0%, #d4a85a 50%, #8c6a2d 100%)" },
+    { id: "black" as const,  label: "שחור", swatch: "linear-gradient(135deg, #3a3a3c 0%, #1a1a1c 50%, #050505 100%)" },
   ];
   const screw = SCREW_OPTIONS.find((s) => s.id === screwColor)!;
 
@@ -53,7 +71,7 @@ function ProductPage() {
   const total = size.price + (withInstall ? installFee : 0);
 
   const media = [product.image, hero];
-  const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+  const related = allProducts.filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id && !p.isHidden).slice(0, 4);
 
   const switchShape = (s: "rect" | "square") => {
     setShape(s);
@@ -62,6 +80,18 @@ function ProductPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8 md:py-14">
+      {isAdmin && (
+        <div className="mb-6 flex items-center justify-between rounded-2xl glass-strong px-5 py-3">
+          <div className="flex items-center gap-2 text-sm">
+            <Sparkles className="h-4 w-4 text-rose-gold" />
+            <span>מצב אדמין — שינויים יתפרסמו מיידית בחנות</span>
+          </div>
+          <button onClick={() => setEditing(true)} className="flex items-center gap-2 rounded-full btn-rose px-4 py-2 text-sm">
+            <Pencil className="h-4 w-4" /> ערוך מוצר
+          </button>
+        </div>
+      )}
+
       <nav className="mb-6 text-xs text-muted-foreground">
         <Link to="/" className="hover:text-primary">בית</Link> /{" "}
         <Link to="/shop" className="hover:text-primary">חנות</Link> /{" "}
@@ -144,21 +174,11 @@ function ProductPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               {SCREW_OPTIONS.map((opt) => (
-                <button
-                  key={opt.id}
-                  onClick={() => setScrewColor(opt.id)}
-                  aria-label={`בורג ${opt.label}`}
-                  aria-pressed={screwColor === opt.id}
+                <button key={opt.id} onClick={() => setScrewColor(opt.id)} aria-label={`בורג ${opt.label}`} aria-pressed={screwColor === opt.id}
                   className={`flex items-center gap-2 rounded-full border-2 py-2 pl-4 pr-2 text-sm transition ${
-                    screwColor === opt.id
-                      ? "border-rose-gold bg-rose-gold/10 text-rose-gold"
-                      : "border-border hover:border-rose-gold/50"
-                  }`}
-                >
-                  <span
-                    className="h-6 w-6 rounded-full ring-1 ring-border shadow-inner"
-                    style={{ background: opt.swatch }}
-                  />
+                    screwColor === opt.id ? "border-rose-gold bg-rose-gold/10 text-rose-gold" : "border-border hover:border-rose-gold/50"
+                  }`}>
+                  <span className="h-6 w-6 rounded-full ring-1 ring-border shadow-inner" style={{ background: opt.swatch }} />
                   <span>{opt.label}</span>
                 </button>
               ))}
@@ -168,12 +188,7 @@ function ProductPage() {
 
           {/* Installation upsell */}
           <label className={`mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border-2 p-4 transition ${withInstall ? "border-rose-gold bg-rose-gold/5" : "border-border hover:border-rose-gold/50"}`}>
-            <input
-              type="checkbox"
-              checked={withInstall}
-              onChange={(e) => setWithInstall(e.target.checked)}
-              className="mt-1 h-5 w-5 accent-rose-gold"
-            />
+            <input type="checkbox" checked={withInstall} onChange={(e) => setWithInstall(e.target.checked)} className="mt-1 h-5 w-5 accent-rose-gold" />
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <Wrench className="h-4 w-4 text-rose-gold" />
@@ -243,6 +258,8 @@ function ProductPage() {
           </div>
         </section>
       )}
+
+      {editing && <EditProductDialog product={product} onClose={() => setEditing(false)} />}
     </div>
   );
 }

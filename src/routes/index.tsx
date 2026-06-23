@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import hero from "@/assets/hero-living-room.jpg";
-import { categories, products } from "@/lib/products";
+import { categoriesQuery, productsQuery } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
 import { USPBar } from "@/components/site/USPBar";
 
@@ -14,11 +15,20 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "תמונות זכוכית יוקרתיות שמשדרגות את חלל הבית." },
     ],
   }),
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(categoriesQuery),
+      context.queryClient.ensureQueryData(productsQuery),
+    ]),
   component: Home,
 });
 
 function Home() {
-  const bestSellers = products.filter((p) => p.bestSeller);
+  const { data: categories } = useSuspenseQuery(categoriesQuery);
+  const { data: products } = useSuspenseQuery(productsQuery);
+  const visibleCategories = categories.filter((c) => c.is_active);
+  const bestSellers = products.filter((p) => p.bestSeller && !p.isHidden).slice(0, 4);
+
   return (
     <>
       {/* Hero */}
@@ -59,8 +69,8 @@ function Home() {
           <Link to="/shop" className="hidden text-sm text-muted-foreground hover:text-primary md:inline">לכל הקטגוריות →</Link>
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((c, i) => (
-            <Link key={c.id} to="/shop" search={{ cat: c.id }}
+          {visibleCategories.map((c, i) => (
+            <Link key={c.id} to="/shop" search={{ cat: c.slug }}
               className={`group relative overflow-hidden rounded-2xl glass ${i === 0 ? "lg:col-span-2 lg:row-span-2" : ""}`}>
               <div className={`overflow-hidden ${i === 0 ? "aspect-[16/12] lg:aspect-auto lg:h-full" : "aspect-[4/3]"}`}>
                 <img src={c.image} alt={c.name} loading="lazy"
@@ -78,15 +88,17 @@ function Home() {
       </section>
 
       {/* Best Sellers */}
-      <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
-        <div className="mb-10 text-center">
-          <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">רבי המכר</span>
-          <h2 className="mt-2 font-serif text-3xl md:text-4xl">היצירות האהובות שלנו</h2>
-        </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {bestSellers.map((p) => <ProductCard key={p.id} product={p} />)}
-        </div>
-      </section>
+      {bestSellers.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
+          <div className="mb-10 text-center">
+            <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">רבי המכר</span>
+            <h2 className="mt-2 font-serif text-3xl md:text-4xl">היצירות האהובות שלנו</h2>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {bestSellers.map((p) => <ProductCard key={p.id} product={p} />)}
+          </div>
+        </section>
+      )}
 
       {/* Story */}
       <section className="mx-auto max-w-5xl px-4 py-20 text-center md:px-8">
