@@ -3,6 +3,7 @@ import { ShoppingBag, Menu, X } from "lucide-react";
 import { useState } from "react";
 import logo from "@/assets/logo.png.asset.json";
 import { useCart, cartCount } from "@/lib/cart";
+import { ThemeToggle } from "./ThemeToggle";
 
 const nav = [
   { to: "/", label: "בית" },
@@ -39,8 +40,9 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <button onClick={() => setOpen(true)} aria-label="עגלה"
-            className="relative grid h-11 w-11 place-items-center rounded-full glass hover:border-rose-gold/50 transition">
+            className="relative grid h-11 w-11 place-items-center rounded-full glass hover:border-rose-gold/60 transition">
             <ShoppingBag className="h-5 w-5 text-rose-gold" />
             {count > 0 && (
               <span className="absolute -top-1 -left-1 grid h-5 min-w-5 place-items-center rounded-full bg-rose-gold px-1 text-[11px] font-semibold text-primary-foreground">
