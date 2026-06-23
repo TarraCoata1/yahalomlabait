@@ -105,7 +105,7 @@ function Shop() {
         <section>
           <div className="mb-6 flex items-center justify-between">
             <p className="text-sm text-muted-foreground">{filtered.length} יצירות</p>
-            <select value={sort} onChange={(e) => navigate({ search: (p) => ({ ...p, sort: e.target.value as "featured" | "low" | "high" }) })}
+            <select value={sort} onChange={(e) => navigate({ search: (p: z.infer<typeof schema>) => ({ ...p, sort: e.target.value as "featured" | "low" | "high" }) })}
               className="rounded-full bg-card border border-border px-4 py-2 text-sm">
               <option value="featured">מומלצים</option>
               <option value="low">מחיר: נמוך לגבוה</option>
