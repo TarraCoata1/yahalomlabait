@@ -36,7 +36,7 @@ function Shop() {
 
   const filtered = useMemo(() => {
     let list = [...products];
-    if (cat) list = list.filter((p) => p.category === cat);
+    if (cat && (CATS as readonly string[]).includes(cat)) list = list.filter((p) => p.category === cat);
     if (styles.length) list = list.filter((p) => styles.includes(p.style));
     if (colors.length) list = list.filter((p) => p.colors.some((c) => colors.includes(c)));
     list = list.filter((p) => p.basePrice <= maxPrice);
