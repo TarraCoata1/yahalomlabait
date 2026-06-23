@@ -6,7 +6,7 @@ import { products, categories, SIZES, type CategoryId } from "@/lib/products";
 import { ProductCard } from "@/components/site/ProductCard";
 
 const schema = z.object({
-  cat: fallback(z.enum(["modern", "landscape", "abstract", "kodesh", "custom"]).optional(), undefined),
+  cat: z.enum(["modern", "landscape", "abstract", "kodesh", "custom"]).optional().catch(undefined),
   sort: fallback(z.enum(["featured", "low", "high"]), "featured").default("featured"),
 });
 
