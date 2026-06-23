@@ -2,10 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useMemo, useState } from "react";
-import { products, categories, SIZES, type CategoryId } from "@/lib/products";
+import { products, categories, FROM_PRICE, type CategoryId } from "@/lib/products";
 import { ProductCard } from "@/components/site/ProductCard";
 
-const CATS = ["modern", "landscape", "abstract", "kodesh", "custom"] as const;
+const CATS = ["abstract", "nature", "popart", "kodesh", "premium"] as const;
 const schema = z.object({
   cat: fallback(z.string(), "").default(""),
   sort: fallback(z.enum(["featured", "low", "high"]), "featured").default("featured"),
@@ -27,7 +27,6 @@ export const Route = createFileRoute("/shop")({
 function Shop() {
   const { cat, sort } = Route.useSearch();
   const navigate = Route.useNavigate();
-  const [maxPrice, setMaxPrice] = useState(2000);
   const [styles, setStyles] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
 
@@ -39,11 +38,10 @@ function Shop() {
     if (cat && (CATS as readonly string[]).includes(cat)) list = list.filter((p) => p.category === cat);
     if (styles.length) list = list.filter((p) => styles.includes(p.style));
     if (colors.length) list = list.filter((p) => p.colors.some((c) => colors.includes(c)));
-    list = list.filter((p) => p.basePrice <= maxPrice);
-    if (sort === "low") list.sort((a, b) => a.basePrice - b.basePrice);
-    if (sort === "high") list.sort((a, b) => b.basePrice - a.basePrice);
+    if (sort === "low") list.sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === "high") list.sort((a, b) => b.name.localeCompare(a.name));
     return list;
-  }, [cat, sort, styles, colors, maxPrice]);
+  }, [cat, sort, styles, colors]);
 
   const toggle = (arr: string[], v: string, set: (a: string[]) => void) =>
     set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
@@ -94,11 +92,9 @@ function Shop() {
               ))}
             </div>
           </div>
-          <div className="rounded-2xl glass p-5">
-            <h3 className="mb-3 font-serif text-lg">מחיר עד</h3>
-            <input type="range" min={400} max={2000} step={50} value={maxPrice}
-              onChange={(e) => setMaxPrice(Number(e.target.value))} className="w-full accent-rose-gold" />
-            <div className="mt-2 text-sm text-muted-foreground">₪{maxPrice}</div>
+          <div className="rounded-2xl glass p-5 text-sm text-muted-foreground">
+            <h3 className="mb-2 font-serif text-lg text-foreground">מחיר</h3>
+            <p>המחירים מתחילים מ־₪{FROM_PRICE} ומשתנים לפי מידה ופורמט. בעמוד המוצר תוכלו לבחור גם פורמט ריבועי ולהוסיף התקנה מקצועית.</p>
           </div>
         </aside>
 
@@ -120,7 +116,7 @@ function Shop() {
               {filtered.map((p) => <ProductCard key={p.id} product={p} />)}
             </div>
           )}
-          <p className="mt-8 text-xs text-muted-foreground">* המחירים החל מ־ {SIZES[0].label}. מידות נוספות במחיר מעודכן בעמוד המוצר.</p>
+          <p className="mt-8 text-xs text-muted-foreground">* המחירים החל מ־₪{FROM_PRICE} (מידה 15×20). מידות נוספות, פורמט ריבועי והתקנה מקצועית בעמוד המוצר.</p>
         </section>
       </div>
     </div>

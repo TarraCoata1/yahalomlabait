@@ -2,18 +2,19 @@ import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import type { Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
-import { SIZES } from "@/lib/products";
+import { RECT_SIZES, FROM_PRICE } from "@/lib/products";
 
 export function ProductCard({ product }: { product: Product }) {
   const add = useCart((s) => s.add);
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
+    const s = RECT_SIZES[0];
     add({
       productId: product.id,
       name: product.name,
       image: product.image,
-      sizeLabel: SIZES[0].label,
-      unitPrice: product.basePrice,
+      sizeLabel: s.label,
+      unitPrice: s.price,
     });
   };
   return (
@@ -41,7 +42,7 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
         <div className="shrink-0 text-left">
           <div className="text-sm text-muted-foreground">החל מ־</div>
-          <div className="font-semibold text-rose-gold">₪{product.basePrice}</div>
+          <div className="font-semibold text-rose-gold">₪{FROM_PRICE}</div>
         </div>
       </div>
     </Link>
