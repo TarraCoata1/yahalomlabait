@@ -136,6 +136,36 @@ function ProductPage() {
             </div>
           </div>
 
+          {/* Screw color */}
+          <div className="mt-6">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="font-medium">צבע ברגי תליה</h3>
+              <span className="text-xs text-muted-foreground">{screw.label}</span>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {SCREW_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => setScrewColor(opt.id)}
+                  aria-label={`בורג ${opt.label}`}
+                  aria-pressed={screwColor === opt.id}
+                  className={`flex items-center gap-2 rounded-full border-2 py-2 pl-4 pr-2 text-sm transition ${
+                    screwColor === opt.id
+                      ? "border-rose-gold bg-rose-gold/10 text-rose-gold"
+                      : "border-border hover:border-rose-gold/50"
+                  }`}
+                >
+                  <span
+                    className="h-6 w-6 rounded-full ring-1 ring-border shadow-inner"
+                    style={{ background: opt.swatch }}
+                  />
+                  <span>{opt.label}</span>
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">ללא תוספת מחיר — בחירה בהתאמה לעיצוב החלל.</p>
+          </div>
+
           {/* Installation upsell */}
           <label className={`mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border-2 p-4 transition ${withInstall ? "border-rose-gold bg-rose-gold/5" : "border-border hover:border-rose-gold/50"}`}>
             <input
@@ -165,7 +195,7 @@ function ProductPage() {
                 productId: product.id,
                 name: product.name,
                 image: product.image,
-                sizeLabel: withInstall ? `${size.label} · כולל התקנה` : size.label,
+                sizeLabel: `${size.label} · ברגים ${screw.label}${withInstall ? " · כולל התקנה" : ""}`,
                 unitPrice: total,
               })
             }
