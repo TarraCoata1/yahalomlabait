@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { ShoppingBag, Menu, X, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import logo from "@/assets/logo.png.asset.json";
 import { useCart, cartCount } from "@/lib/cart";
 import { ThemeToggle } from "./ThemeToggle";
+import { useSession, useIsAdmin } from "@/hooks/use-auth";
 
 const nav = [
   { to: "/", label: "בית" },
@@ -18,6 +19,8 @@ export function Header() {
   const setOpen = useCart((s) => s.setOpen);
   const [mobile, setMobile] = useState(false);
   const count = cartCount(items);
+  const { user } = useSession();
+  const { data: isAdmin } = useIsAdmin(user);
 
   return (
     <header className="glass-strong sticky top-0 z-40">
@@ -40,6 +43,12 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {isAdmin && (
+            <Link to="/admin-portal" aria-label="פאנל ניהול"
+              className="grid h-11 w-11 place-items-center rounded-full glass hover:border-rose-gold/60 transition" title="פאנל ניהול">
+              <ShieldCheck className="h-5 w-5 text-rose-gold" />
+            </Link>
+          )}
           <ThemeToggle />
           <button onClick={() => setOpen(true)} aria-label="עגלה"
             className="relative grid h-11 w-11 place-items-center rounded-full glass hover:border-rose-gold/60 transition">
@@ -67,6 +76,11 @@ export function Header() {
                 {n.label}
               </Link>
             ))}
+            {isAdmin && (
+              <Link to="/admin-portal" onClick={() => setMobile(false)} className="py-3 text-base text-rose-gold">
+                פאנל ניהול
+              </Link>
+            )}
           </div>
         </div>
       )}
