@@ -3,6 +3,7 @@ import { ShoppingBag, Menu, X } from "lucide-react";
 import { useState } from "react";
 import logo from "@/assets/logo.png.asset.json";
 import { useCart, cartCount } from "@/lib/cart";
+import { ThemeToggle } from "./ThemeToggle";
 
 const nav = [
   { to: "/", label: "בית" },
