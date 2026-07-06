@@ -77,7 +77,7 @@ function Home() {
         <div className="mb-10 flex items-end justify-between gap-4">
           <div>
             <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">קטגוריות</span>
-            <h2 className="mt-2 font-serif text-3xl md:text-4xl">בחרו את הסגנון שלכם</h2>
+            <h2 className="mt-2 font-serif text-3xl md:text-4xl">תמונות זכוכית — בחרו את הסגנון שלכם</h2>
           </div>
           <Link to="/shop" className="hidden text-sm text-muted-foreground hover:text-primary md:inline">לכל הקטגוריות →</Link>
         </div>
