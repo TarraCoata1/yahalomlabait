@@ -97,6 +97,7 @@ function Home() {
                 <span className="mt-3 inline-block text-sm text-rose-gold">לקולקציה →</span>
               </div>
             </Link>
+            </ScrollReveal>
           ))}
         </div>
       </section>
