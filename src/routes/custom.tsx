@@ -3,15 +3,16 @@ import { useState, useRef } from "react";
 import { Upload, Sparkles, Check } from "lucide-react";
 import { SIZES } from "@/lib/products";
 import { useCart } from "@/lib/cart";
+import { localizedMeta, canonicalLink } from "@/lib/seo";
 
 export const Route = createFileRoute("/custom")({
   head: () => ({
-    meta: [
-      { title: "הדפסה בעיצוב אישי | Yahalom La Bait" },
-      { name: "description", content: "העלו את התמונה שלכם, בחרו מידה, וראו תצוגה מקדימה דינמית של היצירה האישית שלכם על זכוכית פרימיום." },
-      { property: "og:title", content: "הדפסה בעיצוב אישי | Yahalom La Bait" },
-      { property: "og:description", content: "התמונה שלכם, ברמת גימור גלריה." },
-    ],
+    meta: localizedMeta({
+      title: "עיצוב אישי | תמונות לבית מותאמות אישית - יהלום לבית",
+      description: "העלו את התמונה שלכם, בחרו מידה ופורמט, וקבלו תמונת זכוכית פרימיום בעיצוב אישי — הדפסה ברמת גלריה.",
+      path: "/custom",
+    }),
+    links: canonicalLink("/custom"),
   }),
   component: CustomPage,
 });
