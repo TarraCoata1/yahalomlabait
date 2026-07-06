@@ -50,77 +50,105 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
+  loader: async ({ context }) => {
+    const { fetchSiteSettings, siteSettingsQuery } = await import("@/lib/site-settings");
+    try {
+      return { settings: await context.queryClient.ensureQueryData(siteSettingsQuery) };
+    } catch {
+      return { settings: await fetchSiteSettings() };
+    }
+  },
+  head: ({ loaderData }) => {
+    const s = loaderData?.settings ?? {
+      site_title: "יהלום לבית | תמונות זכוכית יוקרתית ואמנות פרימיום לבית",
+      site_description:
+        "שדרגו את החלל עם קולקציית תמונות זכוכית מחוסמת אקסטרה קליר בהדפסה דיגיטלית ברמת גלריה. אמנות מודרנית, נופים, יודאיקה ועיצוב אישי תוצרת ישראל.",
+      social_image_url: "",
+    };
+    const meta: Array<Record<string, string>> = [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "author", content: "יהלום לבית - Yahalom La Bait" },
       { name: "google-site-verification", content: "ih_LInCKz_Xs-Pe6Stx-wqNdEFOOTT4tlqYVdC1jNEo" },
       { name: "theme-color", content: "#b98a5e" },
+      { title: s.site_title },
+      { name: "description", content: s.site_description },
       { property: "og:site_name", content: "יהלום לבית" },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "he_IL" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/favicon.png" },
-      { rel: "apple-touch-icon", href: "/favicon.png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800;900&family=Frank+Ruhl+Libre:wght@500;700;800;900&family=Heebo:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" },
-    ],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@graph": [
-            {
-              "@type": "LocalBusiness",
-              "@id": "https://yahalom-la-bait.com/#organization",
-              name: "יהלום לבית",
-              alternateName: "Yahalom La Bait",
-              url: "https://yahalom-la-bait.com",
-              image: "https://yahalom-la-bait.com/og-cover.jpg",
-              logo: "https://yahalom-la-bait.com/logo.png",
-              description:
-                "יהלום לבית — מותג פרימיום ישראלי לתמונות לבית ואמנות קיר יוקרתית: הדפסה דיגיטלית מתקדמת על זכוכית מחוסמת, בעיצוב אישי.",
-              telephone: "+972-53-320-6500",
-              email: "moshemalkaa@gmail.com",
-              priceRange: "₪₪₪",
-              address: {
-                "@type": "PostalAddress",
-                addressLocality: "מודיעין",
-                addressCountry: "IL",
-              },
-              areaServed: { "@type": "Country", name: "Israel" },
-              openingHoursSpecification: [
-                {
-                  "@type": "OpeningHoursSpecification",
-                  dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
-                  opens: "10:00",
-                  closes: "18:00",
+      { property: "og:title", content: s.site_title },
+      { property: "og:description", content: s.site_description },
+      { name: "twitter:card", content: s.social_image_url ? "summary_large_image" : "summary" },
+      { name: "twitter:title", content: s.site_title },
+      { name: "twitter:description", content: s.site_description },
+    ];
+    if (s.social_image_url) {
+      meta.push({ property: "og:image", content: s.social_image_url });
+      meta.push({ name: "twitter:image", content: s.social_image_url });
+    }
+    return {
+      meta,
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", type: "image/png", href: "/favicon.png" },
+        { rel: "apple-touch-icon", href: "/favicon.png" },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800;900&family=Frank+Ruhl+Libre:wght@500;700;800;900&family=Heebo:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" },
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "LocalBusiness",
+                "@id": "https://yahalom-la-bait.com/#organization",
+                name: "יהלום לבית",
+                alternateName: "Yahalom La Bait",
+                url: "https://yahalom-la-bait.com",
+                image: s.social_image_url || "https://yahalom-la-bait.com/og-cover.jpg",
+                logo: "https://yahalom-la-bait.com/logo.png",
+                description:
+                  "יהלום לבית — מותג פרימיום ישראלי לתמונות לבית ואמנות קיר יוקרתית: הדפסה דיגיטלית מתקדמת על זכוכית מחוסמת, בעיצוב אישי.",
+                telephone: "+972-53-320-6500",
+                email: "moshemalkaa@gmail.com",
+                priceRange: "₪₪₪",
+                address: {
+                  "@type": "PostalAddress",
+                  addressLocality: "מודיעין",
+                  addressCountry: "IL",
                 },
-              ],
-            },
-            {
-              "@type": "WebSite",
-              "@id": "https://yahalom-la-bait.com/#website",
-              url: "https://yahalom-la-bait.com",
-              name: "יהלום לבית",
-              inLanguage: "he-IL",
-              publisher: { "@id": "https://yahalom-la-bait.com/#organization" },
-              potentialAction: {
-                "@type": "SearchAction",
-                target: "https://yahalom-la-bait.com/shop?cat={search_term_string}",
-                "query-input": "required name=search_term_string",
+                areaServed: { "@type": "Country", name: "Israel" },
+                openingHoursSpecification: [
+                  {
+                    "@type": "OpeningHoursSpecification",
+                    dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+                    opens: "10:00",
+                    closes: "18:00",
+                  },
+                ],
               },
-            },
-          ],
-        }),
-      },
-    ],
-  }),
+              {
+                "@type": "WebSite",
+                "@id": "https://yahalom-la-bait.com/#website",
+                url: "https://yahalom-la-bait.com",
+                name: "יהלום לבית",
+                inLanguage: "he-IL",
+                publisher: { "@id": "https://yahalom-la-bait.com/#organization" },
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: "https://yahalom-la-bait.com/shop?cat={search_term_string}",
+                  "query-input": "required name=search_term_string",
+                },
+              },
+            ],
+          }),
+        },
+      ],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
