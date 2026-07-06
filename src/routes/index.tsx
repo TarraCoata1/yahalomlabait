@@ -107,7 +107,7 @@ function Home() {
         <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
           <div className="mb-10 text-center">
             <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">רבי המכר</span>
-            <h2 className="mt-2 font-serif text-3xl md:text-4xl">היצירות האהובות שלנו</h2>
+            <h2 className="mt-2 font-serif text-3xl md:text-4xl">אמנות פרימיום לבית — היצירות האהובות שלנו</h2>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {bestSellers.map((p, i) => (
