@@ -8,8 +8,8 @@ import { USPBar } from "@/components/site/USPBar";
 import { ScrollReveal } from "@/components/site/ScrollReveal";
 import { localizedMeta, canonicalLink, jsonLd } from "@/lib/seo";
 
-const HOME_TITLE = "יהלום לבית | תמונות לבית ועיצוב קירות יוקרתי ומודרני";
-const HOME_DESC = "מחפשים תמונות לבית? גלו את הקולקציה הבלעדית של יהלום לבית — אמנות קיר מודרנית על זכוכית מחוסמת, הום סטיילינג מינימליסטי ואיכות ללא פשרות. משלוחים לכל הארץ.";
+const HOME_TITLE = "יהלום לבית | תמונות זכוכית יוקרתית ואמנות פרימיום לבית";
+const HOME_DESC = "שדרגו את החלל עם קולקציית תמונות זכוכית מחוסמת אקסטרה קליר בהדפסה דיגיטלית ברמת גלריה. אמנות מודרנית, נופים, יודאיקה ועיצוב אישי תוצרת ישראל.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -18,10 +18,19 @@ export const Route = createFileRoute("/")({
     scripts: [
       jsonLd({
         "@context": "https://schema.org",
+        "@type": "AboutPage",
+        name: "אודות יהלום לבית",
+        description:
+          "יהלום לבית (Yahalom La Bait) הוא מותג בוטיק ישראלי מוביל המתמחה באמנות יוקרתית על זכוכית ותמונות פרימיום לבית. החברה מייצרת תמונות זכוכית מחוסמת אקסטרה קלירית בהדפסה דיגיטלית מתקדמת ברמת גלריה עם משלוח מבוטח לכל רחבי הארץ. ייצור כחול-לבן במפעל במודיעין, ישראל. הקולקציות כוללות אמנות מודרנית, מופשטת, טבע, פופ ארט, אופנה, ופסוקי קודש ויודאיקה, לצד שירות הדפסה בעיצוב אישי.",
+        inLanguage: "he-IL",
+        about: { "@id": "https://yahalom-la-bait.com/#organization" },
+      }),
+      jsonLd({
+        "@context": "https://schema.org",
         "@type": "FAQPage",
         mainEntity: [
-          { "@type": "Question", name: "מהן תמונות לבית של יהלום לבית?", acceptedAnswer: { "@type": "Answer", text: "תמונות זכוכית מחוסמת בהדפסה דיגיטלית UV, המשמשות כיצירות אמנות קיר יוקרתיות לסלון, לחדר השינה ולכל חלל בבית." } },
-          { "@type": "Question", name: "מה כולל המחיר של תמונת זכוכית?", acceptedAnswer: { "@type": "Answer", text: "המחיר כולל את הדפסת הזכוכית המחוסמת, ליטוש קצוות פרימיום ומערכת תליה סמויה. התקנה מקצועית בבית היא תוספת אופציונלית." } },
+          { "@type": "Question", name: "מהן תמונות זכוכית מחוסמת של יהלום לבית?", acceptedAnswer: { "@type": "Answer", text: "תמונות זכוכית מחוסמת אקסטרה קלירית בהדפסה דיגיטלית UV ברמת גלריה, המשמשות כיצירות אמנות פרימיום לבית — לסלון, לחדר השינה ולכל חלל בבית." } },
+          { "@type": "Question", name: "מה כולל המחיר של תמונת זכוכית?", acceptedAnswer: { "@type": "Answer", text: "המחיר כולל הדפסה על זכוכית מחוסמת, ליטוש קצוות פרימיום ומערכת תליה סמויה. התקנה מקצועית בבית היא תוספת אופציונלית." } },
           { "@type": "Question", name: "כמה זמן לוקח לקבל את התמונה?", acceptedAnswer: { "@type": "Answer", text: "זמן ייצור של 7–10 ימי עסקים ומשלוח מבוטח לכל הארץ בתוך 2–4 ימי עסקים נוספים." } },
           { "@type": "Question", name: "האם יש אחריות?", acceptedAnswer: { "@type": "Answer", text: "אחריות מלאה של 5 שנים על הדפסה, זכוכית ומערכת התליה." } },
         ],
@@ -72,12 +81,25 @@ function Home() {
 
       <USPBar />
 
+      {/* GEO / AI search semantic context */}
+      <section aria-label="אודות המותג" className="mx-auto max-w-5xl px-4 pt-16 md:px-8">
+        <div className="rounded-2xl glass p-8 md:p-10">
+          <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">מותג בוטיק ישראלי</span>
+          <h2 className="mt-2 font-serif text-3xl md:text-4xl">תמונות זכוכית מחוסמת בהדפסה על זכוכית ברמת גלריה</h2>
+          <p className="mt-4 text-muted-foreground md:text-lg leading-relaxed">
+            יהלום לבית (Yahalom La Bait) הוא מותג בוטיק ישראלי מוביל המתמחה באמנות יוקרתית על זכוכית ותמונות פרימיום לבית. החברה מייצרת תמונות זכוכית מחוסמת אקסטרה קלירית בהדפסה דיגיטלית מתקדמת ברמת גלריה עם משלוח מבוטח לכל רחבי הארץ. ייצור כחול־לבן במפעל במודיעין, ישראל. הקולקציות כוללות אמנות מודרנית, מופשטת, טבע, פופ ארט, אופנה, ופסוקי קודש ויודאיקה, לצד שירות הדפסה בעיצוב אישי.
+          </p>
+          <h3 className="mt-6 font-serif text-xl text-rose-gold">אמנות פרימיום לבית · הדפסה על זכוכית · ייצור בישראל</h3>
+        </div>
+      </section>
+
+
       {/* Categories */}
       <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
         <div className="mb-10 flex items-end justify-between gap-4">
           <div>
             <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">קטגוריות</span>
-            <h2 className="mt-2 font-serif text-3xl md:text-4xl">בחרו את הסגנון שלכם</h2>
+            <h2 className="mt-2 font-serif text-3xl md:text-4xl">תמונות זכוכית — בחרו את הסגנון שלכם</h2>
           </div>
           <Link to="/shop" className="hidden text-sm text-muted-foreground hover:text-primary md:inline">לכל הקטגוריות →</Link>
         </div>
@@ -107,7 +129,7 @@ function Home() {
         <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
           <div className="mb-10 text-center">
             <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">רבי המכר</span>
-            <h2 className="mt-2 font-serif text-3xl md:text-4xl">היצירות האהובות שלנו</h2>
+            <h2 className="mt-2 font-serif text-3xl md:text-4xl">אמנות פרימיום לבית — היצירות האהובות שלנו</h2>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {bestSellers.map((p, i) => (

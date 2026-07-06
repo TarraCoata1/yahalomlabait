@@ -35,7 +35,7 @@ export function Header() {
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:right-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-background focus:px-4 focus:py-2">דלג לתוכן</a>
       <div className="site-header-inner mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 md:h-20 md:px-8">
         <Link to="/" aria-label="יהלום לבית - דף הבית" className="flex items-center gap-3 shrink-0">
-          <img src={logo.url} alt="לוגו יהלום לבית - אמנות זכוכית יוקרתית" width={44} height={44} className="rounded-full ring-1 ring-rose-gold/40" />
+          <img src={logo.url} alt="לוגו יהלום לבית - תמונות זכוכית ואמנות קיר יוקרתית לבית" width={44} height={44} className="rounded-full ring-1 ring-rose-gold/40" />
           <div className="hidden sm:block leading-tight">
             <div className="font-serif text-lg tracking-wide text-gradient-rose">Yahalom La Bait</div>
             <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Glass Art Prints</div>
