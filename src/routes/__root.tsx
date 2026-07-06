@@ -137,11 +137,12 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-dvh flex-col">
         <Header />
-        <main className="flex-1"><Outlet /></main>
+        <main id="main" className="flex-1"><Outlet /></main>
         <Footer />
       </div>
       <MiniCart />
       <FloatingWidgets />
+      <BackToTop />
       <Toaster />
     </QueryClientProvider>
   );
