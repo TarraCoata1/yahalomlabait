@@ -121,7 +121,7 @@ function ProductPage() {
         </div>
       )}
 
-      <nav className="mb-6 text-xs text-muted-foreground">
+      <nav aria-label="פירורי לחם" className="mb-6 text-xs text-muted-foreground">
         <Link to="/" className="hover:text-primary">בית</Link> /{" "}
         <Link to="/shop" className="hover:text-primary">חנות</Link> /{" "}
         <span className="text-foreground">{product.name}</span>
@@ -131,7 +131,7 @@ function ProductPage() {
         {/* Gallery */}
         <div>
           <div className="relative overflow-hidden rounded-2xl glass">
-            <img src={media[activeMedia]} alt={product.name} className="aspect-[4/5] w-full object-cover" />
+            <img src={media[activeMedia]} alt={`${product.name} - תמונת זכוכית לבית מבית יהלום לבית`} width={800} height={1000} loading="eager" className="aspect-[4/5] w-full object-cover" />
             <span className="absolute bottom-3 right-3 rounded-full bg-background/70 px-3 py-1 text-[11px] tracking-wider text-rose-gold backdrop-blur">
               {activeMedia === 0 ? "תצוגת אמנות" : "תצוגה בסלון"}
             </span>
@@ -140,7 +140,7 @@ function ProductPage() {
             {media.map((m, i) => (
               <button key={i} onClick={() => setActiveMedia(i)}
                 className={`overflow-hidden rounded-lg border-2 transition ${activeMedia === i ? "border-rose-gold" : "border-transparent"}`}>
-                <img src={m} alt="" className="h-20 w-20 object-cover" />
+                <img src={m} alt="" loading="lazy" width={80} height={80} className="h-20 w-20 object-cover" />
               </button>
             ))}
           </div>
