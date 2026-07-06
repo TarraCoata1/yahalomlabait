@@ -110,7 +110,9 @@ function Home() {
             <h2 className="mt-2 font-serif text-3xl md:text-4xl">היצירות האהובות שלנו</h2>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {bestSellers.map((p) => <ProductCard key={p.id} product={p} />)}
+            {bestSellers.map((p, i) => (
+              <ScrollReveal key={p.id} delay={i * 80}><ProductCard product={p} /></ScrollReveal>
+            ))}
           </div>
         </section>
       )}
@@ -132,11 +134,13 @@ function Home() {
             { q: "תמונת הזכוכית שינתה את כל האווירה בבית. עומק ונוכחות שקטה ומרשימה.", a: "מאי כ." },
             { q: "התהליך היה אישי, מדויק וסבלני. איכות ההדפסה ברמה הגבוהה ביותר.", a: "יובל ד." },
             { q: "קיבלנו אין סוף מחמאות מאורחים. ההשקעה בפרטים הקטנים מורגשת.", a: "רוני ח." },
-          ].map((t) => (
-            <blockquote key={t.a} className="rounded-2xl glass p-6">
-              <p className="font-serif text-lg leading-relaxed">"{t.q}"</p>
-              <footer className="mt-4 text-sm text-rose-gold">— {t.a}</footer>
-            </blockquote>
+          ].map((t, i) => (
+            <ScrollReveal key={t.a} delay={i * 100}>
+              <blockquote className="rounded-2xl glass p-6 h-full transition hover:-translate-y-1 hover:border-rose-gold/60">
+                <p className="font-serif text-lg leading-relaxed">"{t.q}"</p>
+                <footer className="mt-4 text-sm text-rose-gold">— {t.a}</footer>
+              </blockquote>
+            </ScrollReveal>
           ))}
         </div>
       </section>
