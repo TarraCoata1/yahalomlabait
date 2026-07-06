@@ -15,6 +15,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { MiniCart } from "@/components/site/MiniCart";
 import { FloatingWidgets } from "@/components/site/FloatingWidgets";
+import { BackToTop } from "@/components/site/BackToTop";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
