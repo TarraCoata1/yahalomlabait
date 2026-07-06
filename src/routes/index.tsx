@@ -5,14 +5,27 @@ import hero from "@/assets/hero-living-room.jpg";
 import { categoriesQuery, productsQuery } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
 import { USPBar } from "@/components/site/USPBar";
+import { ScrollReveal } from "@/components/site/ScrollReveal";
+import { localizedMeta, canonicalLink, jsonLd } from "@/lib/seo";
+
+const HOME_TITLE = "יהלום לבית | תמונות לבית ועיצוב קירות יוקרתי ומודרני";
+const HOME_DESC = "מחפשים תמונות לבית? גלו את הקולקציה הבלעדית של יהלום לבית — אמנות קיר מודרנית על זכוכית מחוסמת, הום סטיילינג מינימליסטי ואיכות ללא פשרות. משלוחים לכל הארץ.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
-      { title: "Yahalom La Bait | אמנות זכוכית יוקרתית בעיצוב אישי" },
-      { name: "description", content: "אוסף אקסקלוסיבי של תמונות זכוכית פרימיום — הדפסה דיגיטלית מתקדמת על זכוכית מחוסמת אקסטרה קלירית, בעיצוב אישי לכל חלל." },
-      { property: "og:title", content: "Yahalom La Bait | אמנות זכוכית יוקרתית" },
-      { property: "og:description", content: "תמונות זכוכית יוקרתיות שמשדרגות את חלל הבית." },
+    meta: localizedMeta({ title: HOME_TITLE, description: HOME_DESC, path: "/" }),
+    links: canonicalLink("/"),
+    scripts: [
+      jsonLd({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+          { "@type": "Question", name: "מהן תמונות לבית של יהלום לבית?", acceptedAnswer: { "@type": "Answer", text: "תמונות זכוכית מחוסמת בהדפסה דיגיטלית UV, המשמשות כיצירות אמנות קיר יוקרתיות לסלון, לחדר השינה ולכל חלל בבית." } },
+          { "@type": "Question", name: "מה כולל המחיר של תמונת זכוכית?", acceptedAnswer: { "@type": "Answer", text: "המחיר כולל את הדפסת הזכוכית המחוסמת, ליטוש קצוות פרימיום ומערכת תליה סמויה. התקנה מקצועית בבית היא תוספת אופציונלית." } },
+          { "@type": "Question", name: "כמה זמן לוקח לקבל את התמונה?", acceptedAnswer: { "@type": "Answer", text: "זמן ייצור של 7–10 ימי עסקים ומשלוח מבוטח לכל הארץ בתוך 2–4 ימי עסקים נוספים." } },
+          { "@type": "Question", name: "האם יש אחריות?", acceptedAnswer: { "@type": "Answer", text: "אחריות מלאה של 5 שנים על הדפסה, זכוכית ומערכת התליה." } },
+        ],
+      }),
     ],
   }),
   loader: ({ context }) =>
