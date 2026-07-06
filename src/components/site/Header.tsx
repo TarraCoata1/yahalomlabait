@@ -1,7 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { ShoppingBag, Menu, X, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "@/assets/logo.png.asset.json";
+import { useCart, cartCount } from "@/lib/cart";
+import { ThemeToggle } from "./ThemeToggle";
+import { useSession, useIsAdmin } from "@/hooks/use-auth";
 import { useCart, cartCount } from "@/lib/cart";
 import { ThemeToggle } from "./ThemeToggle";
 import { useSession, useIsAdmin } from "@/hooks/use-auth";
