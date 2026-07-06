@@ -31,9 +31,12 @@ export const Route = createFileRoute("/product/$id")({
         jsonLd({
           "@context": "https://schema.org",
           "@type": "Product",
+          "@id": `${canonical(path)}#product`,
           name: loaderData.name,
           description: loaderData.description,
-          image: loaderData.image,
+          image: [loaderData.image],
+          sku: String(loaderData.id ?? params.id),
+          mpn: String(loaderData.id ?? params.id),
           brand: { "@type": "Brand", name: "יהלום לבית" },
           category: loaderData.style ?? "אמנות קיר",
           offers: {
@@ -41,9 +44,45 @@ export const Route = createFileRoute("/product/$id")({
             url: canonical(path),
             priceCurrency: "ILS",
             price: String(FROM_PRICE),
+            priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
             availability: "https://schema.org/InStock",
             itemCondition: "https://schema.org/NewCondition",
             seller: { "@type": "Organization", name: "יהלום לבית" },
+            hasMerchantReturnPolicy: {
+              "@type": "MerchantReturnPolicy",
+              applicableCountry: "IL",
+              returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+              merchantReturnDays: 14,
+              returnMethod: "https://schema.org/ReturnByMail",
+              returnFees: "https://schema.org/FreeReturn",
+            },
+            shippingDetails: {
+              "@type": "OfferShippingDetails",
+              shippingRate: {
+                "@type": "MonetaryAmount",
+                value: "0",
+                currency: "ILS",
+              },
+              shippingDestination: {
+                "@type": "DefinedRegion",
+                addressCountry: "IL",
+              },
+              deliveryTime: {
+                "@type": "ShippingDeliveryTime",
+                handlingTime: {
+                  "@type": "QuantitativeValue",
+                  minValue: 7,
+                  maxValue: 10,
+                  unitCode: "DAY",
+                },
+                transitTime: {
+                  "@type": "QuantitativeValue",
+                  minValue: 2,
+                  maxValue: 4,
+                  unitCode: "DAY",
+                },
+              },
+            },
           },
         }),
         breadcrumbSchema([
