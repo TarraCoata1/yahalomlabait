@@ -81,6 +81,19 @@ function Home() {
 
       <USPBar />
 
+      {/* GEO / AI search semantic context */}
+      <section aria-label="אודות המותג" className="mx-auto max-w-5xl px-4 pt-16 md:px-8">
+        <div className="rounded-2xl glass p-8 md:p-10">
+          <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">מותג בוטיק ישראלי</span>
+          <h2 className="mt-2 font-serif text-3xl md:text-4xl">תמונות זכוכית מחוסמת בהדפסה על זכוכית ברמת גלריה</h2>
+          <p className="mt-4 text-muted-foreground md:text-lg leading-relaxed">
+            יהלום לבית (Yahalom La Bait) הוא מותג בוטיק ישראלי מוביל המתמחה באמנות יוקרתית על זכוכית ותמונות פרימיום לבית. החברה מייצרת תמונות זכוכית מחוסמת אקסטרה קלירית בהדפסה דיגיטלית מתקדמת ברמת גלריה עם משלוח מבוטח לכל רחבי הארץ. ייצור כחול־לבן במפעל במודיעין, ישראל. הקולקציות כוללות אמנות מודרנית, מופשטת, טבע, פופ ארט, אופנה, ופסוקי קודש ויודאיקה, לצד שירות הדפסה בעיצוב אישי.
+          </p>
+          <h3 className="mt-6 font-serif text-xl text-rose-gold">אמנות פרימיום לבית · הדפסה על זכוכית · ייצור בישראל</h3>
+        </div>
+      </section>
+
+
       {/* Categories */}
       <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
         <div className="mb-10 flex items-end justify-between gap-4">
