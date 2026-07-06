@@ -5,9 +5,6 @@ import logo from "@/assets/logo.png.asset.json";
 import { useCart, cartCount } from "@/lib/cart";
 import { ThemeToggle } from "./ThemeToggle";
 import { useSession, useIsAdmin } from "@/hooks/use-auth";
-import { useCart, cartCount } from "@/lib/cart";
-import { ThemeToggle } from "./ThemeToggle";
-import { useSession, useIsAdmin } from "@/hooks/use-auth";
 
 const nav = [
   { to: "/", label: "בית" },
