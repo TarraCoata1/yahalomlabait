@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, ShieldCheck, Plus, Pencil, Trash2, EyeOff, Eye, Search } from "lucide-react";
+import { LogOut, ShieldCheck, Plus, Pencil, Trash2, EyeOff, Eye, Search, Upload, ImageIcon } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession, useIsAdmin, signOut } from "@/hooks/use-auth";
@@ -9,6 +9,7 @@ import { categoriesQuery, productsQuery, type Category, type Product } from "@/l
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png.asset.json";
+import { siteSettingsQuery, saveSiteSettings, uploadSocialImage, DEFAULT_SITE_SETTINGS } from "@/lib/site-settings";
 
 export const Route = createFileRoute("/admin-portal")({
   head: () => ({
