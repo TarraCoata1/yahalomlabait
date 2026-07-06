@@ -57,7 +57,7 @@ export function ProductCard({ product }: { product: Product }) {
       <Link to="/product/$id" params={{ id: product.slug }} className="group relative block">
         <div className={`relative overflow-hidden rounded-2xl glass ${product.isHidden ? "opacity-60" : ""}`}>
           <div className="aspect-[4/5] overflow-hidden">
-            <img src={product.image} alt={product.name} loading="lazy"
+            <img src={product.image} alt={`${product.name} - תמונת זכוכית לבית ${product.style ?? ""} מיהלום לבית`} loading="lazy" width={480} height={600}
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
