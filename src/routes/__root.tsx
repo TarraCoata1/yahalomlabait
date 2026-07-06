@@ -79,6 +79,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               name: "יהלום לבית",
               alternateName: "Yahalom La Bait",
               url: "https://yahalom-la-bait.com",
+              image: "https://yahalom-la-bait.com/og-cover.jpg",
+              logo: "https://yahalom-la-bait.com/logo.png",
               description:
                 "יהלום לבית — מותג פרימיום ישראלי לתמונות לבית ואמנות קיר יוקרתית: הדפסה דיגיטלית מתקדמת על זכוכית מחוסמת, בעיצוב אישי.",
               telephone: "+972-53-320-6500",
