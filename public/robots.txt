@@ -1,2 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin-portal
+Disallow: /checkout
+
+Sitemap: https://yahalom-la-bait.com/sitemap.xml

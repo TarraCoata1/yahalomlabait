@@ -1,14 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero-living-room.jpg";
+import { localizedMeta, canonicalLink } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
-    meta: [
-      { title: "אודות | Yahalom La Bait" },
-      { name: "description", content: "Yahalom La Bait — סטודיו ישראלי המתמחה ביצירת תמונות זכוכית בעיצוב אישי לחללי בית פרטיים." },
-      { property: "og:title", content: "אודות | Yahalom La Bait" },
-      { property: "og:description", content: "הסיפור שלנו ודרך העבודה." },
-    ],
+    meta: localizedMeta({
+      title: "אודות יהלום לבית | הסטודיו לתמונות זכוכית יוקרתיות",
+      description: "יהלום לבית — סטודיו ישראלי המתמחה ביצירת תמונות לבית ואמנות זכוכית בעיצוב אישי לחללים פרטיים.",
+      path: "/about",
+    }),
+    links: canonicalLink("/about"),
   }),
   component: About,
 });

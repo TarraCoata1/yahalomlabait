@@ -6,6 +6,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { FROM_PRICE } from "@/lib/products";
 import { categoriesQuery, productsQuery } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
+import { localizedMeta, canonicalLink, breadcrumbSchema } from "@/lib/seo";
 
 const schema = z.object({
   cat: fallback(z.string(), "").default(""),
@@ -14,12 +15,13 @@ const schema = z.object({
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
-    meta: [
-      { title: "החנות | Yahalom La Bait" },
-      { name: "description", content: "כל הקולקציה של תמונות הזכוכית — סננו לפי סגנון, צבע, מידה ומחיר." },
-      { property: "og:title", content: "החנות | Yahalom La Bait" },
-      { property: "og:description", content: "קולקציית תמונות זכוכית פרימיום." },
-    ],
+    meta: localizedMeta({
+      title: "החנות | תמונות לבית ואמנות זכוכית - יהלום לבית",
+      description: "כל הקולקציה של תמונות לבית מיהלום לבית: אמנות מודרנית, יהודית ומינימליסטית על זכוכית מחוסמת. סננו לפי סגנון, צבע ומידה.",
+      path: "/shop",
+    }),
+    links: canonicalLink("/shop"),
+    scripts: [breadcrumbSchema([{ name: "בית", path: "/" }, { name: "חנות", path: "/shop" }])],
   }),
   validateSearch: zodValidator(schema),
   loader: ({ context }) =>

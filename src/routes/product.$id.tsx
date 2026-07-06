@@ -4,11 +4,12 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil } from "lucide-react";
 import hero from "@/assets/hero-living-room.jpg";
 import { productQuery, productsQuery } from "@/lib/catalog";
-import { RECT_SIZES, SQUARE_SIZES, installationFee } from "@/lib/products";
+import { RECT_SIZES, SQUARE_SIZES, installationFee, FROM_PRICE } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/site/ProductCard";
 import { useSession, useIsAdmin } from "@/hooks/use-auth";
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
+import { localizedMeta, canonicalLink, canonical, jsonLd, breadcrumbSchema } from "@/lib/seo";
 
 export const Route = createFileRoute("/product/$id")({
   loader: async ({ params, context }) => {
@@ -16,15 +17,43 @@ export const Route = createFileRoute("/product/$id")({
     if (!product) throw notFound();
     return product;
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData ? [
-      { title: `${loaderData.name} | Yahalom La Bait` },
-      { name: "description", content: loaderData.description },
-      { property: "og:title", content: `${loaderData.name} | Yahalom La Bait` },
-      { property: "og:description", content: loaderData.description },
-      { property: "og:image", content: loaderData.image },
-    ] : [],
-  }),
+  head: ({ loaderData, params }) => {
+    if (!loaderData) {
+      return { meta: [{ title: "המוצר לא נמצא | יהלום לבית" }, { name: "robots", content: "noindex" }] };
+    }
+    const path = `/product/${params.id}`;
+    const title = `${loaderData.name} | תמונות לבית - יהלום לבית`;
+    const description = `${loaderData.description} החל מ־₪${FROM_PRICE}. משלוח מבוטח לכל הארץ ואחריות 5 שנים.`;
+    return {
+      meta: localizedMeta({ title, description, path, image: loaderData.image, type: "product" }),
+      links: canonicalLink(path),
+      scripts: [
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: loaderData.name,
+          description: loaderData.description,
+          image: loaderData.image,
+          brand: { "@type": "Brand", name: "יהלום לבית" },
+          category: loaderData.style ?? "אמנות קיר",
+          offers: {
+            "@type": "Offer",
+            url: canonical(path),
+            priceCurrency: "ILS",
+            price: String(FROM_PRICE),
+            availability: "https://schema.org/InStock",
+            itemCondition: "https://schema.org/NewCondition",
+            seller: { "@type": "Organization", name: "יהלום לבית" },
+          },
+        }),
+        breadcrumbSchema([
+          { name: "בית", path: "/" },
+          { name: "חנות", path: "/shop" },
+          { name: loaderData.name, path },
+        ]),
+      ],
+    };
+  },
   notFoundComponent: () => (
     <div className="mx-auto max-w-md px-4 py-24 text-center">
       <h1 className="font-serif text-3xl">המוצר לא נמצא</h1>
@@ -92,7 +121,7 @@ function ProductPage() {
         </div>
       )}
 
-      <nav className="mb-6 text-xs text-muted-foreground">
+      <nav aria-label="פירורי לחם" className="mb-6 text-xs text-muted-foreground">
         <Link to="/" className="hover:text-primary">בית</Link> /{" "}
         <Link to="/shop" className="hover:text-primary">חנות</Link> /{" "}
         <span className="text-foreground">{product.name}</span>
@@ -102,7 +131,7 @@ function ProductPage() {
         {/* Gallery */}
         <div>
           <div className="relative overflow-hidden rounded-2xl glass">
-            <img src={media[activeMedia]} alt={product.name} className="aspect-[4/5] w-full object-cover" />
+            <img src={media[activeMedia]} alt={`${product.name} - תמונת זכוכית לבית מבית יהלום לבית`} width={800} height={1000} loading="eager" className="aspect-[4/5] w-full object-cover" />
             <span className="absolute bottom-3 right-3 rounded-full bg-background/70 px-3 py-1 text-[11px] tracking-wider text-rose-gold backdrop-blur">
               {activeMedia === 0 ? "תצוגת אמנות" : "תצוגה בסלון"}
             </span>
@@ -111,7 +140,7 @@ function ProductPage() {
             {media.map((m, i) => (
               <button key={i} onClick={() => setActiveMedia(i)}
                 className={`overflow-hidden rounded-lg border-2 transition ${activeMedia === i ? "border-rose-gold" : "border-transparent"}`}>
-                <img src={m} alt="" className="h-20 w-20 object-cover" />
+                <img src={m} alt="" loading="lazy" width={80} height={80} className="h-20 w-20 object-cover" />
               </button>
             ))}
           </div>

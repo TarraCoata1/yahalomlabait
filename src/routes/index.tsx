@@ -5,14 +5,27 @@ import hero from "@/assets/hero-living-room.jpg";
 import { categoriesQuery, productsQuery } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
 import { USPBar } from "@/components/site/USPBar";
+import { ScrollReveal } from "@/components/site/ScrollReveal";
+import { localizedMeta, canonicalLink, jsonLd } from "@/lib/seo";
+
+const HOME_TITLE = "יהלום לבית | תמונות לבית ועיצוב קירות יוקרתי ומודרני";
+const HOME_DESC = "מחפשים תמונות לבית? גלו את הקולקציה הבלעדית של יהלום לבית — אמנות קיר מודרנית על זכוכית מחוסמת, הום סטיילינג מינימליסטי ואיכות ללא פשרות. משלוחים לכל הארץ.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
-      { title: "Yahalom La Bait | אמנות זכוכית יוקרתית בעיצוב אישי" },
-      { name: "description", content: "אוסף אקסקלוסיבי של תמונות זכוכית פרימיום — הדפסה דיגיטלית מתקדמת על זכוכית מחוסמת אקסטרה קלירית, בעיצוב אישי לכל חלל." },
-      { property: "og:title", content: "Yahalom La Bait | אמנות זכוכית יוקרתית" },
-      { property: "og:description", content: "תמונות זכוכית יוקרתיות שמשדרגות את חלל הבית." },
+    meta: localizedMeta({ title: HOME_TITLE, description: HOME_DESC, path: "/" }),
+    links: canonicalLink("/"),
+    scripts: [
+      jsonLd({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+          { "@type": "Question", name: "מהן תמונות לבית של יהלום לבית?", acceptedAnswer: { "@type": "Answer", text: "תמונות זכוכית מחוסמת בהדפסה דיגיטלית UV, המשמשות כיצירות אמנות קיר יוקרתיות לסלון, לחדר השינה ולכל חלל בבית." } },
+          { "@type": "Question", name: "מה כולל המחיר של תמונת זכוכית?", acceptedAnswer: { "@type": "Answer", text: "המחיר כולל את הדפסת הזכוכית המחוסמת, ליטוש קצוות פרימיום ומערכת תליה סמויה. התקנה מקצועית בבית היא תוספת אופציונלית." } },
+          { "@type": "Question", name: "כמה זמן לוקח לקבל את התמונה?", acceptedAnswer: { "@type": "Answer", text: "זמן ייצור של 7–10 ימי עסקים ומשלוח מבוטח לכל הארץ בתוך 2–4 ימי עסקים נוספים." } },
+          { "@type": "Question", name: "האם יש אחריות?", acceptedAnswer: { "@type": "Answer", text: "אחריות מלאה של 5 שנים על הדפסה, זכוכית ומערכת התליה." } },
+        ],
+      }),
     ],
   }),
   loader: ({ context }) =>
@@ -33,7 +46,7 @@ function Home() {
     <>
       {/* Hero */}
       <section className="relative isolate overflow-hidden">
-        <img src={hero} alt="" fetchPriority="high" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-60" />
+        <img src={hero} alt="תמונות לבית מודרניות בסלון מעוצב - יהלום לבית" fetchPriority="high" width={1920} height={1080} className="absolute inset-0 -z-10 h-full w-full object-cover opacity-60" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-l from-background via-background/60 to-background/30" />
         <div className="mx-auto max-w-7xl px-4 py-28 md:px-8 md:py-44">
           <div className="max-w-2xl">
@@ -70,8 +83,9 @@ function Home() {
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {visibleCategories.map((c, i) => (
-            <Link key={c.id} to="/shop" search={{ cat: c.slug }}
-              className={`group relative overflow-hidden rounded-2xl glass ${i === 0 ? "lg:col-span-2 lg:row-span-2" : ""}`}>
+            <ScrollReveal key={c.id} delay={i * 60} className={i === 0 ? "lg:col-span-2 lg:row-span-2" : ""}>
+            <Link to="/shop" search={{ cat: c.slug }}
+              className={`group relative block overflow-hidden rounded-2xl glass transition hover:-translate-y-1 hover:shadow-elegant ${i === 0 ? "h-full" : ""}`}>
               <div className={`overflow-hidden ${i === 0 ? "aspect-[16/12] lg:aspect-auto lg:h-full" : "aspect-[4/3]"}`}>
                 <img src={c.image} alt={c.name} loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -83,6 +97,7 @@ function Home() {
                 <span className="mt-3 inline-block text-sm text-rose-gold">לקולקציה →</span>
               </div>
             </Link>
+            </ScrollReveal>
           ))}
         </div>
       </section>
@@ -95,7 +110,9 @@ function Home() {
             <h2 className="mt-2 font-serif text-3xl md:text-4xl">היצירות האהובות שלנו</h2>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {bestSellers.map((p) => <ProductCard key={p.id} product={p} />)}
+            {bestSellers.map((p, i) => (
+              <ScrollReveal key={p.id} delay={i * 80}><ProductCard product={p} /></ScrollReveal>
+            ))}
           </div>
         </section>
       )}
@@ -117,11 +134,13 @@ function Home() {
             { q: "תמונת הזכוכית שינתה את כל האווירה בבית. עומק ונוכחות שקטה ומרשימה.", a: "מאי כ." },
             { q: "התהליך היה אישי, מדויק וסבלני. איכות ההדפסה ברמה הגבוהה ביותר.", a: "יובל ד." },
             { q: "קיבלנו אין סוף מחמאות מאורחים. ההשקעה בפרטים הקטנים מורגשת.", a: "רוני ח." },
-          ].map((t) => (
-            <blockquote key={t.a} className="rounded-2xl glass p-6">
-              <p className="font-serif text-lg leading-relaxed">"{t.q}"</p>
-              <footer className="mt-4 text-sm text-rose-gold">— {t.a}</footer>
-            </blockquote>
+          ].map((t, i) => (
+            <ScrollReveal key={t.a} delay={i * 100}>
+              <blockquote className="rounded-2xl glass p-6 h-full transition hover:-translate-y-1 hover:border-rose-gold/60">
+                <p className="font-serif text-lg leading-relaxed">"{t.q}"</p>
+                <footer className="mt-4 text-sm text-rose-gold">— {t.a}</footer>
+              </blockquote>
+            </ScrollReveal>
           ))}
         </div>
       </section>

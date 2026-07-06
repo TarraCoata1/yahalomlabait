@@ -1,15 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { useState } from "react";
+import { localizedMeta, canonicalLink } from "@/lib/seo";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
-    meta: [
-      { title: "צור קשר | Yahalom La Bait" },
-      { name: "description", content: "צרו קשר עם Yahalom La Bait — סטודיו תמונות זכוכית במודיעין. טלפון, וואטסאפ ואימייל." },
-      { property: "og:title", content: "צור קשר | Yahalom La Bait" },
-      { property: "og:description", content: "נשמח לשמוע ממך." },
-    ],
+    meta: localizedMeta({
+      title: "צור קשר | יהלום לבית - תמונות לבית ואמנות זכוכית",
+      description: "צרו קשר עם יהלום לבית — סטודיו תמונות זכוכית במודיעין. טלפון 053-320-6500, וואטסאפ ואימייל.",
+      path: "/contact",
+    }),
+    links: canonicalLink("/contact"),
   }),
   component: Contact,
 });

@@ -287,3 +287,36 @@
   font-family: "Heebo", "Arial", sans-serif !important;
   letter-spacing: 0.01em;
 }
+
+/* Smooth scrolling site-wide (honors reduced motion) */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: opacity, transform;
+}
+.reveal-in { opacity: 1; transform: none; }
+
+/* Shrinking sticky header */
+.site-header { transition: padding 0.3s ease, backdrop-filter 0.3s ease, background-color 0.3s ease; }
+.site-header.is-scrolled { box-shadow: 0 4px 24px -12px color-mix(in oklab, var(--rose-gold) 40%, transparent); }
+.site-header.is-scrolled .site-header-inner { height: 3.5rem; }
+@media (min-width: 768px) {
+  .site-header.is-scrolled .site-header-inner { height: 4rem; }
+}
+
+/* Elegant link underline animation */
+.link-underline { position: relative; }
+.link-underline::after {
+  content: ""; position: absolute; inset-inline: 0; bottom: -2px; height: 1px;
+  background: var(--rose-gold); transform: scaleX(0); transform-origin: right;
+  transition: transform 0.35s ease;
+}
+.link-underline:hover::after { transform: scaleX(1); transform-origin: left; }

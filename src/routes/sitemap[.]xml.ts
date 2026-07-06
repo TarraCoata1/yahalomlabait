@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 
-const BASE_URL = "";
+const BASE_URL = "https://yahalom-la-bait.com";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
@@ -21,6 +21,7 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         const paths = [
           "/", "/shop", "/custom", "/about", "/contact",
+          "/faq", "/shipping", "/returns", "/privacy", "/terms",
           ...(cats ?? []).map((c) => `/shop?cat=${c.slug}`),
           ...(prods ?? []).map((p) => `/product/${p.slug}`),
         ];
