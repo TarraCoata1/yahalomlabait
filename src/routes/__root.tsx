@@ -56,6 +56,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Yahalom La Bait | אמנות זכוכית יוקרתית" },
       { name: "description", content: "Yahalom La Bait — תמונות זכוכית יוקרתיות בעיצוב אישי. הדפסה דיגיטלית מתקדמת על זכוכית מחוסמת לעיצוב הבית." },
       { name: "author", content: "Yahalom La Bait" },
+      { name: "google-site-verification", content: "ih_LInCKz_Xs-Pe6Stx-wqNdEFOOTT4tlqYVdC1jNEo" },
       { property: "og:title", content: "Yahalom La Bait | אמנות זכוכית יוקרתית" },
       { property: "og:description", content: "Yahalom La Bait — תמונות זכוכית יוקרתיות בעיצוב אישי. הדפסה דיגיטלית מתקדמת על זכוכית מחוסמת לעיצוב הבית." },
       { property: "og:type", content: "website" },
