@@ -358,3 +358,175 @@ function GoogleIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+/* -------------------- SEO PANEL -------------------- */
+
+function SeoPanel() {
+  const { data, isLoading } = useQuery(siteSettingsQuery);
+  const qc = useQueryClient();
+  const router = useRouter();
+  const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const [title, setTitle] = useState("");
+  const [desc, setDesc] = useState("");
+  const [image, setImage] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    if (!data) return;
+    setTitle(data.site_title ?? "");
+    setDesc(data.site_description ?? "");
+    setImage(data.social_image_url ?? "");
+  }, [data]);
+
+  const handleUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) return toast.error("יש להעלות קובץ תמונה");
+    if (file.size > 5 * 1024 * 1024) return toast.error("גודל מקסימלי 5MB");
+    setUploading(true);
+    try {
+      const url = await uploadSocialImage(file);
+      setImage(url);
+      toast.success("התמונה הועלתה");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      await saveSiteSettings({
+        site_title: title.trim() || DEFAULT_SITE_SETTINGS.site_title,
+        site_description: desc.trim() || DEFAULT_SITE_SETTINGS.site_description,
+        social_image_url: image.trim(),
+      });
+      await qc.invalidateQueries({ queryKey: ["site_settings"] });
+      router.invalidate();
+      toast.success("הגדרות נשמרו");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="rounded-2xl glass p-8 text-center text-sm text-muted-foreground">טוען…</div>;
+  }
+
+  const titleCount = title.length;
+  const descCount = desc.length;
+
+  return (
+    <section className="max-w-3xl">
+      <div className="mb-6">
+        <h2 className="font-serif text-2xl">Site SEO & Social Share Settings</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          הגדרות אלו נטענות דינמית ל־&lt;head&gt; של כל דפי האתר ומשמשות לתצוגה בגוגל וברשתות חברתיות.
+        </p>
+      </div>
+
+      <div className="rounded-2xl glass p-6 space-y-6">
+        {/* Icon & Site Title */}
+        <div>
+          <div className="mb-2 flex items-center justify-between">
+            <label className="text-sm font-medium">Icon & Site Title</label>
+            <span className={`text-xs ${titleCount > 60 ? "text-destructive" : "text-muted-foreground"}`}>
+              {titleCount}/60
+            </span>
+          </div>
+          <div className="flex items-center gap-3 rounded-xl bg-card border border-border p-2">
+            <img src={logo.url} alt="site icon" className="h-10 w-10 rounded-full ring-1 ring-rose-gold/40" />
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value.slice(0, 60))}
+              maxLength={60}
+              placeholder="יהלום לבית | תמונות זכוכית יוקרתית ואמנות פרימיום לבית"
+              className="w-full bg-transparent px-2 py-2 text-sm outline-none"
+            />
+          </div>
+        </div>
+
+        {/* Description */}
+        <div>
+          <div className="mb-2 flex items-center justify-between">
+            <label className="text-sm font-medium">Description</label>
+            <span className={`text-xs ${descCount > 160 ? "text-destructive" : "text-muted-foreground"}`}>
+              {descCount}/160
+            </span>
+          </div>
+          <textarea
+            value={desc}
+            onChange={(e) => setDesc(e.target.value.slice(0, 160))}
+            maxLength={160}
+            rows={4}
+            placeholder="תיאור קצר של האתר שיוצג בגוגל וברשתות חברתיות"
+            className="w-full rounded-xl bg-card border border-border px-4 py-3 text-sm outline-none focus:border-rose-gold resize-none"
+          />
+        </div>
+
+        {/* Social image */}
+        <div>
+          <label className="mb-2 block text-sm font-medium">Social Image</label>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+            <div className="grid h-32 w-full sm:w-56 place-items-center overflow-hidden rounded-xl bg-card border border-border">
+              {image ? (
+                <img src={image} alt="social preview" className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex flex-col items-center gap-2 text-muted-foreground text-xs">
+                  <ImageIcon className="h-6 w-6" />
+                  אין תמונה
+                </div>
+              )}
+            </div>
+            <div className="flex-1 space-y-2">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handleUpload(f);
+                  e.target.value = "";
+                }}
+              />
+              <button
+                onClick={() => fileRef.current?.click()}
+                disabled={uploading}
+                className="flex items-center gap-2 rounded-full btn-rose px-5 py-2.5 text-sm font-semibold disabled:opacity-50"
+              >
+                <Upload className="h-4 w-4" />
+                {uploading ? "מעלה…" : image ? "החלף תמונה" : "העלה תמונה"}
+              </button>
+              {image && (
+                <button
+                  onClick={() => setImage("")}
+                  className="block text-xs text-muted-foreground hover:text-destructive"
+                >
+                  הסר תמונה
+                </button>
+              )}
+              <p className="text-xs text-muted-foreground">
+                מומלץ 1200×630 פיקסלים, עד 5MB. משמש כ־og:image ו־twitter:image.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/40">
+          <button
+            onClick={save}
+            disabled={saving}
+            className="rounded-full btn-rose px-6 py-2.5 text-sm font-semibold disabled:opacity-50"
+          >
+            {saving ? "שומר…" : "שמור הגדרות"}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
