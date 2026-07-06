@@ -46,7 +46,7 @@ function Home() {
     <>
       {/* Hero */}
       <section className="relative isolate overflow-hidden">
-        <img src={hero} alt="" fetchPriority="high" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-60" />
+        <img src={hero} alt="תמונות לבית מודרניות בסלון מעוצב - יהלום לבית" fetchPriority="high" width={1920} height={1080} className="absolute inset-0 -z-10 h-full w-full object-cover opacity-60" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-l from-background via-background/60 to-background/30" />
         <div className="mx-auto max-w-7xl px-4 py-28 md:px-8 md:py-44">
           <div className="max-w-2xl">
@@ -83,8 +83,9 @@ function Home() {
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {visibleCategories.map((c, i) => (
-            <Link key={c.id} to="/shop" search={{ cat: c.slug }}
-              className={`group relative overflow-hidden rounded-2xl glass ${i === 0 ? "lg:col-span-2 lg:row-span-2" : ""}`}>
+            <ScrollReveal key={c.id} delay={i * 60} className={i === 0 ? "lg:col-span-2 lg:row-span-2" : ""}>
+            <Link to="/shop" search={{ cat: c.slug }}
+              className={`group relative block overflow-hidden rounded-2xl glass transition hover:-translate-y-1 hover:shadow-elegant ${i === 0 ? "h-full" : ""}`}>
               <div className={`overflow-hidden ${i === 0 ? "aspect-[16/12] lg:aspect-auto lg:h-full" : "aspect-[4/3]"}`}>
                 <img src={c.image} alt={c.name} loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
