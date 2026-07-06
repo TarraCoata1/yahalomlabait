@@ -14,22 +14,26 @@ export function InfoPage({
 }) {
   return (
     <>
-      {faqSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: sections.map((s) => ({
-                "@type": "Question",
-                name: s.q,
-                acceptedAnswer: { "@type": "Answer", text: typeof s.a === "string" ? s.a : "" },
-              })),
-            }),
-          }}
-        />
-      )}
+      {faqSchema && (() => {
+        const qa = sections.filter((s) => typeof s.a === "string");
+        if (qa.length === 0) return null;
+        return (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: qa.map((s) => ({
+                  "@type": "Question",
+                  name: s.q,
+                  acceptedAnswer: { "@type": "Answer", text: s.a as string },
+                })),
+              }),
+            }}
+          />
+        );
+      })()}
       <article className="mx-auto max-w-4xl px-4 py-16 md:px-8">
         <nav aria-label="פירורי לחם" className="mb-6 text-xs text-muted-foreground">
           <Link to="/" className="hover:text-primary">בית</Link> / <span className="text-foreground">{title}</span>
