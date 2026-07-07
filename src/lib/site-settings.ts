@@ -1,10 +1,32 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 
 export type SiteSettings = {
+  // Meta / social
   site_title: string;
   site_description: string;
   social_image_url: string;
+  // Business
+  company_name: string;
+  logo_url: string;
+  contact_email: string;
+  contact_phone: string;
+  whatsapp_number: string;
+  address: string;
+  google_maps_url: string;
+  google_business_url: string;
+  // Socials
+  facebook_url: string;
+  instagram_url: string;
+  tiktok_url: string;
+  youtube_url: string;
+  // Marketing / verification
+  ga4_measurement_id: string;
+  gtm_container_id: string;
+  facebook_pixel_id: string;
+  gsc_verification: string;
+  business_hours: Json;
 };
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
@@ -12,20 +34,38 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   site_description:
     "שדרגו את החלל עם קולקציית תמונות זכוכית מחוסמת אקסטרה קליר בהדפסה דיגיטלית ברמת גלריה. אמנות מודרנית, נופים, יודאיקה ועיצוב אישי תוצרת ישראל.",
   social_image_url: "",
+  company_name: "יהלום לבית",
+  logo_url: "",
+  contact_email: "moshemalkaa@gmail.com",
+  contact_phone: "+972-53-320-6500",
+  whatsapp_number: "972533206500",
+  address: "מודיעין, ישראל",
+  google_maps_url: "",
+  google_business_url: "",
+  facebook_url: "",
+  instagram_url: "",
+  tiktok_url: "",
+  youtube_url: "",
+  ga4_measurement_id: "",
+  gtm_container_id: "",
+  facebook_pixel_id: "",
+  gsc_verification: "",
+  business_hours: [],
 };
 
 export async function fetchSiteSettings(): Promise<SiteSettings> {
   try {
     const { data, error } = await supabase
       .from("site_settings")
-      .select("site_title, site_description, social_image_url")
+      .select("*")
       .maybeSingle();
     if (error || !data) return DEFAULT_SITE_SETTINGS;
     return {
-      site_title: data.site_title || DEFAULT_SITE_SETTINGS.site_title,
-      site_description: data.site_description || DEFAULT_SITE_SETTINGS.site_description,
-      social_image_url: data.social_image_url || "",
-    };
+      ...DEFAULT_SITE_SETTINGS,
+      ...Object.fromEntries(
+        Object.entries(data).filter(([, v]) => v !== null && v !== undefined),
+      ),
+    } as SiteSettings;
   } catch {
     return DEFAULT_SITE_SETTINGS;
   }
