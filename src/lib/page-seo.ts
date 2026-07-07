@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 
 export type PageSeo = {
   id: string;
@@ -16,7 +17,7 @@ export type PageSeo = {
   robots_index: boolean;
   robots_follow: boolean;
   breadcrumb_title: string;
-  schema_jsonld: unknown;
+  schema_jsonld: Json;
   is_active: boolean;
 };
 

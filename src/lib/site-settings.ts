@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 
 export type SiteSettings = {
   // Meta / social
@@ -25,7 +26,7 @@ export type SiteSettings = {
   gtm_container_id: string;
   facebook_pixel_id: string;
   gsc_verification: string;
-  business_hours: unknown;
+  business_hours: Json;
 };
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
