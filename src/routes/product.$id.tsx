@@ -178,6 +178,8 @@ function ProductPage() {
           <div className="mt-4 flex gap-3">
             {media.map((m, i) => (
               <button key={i} onClick={() => setActiveMedia(i)}
+                aria-label={i === 0 ? `הצג ${product.name} - תצוגת אמנות` : `הצג ${product.name} - תצוגה בסלון`}
+                aria-pressed={activeMedia === i}
                 className={`overflow-hidden rounded-lg border-2 transition ${activeMedia === i ? "border-rose-gold" : "border-transparent"}`}>
                 <img src={m} alt="" loading="lazy" width={80} height={80} className="h-20 w-20 object-cover" />
               </button>

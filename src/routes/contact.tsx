@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { useState } from "react";
-import { localizedMeta, canonicalLink } from "@/lib/seo";
+import { localizedMeta, canonicalLink, jsonLd, breadcrumbSchema } from "@/lib/seo";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -11,6 +11,45 @@ export const Route = createFileRoute("/contact")({
       path: "/contact",
     }),
     links: canonicalLink("/contact"),
+    scripts: [
+      breadcrumbSchema([{ name: "בית", path: "/" }, { name: "צור קשר", path: "/contact" }]),
+      jsonLd({
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        name: "צור קשר · יהלום לבית",
+        url: "https://yahalom-la-bait.com/contact",
+        inLanguage: "he-IL",
+        mainEntity: {
+          "@type": "LocalBusiness",
+          "@id": "https://yahalom-la-bait.com/#organization",
+          name: "יהלום לבית",
+          alternateName: "Yahalom La Bait",
+          telephone: "+972-53-320-6500",
+          email: "moshemalkaa@gmail.com",
+          url: "https://yahalom-la-bait.com",
+          priceRange: "₪₪₪",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "מודיעין",
+            addressCountry: "IL",
+          },
+          areaServed: { "@type": "Country", name: "Israel" },
+          openingHoursSpecification: [{
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+            opens: "10:00",
+            closes: "18:00",
+          }],
+          contactPoint: [{
+            "@type": "ContactPoint",
+            telephone: "+972-53-320-6500",
+            contactType: "customer service",
+            areaServed: "IL",
+            availableLanguage: ["Hebrew", "English"],
+          }],
+        },
+      }),
+    ],
   }),
   component: Contact,
 });

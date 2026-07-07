@@ -8,8 +8,8 @@ import { USPBar } from "@/components/site/USPBar";
 import { ScrollReveal } from "@/components/site/ScrollReveal";
 import { localizedMeta, canonicalLink, jsonLd } from "@/lib/seo";
 
-const HOME_TITLE = "יהלום לבית | תמונות זכוכית יוקרתית ואמנות פרימיום לבית";
-const HOME_DESC = "שדרגו את החלל עם קולקציית תמונות זכוכית מחוסמת אקסטרה קליר בהדפסה דיגיטלית ברמת גלריה. אמנות מודרנית, נופים, יודאיקה ועיצוב אישי תוצרת ישראל.";
+const HOME_TITLE = "יהלום לבית — תמונות זכוכית מחוסמת ואמנות קיר יוקרתית לבית";
+const HOME_DESC = "קולקציית תמונות זכוכית מחוסמת אקסטרה קליר בהדפסה דיגיטלית ברמת גלריה: אמנות מודרנית, נופים, יודאיקה ועיצוב אישי — ייצור בישראל, משלוח מבוטח ואחריות 5 שנים.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
