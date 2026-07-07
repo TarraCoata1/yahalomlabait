@@ -6,8 +6,15 @@ import { useCart, cartTotal } from "@/lib/cart";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "תשלום | Yahalom La Bait" },
-      { name: "description", content: "השלמת ההזמנה — תשלום מאובטח באשראי, Apple Pay ו־Google Pay." },
+      { title: "תשלום מאובטח | יהלום לבית" },
+      { name: "description", content: "השלמת ההזמנה ביהלום לבית — תשלום מאובטח באשראי, Apple Pay ו־Google Pay עם משלוח מבוטח לכל הארץ." },
+      { name: "robots", content: "noindex, nofollow" },
+      { property: "og:title", content: "תשלום מאובטח | יהלום לבית" },
+      { property: "og:description", content: "השלמת הזמנה מאובטחת ביהלום לבית." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "תשלום מאובטח | יהלום לבית" },
+      { name: "twitter:description", content: "השלמת הזמנה מאובטחת ביהלום לבית." },
     ],
   }),
   component: Checkout,

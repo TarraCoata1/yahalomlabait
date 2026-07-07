@@ -29,7 +29,12 @@ function About() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-5xl gap-12 px-4 py-20 md:grid-cols-2 md:px-8">
+      <section className="mx-auto max-w-5xl px-4 py-20 md:px-8">
+        <div className="mb-10 text-center">
+          <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">התהליך שלנו</span>
+          <h2 className="mt-3 font-serif text-3xl md:text-4xl">איך נולדת תמונת זכוכית יוקרתית</h2>
+        </div>
+        <div className="grid gap-12 md:grid-cols-2">
         {[
           { n: "01", t: "הקשבה לחלל", d: "תהליך היצירה מתחיל בהבנת המקום — האור, הצבעים, הפרופורציות והאווירה." },
           { n: "02", t: "עיצוב אישי מלא", d: "כל תמונה מתוכננת מתוך הקשבה מדויקת לצרכים, לאווירה ולסגנון המבוקש." },
@@ -42,6 +47,7 @@ function About() {
             <p className="mt-3 text-muted-foreground">{s.d}</p>
           </div>
         ))}
+        </div>
       </section>
 
       <section className="mx-auto max-w-3xl px-4 pb-24 text-center md:px-8">
