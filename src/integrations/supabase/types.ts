@@ -50,6 +50,69 @@ export type Database = {
         }
         Relationships: []
       }
+      page_seo: {
+        Row: {
+          breadcrumb_title: string
+          canonical_url: string
+          created_at: string
+          description: string
+          id: string
+          is_active: boolean
+          keywords: string
+          og_description: string
+          og_image: string
+          og_title: string
+          page_label: string
+          robots_follow: boolean
+          robots_index: boolean
+          route_path: string
+          schema_jsonld: Json
+          title: string
+          twitter_card: string
+          updated_at: string
+        }
+        Insert: {
+          breadcrumb_title?: string
+          canonical_url?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          keywords?: string
+          og_description?: string
+          og_image?: string
+          og_title?: string
+          page_label?: string
+          robots_follow?: boolean
+          robots_index?: boolean
+          route_path: string
+          schema_jsonld?: Json
+          title?: string
+          twitter_card?: string
+          updated_at?: string
+        }
+        Update: {
+          breadcrumb_title?: string
+          canonical_url?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          keywords?: string
+          og_description?: string
+          og_image?: string
+          og_title?: string
+          page_label?: string
+          robots_follow?: boolean
+          robots_index?: boolean
+          route_path?: string
+          schema_jsonld?: Json
+          title?: string
+          twitter_card?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           best_seller: boolean
@@ -108,25 +171,76 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          address: string
+          business_hours: Json
+          company_name: string
+          contact_email: string
+          contact_phone: string
+          facebook_pixel_id: string
+          facebook_url: string
+          ga4_measurement_id: string
+          google_business_url: string
+          google_maps_url: string
+          gsc_verification: string
+          gtm_container_id: string
           id: boolean
+          instagram_url: string
+          logo_url: string
           site_description: string
           site_title: string
           social_image_url: string
+          tiktok_url: string
           updated_at: string
+          whatsapp_number: string
+          youtube_url: string
         }
         Insert: {
+          address?: string
+          business_hours?: Json
+          company_name?: string
+          contact_email?: string
+          contact_phone?: string
+          facebook_pixel_id?: string
+          facebook_url?: string
+          ga4_measurement_id?: string
+          google_business_url?: string
+          google_maps_url?: string
+          gsc_verification?: string
+          gtm_container_id?: string
           id?: boolean
+          instagram_url?: string
+          logo_url?: string
           site_description?: string
           site_title?: string
           social_image_url?: string
+          tiktok_url?: string
           updated_at?: string
+          whatsapp_number?: string
+          youtube_url?: string
         }
         Update: {
+          address?: string
+          business_hours?: Json
+          company_name?: string
+          contact_email?: string
+          contact_phone?: string
+          facebook_pixel_id?: string
+          facebook_url?: string
+          ga4_measurement_id?: string
+          google_business_url?: string
+          google_maps_url?: string
+          gsc_verification?: string
+          gtm_container_id?: string
           id?: boolean
+          instagram_url?: string
+          logo_url?: string
           site_description?: string
           site_title?: string
           social_image_url?: string
+          tiktok_url?: string
           updated_at?: string
+          whatsapp_number?: string
+          youtube_url?: string
         }
         Relationships: []
       }
@@ -156,7 +270,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "user"
