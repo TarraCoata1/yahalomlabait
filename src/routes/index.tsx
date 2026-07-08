@@ -14,7 +14,10 @@ const HOME_DESC = "קולקציית תמונות זכוכית מחוסמת אק�
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: localizedMeta({ title: HOME_TITLE, description: HOME_DESC, path: "/" }),
-    links: canonicalLink("/"),
+    links: [
+      ...canonicalLink("/"),
+      { rel: "preload", as: "image", href: hero, fetchpriority: "high" } as unknown as { rel: string; href: string },
+    ],
     scripts: [
       jsonLd({
         "@context": "https://schema.org",
