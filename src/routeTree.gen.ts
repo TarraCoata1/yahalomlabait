@@ -15,6 +15,7 @@ import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ShippingRouteImport } from './routes/shipping'
 import { Route as ReturnsRouteImport } from './routes/returns'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as HangingGuideRouteImport } from './routes/hanging-guide'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CustomRouteImport } from './routes/custom'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -52,6 +53,11 @@ const ReturnsRoute = ReturnsRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HangingGuideRoute = HangingGuideRouteImport.update({
+  id: '/hanging-guide',
+  path: '/hanging-guide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/custom': typeof CustomRoute
   '/faq': typeof FaqRoute
+  '/hanging-guide': typeof HangingGuideRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
   '/shipping': typeof ShippingRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/custom': typeof CustomRoute
   '/faq': typeof FaqRoute
+  '/hanging-guide': typeof HangingGuideRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
   '/shipping': typeof ShippingRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/custom': typeof CustomRoute
   '/faq': typeof FaqRoute
+  '/hanging-guide': typeof HangingGuideRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
   '/shipping': typeof ShippingRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/custom'
     | '/faq'
+    | '/hanging-guide'
     | '/privacy'
     | '/returns'
     | '/shipping'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/custom'
     | '/faq'
+    | '/hanging-guide'
     | '/privacy'
     | '/returns'
     | '/shipping'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/custom'
     | '/faq'
+    | '/hanging-guide'
     | '/privacy'
     | '/returns'
     | '/shipping'
@@ -203,6 +215,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CustomRoute: typeof CustomRoute
   FaqRoute: typeof FaqRoute
+  HangingGuideRoute: typeof HangingGuideRoute
   PrivacyRoute: typeof PrivacyRoute
   ReturnsRoute: typeof ReturnsRoute
   ShippingRoute: typeof ShippingRoute
@@ -254,6 +267,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hanging-guide': {
+      id: '/hanging-guide'
+      path: '/hanging-guide'
+      fullPath: '/hanging-guide'
+      preLoaderRoute: typeof HangingGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -323,6 +343,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CustomRoute: CustomRoute,
   FaqRoute: FaqRoute,
+  HangingGuideRoute: HangingGuideRoute,
   PrivacyRoute: PrivacyRoute,
   ReturnsRoute: ReturnsRoute,
   ShippingRoute: ShippingRoute,
