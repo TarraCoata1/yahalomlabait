@@ -23,7 +23,7 @@ export const Route = createFileRoute("/contact")({
           "@type": "LocalBusiness",
           "@id": "https://yahalom-la-bait.com/#organization",
           name: "יהלום לבית",
-          alternateName: "Yahalom La Bait",
+          alternateName: "יהלום לבית",
           telephone: "+972-53-320-6500",
           email: "moshemalkaa@gmail.com",
           url: "https://yahalom-la-bait.com",

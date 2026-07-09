@@ -8,7 +8,7 @@ export const Route = createFileRoute("/shipping")({
   loader: ({ context }) => context.queryClient.ensureQueryData(siteSettingsQuery),
   head: () => ({
     meta: localizedMeta({
-      title: "משלוחים ואיסוף | יהלום לבית (Yahalom LaBayit)",
+      title: "משלוחים ואיסוף | יהלום לבית",
       description:
         "משלוח מבוטח באריזה הרמטית לכל הארץ, עד 14 ימי עסקים. פרטי זמנים, עלויות ואפשרויות איסוף עצמי של יהלום לבית.",
       path: "/shipping",

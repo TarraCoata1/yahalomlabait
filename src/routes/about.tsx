@@ -24,7 +24,7 @@ function About() {
           <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">אודות</span>
           <h1 className="mt-3 font-serif text-4xl md:text-6xl">קצת עלינו</h1>
           <p className="mx-auto mt-6 max-w-2xl text-muted-foreground md:text-lg">
-            ב־Yahalom La Bait אנחנו יוצרים תמונות זכוכית ועבודות עיצוב אישיות ברמה הגבוהה ביותר, מתוך חיבור עמוק לאסתטיקה, דיוק, רגש ופסטורליות.
+            ב״יהלום לבית״ אנחנו יוצרים תמונות זכוכית ועבודות עיצוב אישיות ברמה הגבוהה ביותר, מתוך חיבור עמוק לאסתטיקה, דיוק, רגש ופסטורליות.
           </p>
         </div>
       </section>

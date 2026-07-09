@@ -37,7 +37,7 @@ export function Header() {
         <Link to="/" aria-label="יהלום לבית - דף הבית" className="flex items-center gap-3 shrink-0">
           <img src={logo.url} alt="לוגו יהלום לבית - תמונות זכוכית ואמנות קיר יוקרתית לבית" width={44} height={44} className="rounded-full ring-1 ring-rose-gold/40" />
           <div className="hidden sm:block leading-tight">
-            <div className="font-serif text-lg tracking-wide text-gradient-rose">Yahalom La Bait</div>
+            <div className="font-serif text-lg tracking-wide text-gradient-rose">יהלום לבית</div>
             <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Glass Art Prints</div>
           </div>
         </Link>

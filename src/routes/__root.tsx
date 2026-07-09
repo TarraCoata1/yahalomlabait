@@ -118,7 +118,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@type": "LocalBusiness",
           "@id": "https://yahalom-la-bait.com/#organization",
           name: s.company_name,
-          alternateName: "Yahalom La Bait",
+          alternateName: "יהלום לבית",
           url: "https://yahalom-la-bait.com",
           image: s.social_image_url || "https://yahalom-la-bait.com/og-cover.jpg",
           logo: "https://yahalom-la-bait.com/logo.png",

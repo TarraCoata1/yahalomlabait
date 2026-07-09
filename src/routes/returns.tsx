@@ -5,7 +5,7 @@ import { localizedMeta, canonicalLink } from "@/lib/seo";
 export const Route = createFileRoute("/returns")({
   head: () => ({
     meta: localizedMeta({
-      title: "מדיניות החזרות וביטולים | יהלום לבית (Yahalom LaBayit)",
+      title: "מדיניות החזרות וביטולים | יהלום לבית",
       description:
         "מדיניות ההחזרות והביטולים של יהלום לבית — כל ההזמנות סופיות. לא ניתן לבטל הזמנה לאחר ביצועה ולא מתקבלים החזרים.",
       path: "/returns",

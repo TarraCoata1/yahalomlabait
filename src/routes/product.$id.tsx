@@ -23,7 +23,7 @@ export const Route = createFileRoute("/product/$id")({
     }
     const path = `/product/${params.id}`;
     const title = `${loaderData.name} | תמונות לבית - יהלום לבית`;
-    const description = `${loaderData.description} החל מ־₪${FROM_PRICE}. משלוח מבוטח עד 14 ימי עסקים — יהלום לבית (Yahalom LaBayit).`;
+    const description = `${loaderData.description} החל מ־₪${FROM_PRICE}. משלוח מבוטח עד 14 ימי עסקים — יהלום לבית.`;
     return {
       meta: localizedMeta({ title, description, path, image: loaderData.image, type: "product" }),
       links: canonicalLink(path),

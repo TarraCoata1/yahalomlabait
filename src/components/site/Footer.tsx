@@ -9,7 +9,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-5 md:px-8">
         <div className="space-y-3 md:col-span-2">
           <img src={logo.url} alt="לוגו יהלום לבית" width={56} height={56} className="rounded-full ring-1 ring-rose-gold/40" />
-          <div className="font-serif text-xl text-gradient-rose">יהלום לבית · Yahalom La Bait</div>
+          <div className="font-serif text-xl text-gradient-rose">יהלום לבית</div>
           <p className="text-sm text-muted-foreground max-w-sm">
             מותג פרימיום ישראלי לתמונות לבית ואמנות זכוכית יוקרתית בעיצוב אישי. הדפסה דיגיטלית ברמת גלריה — מודיעין, ישראל.
           </p>
