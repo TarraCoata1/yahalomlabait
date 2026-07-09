@@ -17,7 +17,7 @@ import { adminOrdersQuery, ORDER_STATUSES, PAYMENT_STATUSES, ORDER_STATUS_LABEL,
 export const Route = createFileRoute("/admin-portal")({
   head: () => ({
     meta: [
-      { title: "ניהול | Yahalom La Bait" },
+      { title: "ניהול | יהלום לבית" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),

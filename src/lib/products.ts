@@ -1,5 +1,5 @@
 /**
- * Pricing rate sheet and installation logic for Yahalom La Bait.
+ * Pricing rate sheet and installation logic for יהלום לבית.
  * Catalog data (categories + products) lives in the database — see `src/lib/catalog.ts`.
  */
 
