@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import hero from "@/assets/hero-living-room.jpg";
+import heroWebp from "@/assets/hero-living-room.webp";
+import heroAvif from "@/assets/hero-living-room.avif";
 import { categoriesQuery, productsQuery } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
 import { USPBar } from "@/components/site/USPBar";
