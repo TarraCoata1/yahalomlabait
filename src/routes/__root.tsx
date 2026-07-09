@@ -94,7 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:locale", content: "he_IL" },
       { property: "og:title", content: s.site_title },
       { property: "og:description", content: s.site_description },
-      { name: "twitter:card", content: s.social_image_url ? "summary_large_image" : "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: s.site_title },
       { name: "twitter:description", content: s.site_description },
     ];
@@ -104,10 +104,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     if (s.facebook_pixel_id) {
       meta.push({ name: "facebook-domain-verification", content: s.facebook_pixel_id });
     }
-    if (s.social_image_url) {
-      meta.push({ property: "og:image", content: s.social_image_url });
-      meta.push({ name: "twitter:image", content: s.social_image_url });
-    }
+    const ogImage = s.social_image_url || "https://yahalom-la-bait.com/og-cover.jpg";
+    meta.push({ property: "og:image", content: ogImage });
+    meta.push({ property: "og:image:width", content: "1200" });
+    meta.push({ property: "og:image:height", content: "630" });
+    meta.push({ name: "twitter:image", content: ogImage });
 
     const sameAs = [s.facebook_url, s.instagram_url, s.tiktok_url, s.youtube_url].filter(Boolean);
     const jsonLd = {
@@ -194,8 +195,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       meta,
       links: [
         { rel: "stylesheet", href: appCss },
-        { rel: "icon", type: "image/png", href: "/favicon.png" },
-        { rel: "apple-touch-icon", href: "/favicon.png" },
+        { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" },
+        { rel: "icon", type: "image/png", sizes: "192x192", href: "/favicon-192.png" },
+        { rel: "icon", type: "image/png", sizes: "512x512", href: "/favicon.png" },
+        { rel: "apple-touch-icon", sizes: "192x192", href: "/favicon-192.png" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
         { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800;900&family=Frank+Ruhl+Libre:wght@500;700;800;900&family=Heebo:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" },

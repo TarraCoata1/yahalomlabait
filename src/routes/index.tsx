@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import hero from "@/assets/hero-living-room.jpg";
+import heroWebp from "@/assets/hero-living-room.webp";
+import heroAvif from "@/assets/hero-living-room.avif";
 import { categoriesQuery, productsQuery } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
 import { USPBar } from "@/components/site/USPBar";
@@ -16,7 +18,7 @@ export const Route = createFileRoute("/")({
     meta: localizedMeta({ title: HOME_TITLE, description: HOME_DESC, path: "/" }),
     links: [
       ...canonicalLink("/"),
-      { rel: "preload", as: "image", href: hero, fetchpriority: "high" } as unknown as { rel: string; href: string },
+      { rel: "preload", as: "image", href: heroAvif, type: "image/avif", fetchpriority: "high" } as unknown as { rel: string; href: string },
     ],
     scripts: [
       jsonLd({
@@ -58,7 +60,11 @@ function Home() {
     <>
       {/* Hero */}
       <section className="relative isolate overflow-hidden">
-        <img src={hero} alt="תמונות לבית מודרניות בסלון מעוצב - יהלום לבית" fetchPriority="high" width={1920} height={1080} className="absolute inset-0 -z-10 h-full w-full object-cover opacity-60" />
+        <picture>
+          <source srcSet={heroAvif} type="image/avif" />
+          <source srcSet={heroWebp} type="image/webp" />
+          <img src={hero} alt="תמונות לבית מודרניות בסלון מעוצב - יהלום לבית" fetchPriority="high" width={1920} height={1080} decoding="async" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-60" />
+        </picture>
         <div className="absolute inset-0 -z-10 bg-gradient-to-l from-background via-background/60 to-background/30" />
         <div className="mx-auto max-w-7xl px-4 py-28 md:px-8 md:py-44">
           <div className="max-w-2xl">
