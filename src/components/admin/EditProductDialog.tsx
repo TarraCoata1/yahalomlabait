@@ -12,8 +12,10 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
   const [description, setDescription] = useState(product.description);
   const [categoryId, setCategoryId] = useState<string>(product.categoryId ?? "");
   const [style, setStyle] = useState(product.style);
+  const [sku, setSku] = useState(product.sku ?? "");
   const [bestSeller, setBestSeller] = useState(product.bestSeller);
   const [saving, setSaving] = useState(false);
+
 
   const save = async () => {
     setSaving(true);
@@ -24,9 +26,11 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
         description: description.trim(),
         category_id: categoryId || null,
         style: style.trim(),
+        sku: sku.trim() || null,
         best_seller: bestSeller,
       })
       .eq("id", product.id);
+
     setSaving(false);
     if (error) return toast.error("שגיאה בשמירה: " + error.message);
     toast.success("המוצר עודכן");
@@ -60,6 +64,12 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
             <input value={style} onChange={(e) => setStyle(e.target.value)}
               className="mt-1 w-full rounded-xl bg-card border border-border px-4 py-2.5 focus:border-rose-gold outline-none" />
           </label>
+          <label className="block">
+            <span className="text-xs text-muted-foreground">מק״ט (SKU)</span>
+            <input value={sku} onChange={(e) => setSku(e.target.value)} dir="ltr" placeholder="למשל: YLB-MOD-001"
+              className="mt-1 w-full rounded-xl bg-card border border-border px-4 py-2.5 focus:border-rose-gold outline-none" />
+          </label>
+
           <label className="block">
             <span className="text-xs text-muted-foreground">קטגוריה</span>
             <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}
