@@ -14,8 +14,12 @@ export function MiniCart() {
       />
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex w-full max-w-md flex-col glass-strong transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}
-        aria-hidden={!open}
+        aria-label="עגלת קניות"
+        role="dialog"
+        aria-modal={open}
+        {...(!open ? { inert: "" as unknown as "" } : {})}
       >
+
         <header className="flex items-center justify-between border-b border-border/50 px-6 py-5">
           <div className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5 text-rose-gold" />
