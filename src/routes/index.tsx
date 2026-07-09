@@ -18,7 +18,7 @@ export const Route = createFileRoute("/")({
     meta: localizedMeta({ title: HOME_TITLE, description: HOME_DESC, path: "/" }),
     links: [
       ...canonicalLink("/"),
-      { rel: "preload", as: "image", href: hero, fetchpriority: "high" } as unknown as { rel: string; href: string },
+      { rel: "preload", as: "image", href: heroAvif, type: "image/avif", fetchpriority: "high" } as unknown as { rel: string; href: string },
     ],
     scripts: [
       jsonLd({
