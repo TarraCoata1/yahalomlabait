@@ -94,7 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:locale", content: "he_IL" },
       { property: "og:title", content: s.site_title },
       { property: "og:description", content: s.site_description },
-      { name: "twitter:card", content: s.social_image_url ? "summary_large_image" : "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: s.site_title },
       { name: "twitter:description", content: s.site_description },
     ];
