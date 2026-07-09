@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Lock, Check, Truck, Store, Loader2 } from "lucide-react";
 import { useCart, cartTotal, cartInstallationTotal } from "@/lib/cart";
 import { siteSettingsQuery, type PaymentMethodConfig } from "@/lib/site-settings";
+import type { Json } from "@/integrations/supabase/types";
+
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -106,7 +108,7 @@ function Checkout() {
         status: "pending_payment" as const,
         payment_method: selected.id as "bank_transfer" | "bit" | "cash" | "online",
         payment_status: "pending" as const,
-        payment_meta: { method_label: selected.label } as unknown as Record<string, unknown>,
+        payment_meta: { method_label: selected.label } as unknown as Json,
         currency: "ILS",
         subtotal: productSubtotal,
         shipping_fee: shippingFee,
@@ -116,7 +118,7 @@ function Checkout() {
         customer_name: form.name.trim(),
         customer_email: form.email.trim(),
         customer_phone: form.phone.trim(),
-        shipping_address: address as unknown as Record<string, unknown> | null,
+        shipping_address: address as unknown as Json,
         fulfillment_type: fulfillment,
         notes: form.notes.trim() || null,
       };
@@ -153,8 +155,9 @@ function Checkout() {
           customization: {
             screw_color_label: it.screwColorLabel,
             base_price: it.basePrice,
-          } as unknown as Record<string, unknown>,
+          } as unknown as Json,
         }));
+
         const itemsRes = await supabase.from("order_items").insert(itemRows);
         if (itemsRes.error) throw itemsRes.error;
       }
