@@ -113,7 +113,10 @@ function Checkout() {
         },
       }));
 
-      const rpcRes = await supabase.rpc("place_order", {
+      const rpcRes = await (supabase.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ data: Array<{ order_id: string; order_number: number }> | null; error: { message: string } | null }>)("place_order", {
         _items: itemsPayload as unknown as Json,
         _customer: {
           name: form.name.trim(),
@@ -126,6 +129,7 @@ function Checkout() {
         _shipping_address: (address ?? {}) as unknown as Json,
         _notes: form.notes.trim() || "",
       });
+
 
       if (rpcRes.error) throw rpcRes.error;
       const row = Array.isArray(rpcRes.data) ? rpcRes.data[0] : rpcRes.data;
