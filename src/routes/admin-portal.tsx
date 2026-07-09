@@ -719,3 +719,212 @@ function PanelSkeleton() {
   return <div className="rounded-2xl glass p-8 text-center text-sm text-muted-foreground">טוען…</div>;
 }
 
+/* -------------------- ORDERS PANEL -------------------- */
+
+function currency(n: number, code = "ILS") {
+  try {
+    return new Intl.NumberFormat("he-IL", { style: "currency", currency: code, maximumFractionDigits: 0 }).format(n);
+  } catch { return `₪${n}`; }
+}
+
+const ORDER_BADGE: Record<OrderStatus, string> = {
+  pending_payment: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  under_review: "bg-sky-500/15 text-sky-300 border-sky-500/30",
+  customer_contact: "bg-violet-500/15 text-violet-300 border-violet-500/30",
+  in_production: "bg-blue-500/15 text-blue-300 border-blue-500/30",
+  completed: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+  cancelled: "bg-rose-500/15 text-rose-300 border-rose-500/30",
+};
+
+const PAYMENT_BADGE: Record<PaymentStatus, string> = {
+  pending: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  paid: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+  refunded: "bg-slate-500/15 text-slate-300 border-slate-500/30",
+  failed: "bg-rose-500/15 text-rose-300 border-rose-500/30",
+};
+
+function OrdersPanel() {
+  const { data: orders = [], isLoading } = useQuery(adminOrdersQuery);
+  const qc = useQueryClient();
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<OrderStatus | "">("");
+
+  const invalidate = () => qc.invalidateQueries({ queryKey: ["admin_orders"] });
+
+  const setStatus = async (o: OrderRow, status: OrderStatus) => {
+    const { error } = await supabase.from("orders").update({ status }).eq("id", o.id);
+    if (error) return toast.error(error.message);
+    toast.success("סטטוס עודכן");
+    invalidate();
+  };
+
+  const setPayment = async (o: OrderRow, payment_status: PaymentStatus) => {
+    const { error } = await supabase.from("orders").update({ payment_status }).eq("id", o.id);
+    if (error) return toast.error(error.message);
+    toast.success("סטטוס תשלום עודכן");
+    invalidate();
+  };
+
+  const q = search.trim().toLowerCase();
+  const filtered = orders.filter((o) => {
+    if (statusFilter && o.status !== statusFilter) return false;
+    if (!q) return true;
+    return (
+      String(o.order_number).includes(q) ||
+      (o.customer_name ?? "").toLowerCase().includes(q) ||
+      (o.customer_email ?? "").toLowerCase().includes(q) ||
+      (o.customer_phone ?? "").toLowerCase().includes(q)
+    );
+  });
+
+  return (
+    <section>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="חיפוש לפי מס׳ הזמנה, שם, מייל, טלפון…"
+            className="w-full rounded-full bg-card border border-border pr-10 pl-4 py-2.5 text-sm focus:border-rose-gold outline-none" />
+        </div>
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as OrderStatus | "")}
+          className="rounded-full bg-card border border-border px-4 py-2.5 text-sm">
+          <option value="">כל הסטטוסים</option>
+          {ORDER_STATUSES.map((s) => (
+            <option key={s} value={s}>{ORDER_STATUS_LABEL[s]}</option>
+          ))}
+        </select>
+        <span className="text-xs text-muted-foreground">{filtered.length} / {orders.length}</span>
+      </div>
+
+      <div className="overflow-x-auto rounded-2xl glass">
+        {isLoading ? (
+          <div className="p-8 text-center text-sm text-muted-foreground">טוען…</div>
+        ) : filtered.length === 0 ? (
+          <div className="p-8 text-center text-sm text-muted-foreground">אין הזמנות להצגה.</div>
+        ) : (
+          <table className="w-full text-sm min-w-[900px]">
+            <thead className="border-b border-border/50 text-xs text-muted-foreground">
+              <tr>
+                <th className="px-3 py-3 text-right">מס׳</th>
+                <th className="px-3 py-3 text-right">תאריך</th>
+                <th className="px-3 py-3 text-right">לקוח</th>
+                <th className="px-3 py-3 text-right">אמצעי תשלום</th>
+                <th className="px-3 py-3 text-right">תשלום</th>
+                <th className="px-3 py-3 text-right">סטטוס</th>
+                <th className="px-3 py-3 text-left">סה״כ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((o) => (
+                <tr key={o.id} className="border-t border-border/30 align-top hover:bg-secondary/20">
+                  <td className="px-3 py-3 font-mono text-xs" dir="ltr">#{o.order_number}</td>
+                  <td className="px-3 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                    {new Date(o.created_at).toLocaleDateString("he-IL")}
+                  </td>
+                  <td className="px-3 py-3">
+                    <div className="font-medium">{o.customer_name || "—"}</div>
+                    <div className="text-xs text-muted-foreground" dir="ltr">{o.customer_email}</div>
+                    <div className="text-xs text-muted-foreground" dir="ltr">{o.customer_phone}</div>
+                  </td>
+                  <td className="px-3 py-3 text-xs">{PAYMENT_METHOD_LABEL[o.payment_method] ?? o.payment_method}</td>
+                  <td className="px-3 py-3">
+                    <span className={`inline-block rounded-full border px-2.5 py-1 text-[11px] mb-1 ${PAYMENT_BADGE[o.payment_status]}`}>
+                      {PAYMENT_STATUS_LABEL[o.payment_status]}
+                    </span>
+                    <select value={o.payment_status} onChange={(e) => setPayment(o, e.target.value as PaymentStatus)}
+                      className="block w-full mt-1 rounded-lg bg-card border border-border px-2 py-1 text-xs">
+                      {PAYMENT_STATUSES.map((s) => <option key={s} value={s}>{PAYMENT_STATUS_LABEL[s]}</option>)}
+                    </select>
+                  </td>
+                  <td className="px-3 py-3">
+                    <span className={`inline-block rounded-full border px-2.5 py-1 text-[11px] mb-1 ${ORDER_BADGE[o.status]}`}>
+                      {ORDER_STATUS_LABEL[o.status]}
+                    </span>
+                    <select value={o.status} onChange={(e) => setStatus(o, e.target.value as OrderStatus)}
+                      className="block w-full mt-1 rounded-lg bg-card border border-border px-2 py-1 text-xs">
+                      {ORDER_STATUSES.map((s) => <option key={s} value={s}>{ORDER_STATUS_LABEL[s]}</option>)}
+                    </select>
+                  </td>
+                  <td className="px-3 py-3 text-left font-semibold whitespace-nowrap">{currency(o.total, o.currency)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* -------------------- SITE SETTINGS (Fulfillment / Payments) -------------------- */
+
+function SiteSettingsPanel() {
+  const { form, setField, save, saving, isLoading } = useSettingsForm();
+  if (isLoading) return <PanelSkeleton />;
+
+  const methods = form.payment_methods ?? [];
+  const updateMethod = (idx: number, patch: Partial<PaymentMethodConfig>) => {
+    const next = methods.map((m, i) => (i === idx ? { ...m, ...patch } : m));
+    setField("payment_methods", next);
+  };
+
+  return (
+    <div className="max-w-3xl space-y-6">
+      <div className="rounded-2xl glass p-6 space-y-5">
+        <PanelHeader title="איסוף עצמי ומשלוח" subtitle="נשלט מכאן ומופיע ב־Checkout, בעמודי מוצר ובעמוד המשלוחים." />
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={form.pickup_enabled} onChange={(e) => setField("pickup_enabled", e.target.checked)} className="h-4 w-4 accent-rose-gold" />
+          <span>אפשר איסוף עצמי בעמוד ה־Checkout</span>
+        </label>
+        <Field label="כתובת נקודת האיסוף">
+          <input value={form.pickup_address} onChange={(e) => setField("pickup_address", e.target.value)} className={inputCls} />
+        </Field>
+        <Field label="הנחיות לאיסוף (שעות, יצירת קשר)">
+          <textarea value={form.pickup_instructions} onChange={(e) => setField("pickup_instructions", e.target.value)} rows={2} className={inputCls + " resize-none"} />
+        </Field>
+        <Field label="זמן משלוח מוצג ללקוח">
+          <input value={form.shipping_lead_time_text} onChange={(e) => setField("shipping_lead_time_text", e.target.value)} className={inputCls} />
+        </Field>
+        <Field label="הערת התקנה למידות גדולות">
+          <textarea value={form.large_size_install_note} onChange={(e) => setField("large_size_install_note", e.target.value)} rows={2} className={inputCls + " resize-none"} />
+        </Field>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={form.show_warranty} onChange={(e) => setField("show_warranty", e.target.checked)} className="h-4 w-4 accent-rose-gold" />
+          <span>הצג טקסטים של אחריות באתר (כבוי כרגע לפי החלטת העסק)</span>
+        </label>
+        <SaveBar saving={saving} onSave={() => save()} />
+      </div>
+
+      <div className="rounded-2xl glass p-6 space-y-5">
+        <PanelHeader title="אמצעי תשלום" subtitle="הפעל/כבה אמצעי תשלום ידני. הטקסטים מוצגים ללקוח בעמוד ה־Checkout וגם באישור ההזמנה." />
+        <div className="space-y-4">
+          {methods.map((m, i) => (
+            <div key={m.id} className="rounded-xl bg-card border border-border p-4 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="font-medium">{m.label}</div>
+                  <div className="text-[11px] font-mono text-muted-foreground" dir="ltr">{m.id}</div>
+                </div>
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={m.enabled} onChange={(e) => updateMethod(i, { enabled: e.target.checked })} className="h-4 w-4 accent-rose-gold" />
+                  <span>{m.enabled ? "פעיל" : "כבוי"}</span>
+                </label>
+              </div>
+              <Field label="שם לתצוגה">
+                <input value={m.label} onChange={(e) => updateMethod(i, { label: e.target.value })} className={inputCls} />
+              </Field>
+              <Field label="הוראות ללקוח">
+                <textarea value={m.instructions ?? ""} onChange={(e) => updateMethod(i, { instructions: e.target.value })} rows={2} className={inputCls + " resize-none"} />
+              </Field>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          שער תשלום אונליין (Cardcom / PayPlus / Tranzila / Meshulam) יחובר בעתיד לאותה שכבת אמצעי תשלום ללא שינוי במבנה ההזמנה.
+        </p>
+        <SaveBar saving={saving} onSave={() => save()} />
+      </div>
+    </div>
+  );
+}
+
+
