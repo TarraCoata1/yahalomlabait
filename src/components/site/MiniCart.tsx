@@ -17,8 +17,9 @@ export function MiniCart() {
         aria-label="עגלת קניות"
         role="dialog"
         aria-modal={open}
-        {...(!open ? { inert: "" as unknown as "" } : {})}
+        inert={!open}
       >
+
 
         <header className="flex items-center justify-between border-b border-border/50 px-6 py-5">
           <div className="flex items-center gap-2">
