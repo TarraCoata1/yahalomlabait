@@ -104,10 +104,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     if (s.facebook_pixel_id) {
       meta.push({ name: "facebook-domain-verification", content: s.facebook_pixel_id });
     }
-    if (s.social_image_url) {
-      meta.push({ property: "og:image", content: s.social_image_url });
-      meta.push({ name: "twitter:image", content: s.social_image_url });
-    }
+    const ogImage = s.social_image_url || "https://yahalom-la-bait.com/og-cover.jpg";
+    meta.push({ property: "og:image", content: ogImage });
+    meta.push({ property: "og:image:width", content: "1200" });
+    meta.push({ property: "og:image:height", content: "630" });
+    meta.push({ name: "twitter:image", content: ogImage });
 
     const sameAs = [s.facebook_url, s.instagram_url, s.tiktok_url, s.youtube_url].filter(Boolean);
     const jsonLd = {
