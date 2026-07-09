@@ -109,7 +109,7 @@ function CustomPage() {
               </div>
               <button
                 disabled={!image}
-                onClick={() => add({ productId: "custom-print", name: "הדפסה בעיצוב אישי", image: image!, sizeLabel: size.label, unitPrice: price })}
+                onClick={() => add({ productId: "custom-print", sku: "CUSTOM", name: "הדפסה בעיצוב אישי", image: image!, sizeId: size.id, sizeLabel: size.label, basePrice: price, screwColor: "silver", screwColorLabel: "כסוף", withInstallation: false, installationFee: 0, unitPrice: price })}
                 className="rounded-full btn-rose px-6 py-3 font-semibold disabled:cursor-not-allowed disabled:opacity-50 hover:btn-rose-hover">
                 <span className="inline-flex items-center gap-2"><Sparkles className="h-4 w-4" /> הוסף לעגלה</span>
               </button>
