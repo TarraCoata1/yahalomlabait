@@ -97,74 +97,44 @@ function Checkout() {
     }
     setSubmitting(true);
     try {
-      const { data: userRes } = await supabase.auth.getUser();
-      const uid = userRes.user?.id ?? null;
       const address = fulfillment === "shipping"
         ? { street: form.street.trim(), city: form.city.trim(), zip: form.zip.trim() }
         : null;
 
-      const orderPayload = {
-        user_id: uid,
-        status: "pending_payment" as const,
-        payment_method: selected.id as "bank_transfer" | "bit" | "cash" | "online",
-        payment_status: "pending" as const,
-        payment_meta: { method_label: selected.label } as unknown as Json,
-        currency: "ILS",
-        subtotal: productSubtotal,
-        shipping_fee: shippingFee,
-        installation_fee: installationFee,
-        discount: 0,
-        total,
-        customer_name: form.name.trim(),
-        customer_email: form.email.trim(),
-        customer_phone: form.phone.trim(),
-        shipping_address: address as unknown as Json,
-        fulfillment_type: fulfillment,
-        notes: form.notes.trim() || null,
-      };
+      const itemsPayload = items.map((it) => ({
+        product_id: it.productId,
+        size_id: it.sizeId,
+        size_label: it.sizeLabel,
+        screw_color: it.screwColor,
+        with_installation: it.withInstallation,
+        quantity: it.qty,
+        customization: {
+          screw_color_label: it.screwColorLabel,
+        },
+      }));
 
-      const insertRes = await supabase
-        .from("orders")
-        .insert(orderPayload)
-        .select("id, order_number")
-        .maybeSingle();
+      const rpcRes = await supabase.rpc("place_order", {
+        _items: itemsPayload as unknown as Json,
+        _customer: {
+          name: form.name.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+        } as unknown as Json,
+        _payment_method: selected.id,
+        _payment_meta: { method_label: selected.label } as unknown as Json,
+        _fulfillment: fulfillment,
+        _shipping_address: (address ?? {}) as unknown as Json,
+        _notes: form.notes.trim() || "",
+      });
 
-      if (insertRes.error) throw insertRes.error;
-
-      let orderId = insertRes.data?.id ?? null;
-      let orderNumber: number | null = insertRes.data?.order_number ?? null;
-
-      if (!orderId) {
-        // Guest without SELECT policy — re-insert path already succeeded, but we can't
-        // read the row back. Skip order-items linkage; admin will see the order.
-      } else {
-        const itemRows = items.map((it) => ({
-          order_id: orderId,
-          product_id: it.productId,
-          product_name: it.name,
-          product_image: it.image,
-          sku: it.sku || null,
-          size_label: it.sizeLabel,
-          size_id: it.sizeId,
-          screw_color: it.screwColor,
-          with_installation: it.withInstallation,
-          installation_fee: it.installationFee,
-          quantity: it.qty,
-          unit_price: it.unitPrice,
-          line_total: it.unitPrice * it.qty,
-          customization: {
-            screw_color_label: it.screwColorLabel,
-            base_price: it.basePrice,
-          } as unknown as Json,
-        }));
-
-        const itemsRes = await supabase.from("order_items").insert(itemRows);
-        if (itemsRes.error) throw itemsRes.error;
-      }
+      if (rpcRes.error) throw rpcRes.error;
+      const row = Array.isArray(rpcRes.data) ? rpcRes.data[0] : rpcRes.data;
+      const orderNumber: number | null = (row?.order_number as number | undefined) ?? null;
 
       clear();
       setDone({ method: selected, orderNumber });
       setTimeout(() => navigate({ to: "/" }), 10000);
+
     } catch (err) {
       toast.error("שגיאה בשליחת ההזמנה: " + (err as Error).message);
     } finally {
