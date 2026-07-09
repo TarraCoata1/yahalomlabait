@@ -100,7 +100,7 @@ function CustomPage() {
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               <li className="flex gap-2"><Check className="h-4 w-4 text-rose-gold" />בדיקת איכות מקצועית של הקובץ</li>
               <li className="flex gap-2"><Check className="h-4 w-4 text-rose-gold" />תצוגת הוכחה (Proof) לפני ייצור</li>
-              <li className="flex gap-2"><Check className="h-4 w-4 text-rose-gold" />זמן ייצור: 10–14 ימי עסקים</li>
+              <li className="flex gap-2"><Check className="h-4 w-4 text-rose-gold" />זמן אספקה: עד 14 ימי עסקים</li>
             </ul>
             <div className="mt-5 flex items-center justify-between">
               <div>

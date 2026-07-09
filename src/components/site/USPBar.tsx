@@ -3,7 +3,7 @@ import { ShieldCheck, Sparkles, Truck, MapPin } from "lucide-react";
 const items = [
   { icon: Sparkles, title: "זכוכית מחוסמת אקסטרה קלירית", sub: "צלילות מקסימלית, ברק עמוק" },
   { icon: ShieldCheck, title: "הדפסה דיגיטלית מתקדמת", sub: "חדות וצבעים שלא נדהים" },
-  { icon: Truck, title: "משלוח מבוטח עד הבית", sub: "אריזה הרמטית ומקצוענית" },
+  { icon: Truck, title: "משלוח מבוטח עד הבית", sub: "משלוח והתקנה מבוטחים" },
   { icon: MapPin, title: "תוצרת ישראל", sub: "ייצור איכותי במודיעין" },
 ];
 

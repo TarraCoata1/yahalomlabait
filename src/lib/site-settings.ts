@@ -2,6 +2,13 @@ import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
 
+export type PaymentMethodConfig = {
+  id: "bank_transfer" | "bit" | "cash" | "online" | string;
+  label: string;
+  enabled: boolean;
+  instructions?: string;
+};
+
 export type SiteSettings = {
   // Meta / social
   site_title: string;
@@ -27,12 +34,20 @@ export type SiteSettings = {
   facebook_pixel_id: string;
   gsc_verification: string;
   business_hours: Json;
+  // Fulfillment
+  pickup_enabled: boolean;
+  pickup_address: string;
+  pickup_instructions: string;
+  shipping_lead_time_text: string;
+  large_size_install_note: string;
+  show_warranty: boolean;
+  payment_methods: PaymentMethodConfig[];
 };
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  site_title: "יהלום לבית | תמונות זכוכית יוקרתית ואמנות פרימיום לבית",
+  site_title: "יהלום לבית (Yahalom LaBayit) | תמונות זכוכית יוקרתית ואמנות פרימיום לבית",
   site_description:
-    "שדרגו את החלל עם קולקציית תמונות זכוכית מחוסמת אקסטרה קליר בהדפסה דיגיטלית ברמת גלריה. אמנות מודרנית, נופים, יודאיקה ועיצוב אישי תוצרת ישראל.",
+    "יהלום לבית (Yahalom LaBayit) — קולקציית תמונות זכוכית מחוסמת אקסטרה קליר בהדפסה דיגיטלית ברמת גלריה. אמנות מודרנית, נופים, יודאיקה ועיצוב אישי, תוצרת ישראל, משלוח מבוטח.",
   social_image_url: "",
   company_name: "יהלום לבית",
   logo_url: "",
@@ -51,6 +66,18 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   facebook_pixel_id: "",
   gsc_verification: "",
   business_hours: [],
+  pickup_enabled: false,
+  pickup_address: "",
+  pickup_instructions: "",
+  shipping_lead_time_text: "עד 14 ימי עסקים",
+  large_size_install_note:
+    "למידות מעל 70×100 ס״מ, ההתקנה מתחילה מ־₪350 ועולה בהתאם למידה שנבחרה.",
+  show_warranty: false,
+  payment_methods: [
+    { id: "bank_transfer", label: "העברה בנקאית", enabled: true, instructions: "פרטי חשבון יישלחו במייל לאחר ההזמנה." },
+    { id: "bit", label: "ביט (Bit)", enabled: true, instructions: "מספר לתשלום ב־Bit יישלח לאחר ההזמנה." },
+    { id: "cash", label: "מזומן במעמד האיסוף/ההתקנה", enabled: true, instructions: "תשלום במזומן במעמד האיסוף העצמי או ההתקנה בבית." },
+  ],
 };
 
 export async function fetchSiteSettings(): Promise<SiteSettings> {

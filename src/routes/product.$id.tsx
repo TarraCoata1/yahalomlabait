@@ -23,7 +23,7 @@ export const Route = createFileRoute("/product/$id")({
     }
     const path = `/product/${params.id}`;
     const title = `${loaderData.name} | תמונות לבית - יהלום לבית`;
-    const description = `${loaderData.description} החל מ־₪${FROM_PRICE}. משלוח מבוטח לכל הארץ ואחריות 5 שנים.`;
+    const description = `${loaderData.description} החל מ־₪${FROM_PRICE}. משלוח מבוטח עד 14 ימי עסקים — יהלום לבית (Yahalom LaBayit).`;
     return {
       meta: localizedMeta({ title, description, path, image: loaderData.image, type: "product" }),
       links: canonicalLink(path),
@@ -265,7 +265,10 @@ function ProductPage() {
                 <span className="font-medium">הוסף התקנה מקצועית לבית</span>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                תיאום מועד, מדידה והרכבה על ידי מתקין מוסמך. למידות עד 70×100 — ₪250, מעבר לכך — ₪350.
+                תיאום מועד, מדידה והרכבה על ידי מתקין מוסמך. למידות עד 70×100 ס״מ — ₪250.
+              </p>
+              <p className="mt-1 text-xs text-rose-gold/90">
+                למידות מעל 70×100 ס״מ, ההתקנה מתחילה מ־₪350 ועולה בהתאם למידה שנבחרה.
               </p>
             </div>
             <div className="shrink-0 text-left">
@@ -291,7 +294,7 @@ function ProductPage() {
           <div className="mt-6 grid gap-3 sm:grid-cols-3 text-sm">
             <div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-rose-gold" /><span className="text-muted-foreground">זכוכית אקסטרה קלירית</span></div>
             <div className="flex items-center gap-2"><Truck className="h-4 w-4 text-rose-gold" /><span className="text-muted-foreground">משלוח מבוטח</span></div>
-            <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-rose-gold" /><span className="text-muted-foreground">אחריות 5 שנים</span></div>
+            <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-rose-gold" /><span className="text-muted-foreground">התקנה מבוטחת</span></div>
           </div>
 
           {/* Tabs */}
@@ -310,8 +313,8 @@ function ProductPage() {
                 </>
               ) : (
                 <>
-                  <p>זמן ייצור: 7–10 ימי עסקים. משלוח עד הבית בכל הארץ באריזה הרמטית ומבוטחת.</p>
-                  <p>החזרה תוך 14 ימים על מוצרי מדף. הדפסות בעיצוב אישי אינן ניתנות להחזרה.</p>
+                  <p>זמן אספקה: עד 14 ימי עסקים מרגע אישור ההזמנה, כולל ייצור ומשלוח מבוטח.</p>
+                  <p>המשלוח וההתקנה מבוטחים. כל ההזמנות סופיות — לא ניתן לבטל הזמנה לאחר ביצועה.</p>
                   <p>לתאום הובלה והרכבה בבית — סמנו "הוסף התקנה מקצועית" או צרו קשר בוואטסאפ.</p>
                 </>
               )}
