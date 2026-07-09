@@ -4,9 +4,16 @@ import { persist } from "zustand/middleware";
 export type CartItem = {
   key: string;
   productId: string;
+  sku: string;
   name: string;
   image: string;
+  sizeId: string;
   sizeLabel: string;
+  basePrice: number;
+  screwColor: "silver" | "gold" | "black";
+  screwColorLabel: string;
+  withInstallation: boolean;
+  installationFee: number;
   unitPrice: number;
   qty: number;
 };
@@ -28,7 +35,7 @@ export const useCart = create<CartState>()(
       open: false,
       add: (item) =>
         set((s) => {
-          const key = `${item.productId}-${item.sizeLabel}`;
+          const key = `${item.productId}-${item.sizeId}-${item.screwColor}-${item.withInstallation ? "inst" : "noinst"}`;
           const existing = s.items.find((i) => i.key === key);
           const qty = item.qty ?? 1;
           const items = existing
@@ -44,10 +51,16 @@ export const useCart = create<CartState>()(
       clear: () => set({ items: [] }),
       setOpen: (open) => set({ open }),
     }),
-    { name: "ylb-cart" },
+    {
+      name: "ylb-cart",
+      version: 2,
+      migrate: () => ({ items: [], open: false } as unknown as CartState),
+    },
   ),
 );
 
 export const cartTotal = (items: CartItem[]) =>
   items.reduce((sum, i) => sum + i.unitPrice * i.qty, 0);
 export const cartCount = (items: CartItem[]) => items.reduce((s, i) => s + i.qty, 0);
+export const cartInstallationTotal = (items: CartItem[]) =>
+  items.reduce((sum, i) => sum + (i.withInstallation ? i.installationFee * i.qty : 0), 0);
