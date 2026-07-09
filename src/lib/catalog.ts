@@ -54,7 +54,9 @@ export type Product = {
   bestSeller: boolean;
   isHidden: boolean;
   sort_order: number;
+  sku: string;
 };
+
 
 type CategoryRow = {
   id: string;
@@ -78,8 +80,10 @@ type ProductRow = {
   best_seller: boolean;
   is_hidden: boolean;
   sort_order: number;
+  sku: string | null;
   category?: { slug: string } | null;
 };
+
 
 function toCategory(r: CategoryRow): Category {
   return {
@@ -109,7 +113,9 @@ function toProduct(r: ProductRow): Product {
     bestSeller: r.best_seller,
     isHidden: r.is_hidden,
     sort_order: r.sort_order,
+    sku: r.sku ?? "",
   };
+
 }
 
 export const categoriesQuery = queryOptions({
