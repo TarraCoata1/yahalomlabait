@@ -8,8 +8,8 @@ import { USPBar } from "@/components/site/USPBar";
 import { ScrollReveal } from "@/components/site/ScrollReveal";
 import { localizedMeta, canonicalLink, jsonLd } from "@/lib/seo";
 
-const HOME_TITLE = "יהלום לבית — תמונות זכוכית מחוסמת ואמנות קיר יוקרתית לבית";
-const HOME_DESC = "קולקציית תמונות זכוכית מחוסמת אקסטרה קליר בהדפסה דיגיטלית ברמת גלריה: אמנות מודרנית, נופים, יודאיקה ועיצוב אישי — ייצור בישראל, משלוח מבוטח ואחריות 5 שנים.";
+const HOME_TITLE = "יהלום לבית (Yahalom LaBayit) — תמונות זכוכית מחוסמת ואמנות קיר יוקרתית לבית";
+const HOME_DESC = "יהלום לבית (Yahalom LaBayit): קולקציית תמונות זכוכית מחוסמת אקסטרה קליר בהדפסה דיגיטלית ברמת גלריה — אמנות מודרנית, נופים, יודאיקה ועיצוב אישי, ייצור בישראל, משלוח מבוטח עד 14 ימי עסקים.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -34,8 +34,8 @@ export const Route = createFileRoute("/")({
         mainEntity: [
           { "@type": "Question", name: "מהן תמונות זכוכית מחוסמת של יהלום לבית?", acceptedAnswer: { "@type": "Answer", text: "תמונות זכוכית מחוסמת אקסטרה קלירית בהדפסה דיגיטלית UV ברמת גלריה, המשמשות כיצירות אמנות פרימיום לבית — לסלון, לחדר השינה ולכל חלל בבית." } },
           { "@type": "Question", name: "מה כולל המחיר של תמונת זכוכית?", acceptedAnswer: { "@type": "Answer", text: "המחיר כולל הדפסה על זכוכית מחוסמת, ליטוש קצוות פרימיום ומערכת תליה סמויה. התקנה מקצועית בבית היא תוספת אופציונלית." } },
-          { "@type": "Question", name: "כמה זמן לוקח לקבל את התמונה?", acceptedAnswer: { "@type": "Answer", text: "זמן ייצור של 7–10 ימי עסקים ומשלוח מבוטח לכל הארץ בתוך 2–4 ימי עסקים נוספים." } },
-          { "@type": "Question", name: "האם יש אחריות?", acceptedAnswer: { "@type": "Answer", text: "אחריות מלאה של 5 שנים על הדפסה, זכוכית ומערכת התליה." } },
+          { "@type": "Question", name: "כמה זמן לוקח לקבל את התמונה?", acceptedAnswer: { "@type": "Answer", text: "עד 14 ימי עסקים מרגע אישור ההזמנה, כולל ייצור ומשלוח מבוטח לכל הארץ." } },
+          { "@type": "Question", name: "האם המשלוח וההתקנה מבוטחים?", acceptedAnswer: { "@type": "Answer", text: "כן. המשלוח וההתקנה מבוטחים על ידי המפעל בכל הארץ." } },
         ],
       }),
     ],
