@@ -14,8 +14,13 @@ export function MiniCart() {
       />
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex w-full max-w-md flex-col glass-strong transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}
-        aria-hidden={!open}
+        aria-label="עגלת קניות"
+        role="dialog"
+        aria-modal={open}
+        inert={!open}
       >
+
+
         <header className="flex items-center justify-between border-b border-border/50 px-6 py-5">
           <div className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5 text-rose-gold" />
@@ -45,16 +50,23 @@ export function MiniCart() {
                       <div className="min-w-0">
                         <h3 className="truncate font-medium">{it.name}</h3>
                         <p className="text-xs text-muted-foreground">{it.sizeLabel}</p>
+                        <p className="text-xs text-muted-foreground">
+                          ברגי תליה: <span className="text-foreground/80">{it.screwColorLabel}</span>
+                        </p>
+                        {it.withInstallation && (
+                          <p className="text-xs text-rose-gold/90">כולל התקנה מקצועית (+₪{it.installationFee})</p>
+                        )}
+                        {it.sku && <p className="text-[10px] font-mono text-muted-foreground/70" dir="ltr">SKU: {it.sku}</p>}
                       </div>
-                      <button onClick={() => remove(it.key)} aria-label="הסר" className="text-muted-foreground hover:text-destructive">
+                      <button onClick={() => remove(it.key)} aria-label={`הסר ${it.name}`} className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10">
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                     <div className="mt-2 flex items-center justify-between">
-                      <div className="flex items-center gap-2 rounded-full border border-border/60">
-                        <button onClick={() => setQty(it.key, it.qty - 1)} className="grid h-7 w-7 place-items-center"><Minus className="h-3 w-3" /></button>
-                        <span className="w-5 text-center text-sm">{it.qty}</span>
-                        <button onClick={() => setQty(it.key, it.qty + 1)} className="grid h-7 w-7 place-items-center"><Plus className="h-3 w-3" /></button>
+                      <div className="flex items-center gap-1 rounded-full border border-border/60">
+                        <button onClick={() => setQty(it.key, it.qty - 1)} aria-label="הפחת כמות" className="grid h-9 w-9 place-items-center rounded-full hover:bg-secondary"><Minus className="h-3 w-3" /></button>
+                        <span aria-live="polite" className="w-6 text-center text-sm">{it.qty}</span>
+                        <button onClick={() => setQty(it.key, it.qty + 1)} aria-label="הוסף כמות" className="grid h-9 w-9 place-items-center rounded-full hover:bg-secondary"><Plus className="h-3 w-3" /></button>
                       </div>
                       <div className="font-semibold text-rose-gold">₪{it.unitPrice * it.qty}</div>
                     </div>
@@ -62,6 +74,7 @@ export function MiniCart() {
                 </li>
               ))}
             </ul>
+
           )}
         </div>
 

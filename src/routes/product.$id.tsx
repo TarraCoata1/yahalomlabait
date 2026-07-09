@@ -281,15 +281,23 @@ function ProductPage() {
             onClick={() =>
               add({
                 productId: product.id,
+                sku: product.sku ?? "",
                 name: product.name,
                 image: product.image,
-                sizeLabel: `${size.label} · ברגים ${screw.label}${withInstall ? " · כולל התקנה" : ""}`,
+                sizeId: size.id,
+                sizeLabel: size.label,
+                basePrice: size.price,
+                screwColor,
+                screwColorLabel: screw.label,
+                withInstallation: withInstall,
+                installationFee: withInstall ? installFee : 0,
                 unitPrice: total,
               })
             }
             className="mt-6 w-full rounded-full btn-rose py-4 font-semibold hover:btn-rose-hover">
             הוסף לעגלה · ₪{total}
           </button>
+
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3 text-sm">
             <div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-rose-gold" /><span className="text-muted-foreground">זכוכית אקסטרה קלירית</span></div>

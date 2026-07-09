@@ -22,12 +22,20 @@ export function ProductCard({ product }: { product: Product }) {
     const s = RECT_SIZES[0];
     add({
       productId: product.id,
+      sku: product.sku ?? "",
       name: product.name,
       image: product.image,
+      sizeId: s.id,
       sizeLabel: s.label,
+      basePrice: s.price,
+      screwColor: "silver",
+      screwColorLabel: "כסוף",
+      withInstallation: false,
+      installationFee: 0,
       unitPrice: s.price,
     });
   };
+
 
   const stop = (e: React.MouseEvent) => {
     e.preventDefault();

@@ -68,15 +68,17 @@ export function Header() {
               </span>
             )}
           </button>
-          <button onClick={() => setMobile((v) => !v)} aria-label="תפריט"
+          <button onClick={() => setMobile((v) => !v)} aria-label={mobile ? "סגור תפריט" : "פתח תפריט"}
+            aria-expanded={mobile} aria-controls="mobile-nav"
             className="md:hidden grid h-11 w-11 place-items-center rounded-full glass">
-            {mobile ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobile ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
           </button>
+
         </div>
       </div>
 
       {mobile && (
-        <div className="md:hidden border-t border-border/50 glass-strong">
+        <div id="mobile-nav" className="md:hidden border-t border-border/50 glass-strong">
           <div className="flex flex-col px-6 py-4 gap-1">
             {nav.map((n) => (
               <Link key={n.to} to={n.to} onClick={() => setMobile(false)}

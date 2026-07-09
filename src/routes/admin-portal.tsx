@@ -748,6 +748,7 @@ function OrdersPanel() {
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "">("");
+  const [viewing, setViewing] = useState<OrderRow | null>(null);
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ["admin_orders"] });
 
@@ -764,6 +765,7 @@ function OrdersPanel() {
     toast.success("סטטוס תשלום עודכן");
     invalidate();
   };
+
 
   const q = search.trim().toLowerCase();
   const filtered = orders.filter((o) => {
@@ -811,8 +813,10 @@ function OrdersPanel() {
                 <th className="px-3 py-3 text-right">תשלום</th>
                 <th className="px-3 py-3 text-right">סטטוס</th>
                 <th className="px-3 py-3 text-left">סה״כ</th>
+                <th className="px-3 py-3 text-left">פרטים</th>
               </tr>
             </thead>
+
             <tbody>
               {filtered.map((o) => (
                 <tr key={o.id} className="border-t border-border/30 align-top hover:bg-secondary/20">
@@ -845,15 +849,142 @@ function OrdersPanel() {
                     </select>
                   </td>
                   <td className="px-3 py-3 text-left font-semibold whitespace-nowrap">{currency(o.total, o.currency)}</td>
+                  <td className="px-3 py-3 text-left">
+                    <button onClick={() => setViewing(o)} className="rounded-full glass px-3 py-1.5 text-xs hover:border-rose-gold/60">צפייה</button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+      {viewing && <OrderDetailDialog order={viewing} onClose={() => setViewing(null)} onChanged={invalidate} />}
     </section>
   );
 }
+
+type OrderItemRow = {
+  id: string;
+  product_name: string;
+  product_image: string | null;
+  sku: string | null;
+  size_label: string;
+  screw_color: string | null;
+  with_installation: boolean;
+  installation_fee: number;
+  quantity: number;
+  unit_price: number;
+  line_total: number;
+  customization: { screw_color_label?: string; base_price?: number } | null;
+};
+
+function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onClose: () => void; onChanged: () => void }) {
+  const { data: items = [], isLoading } = useQuery({
+    queryKey: ["admin_order_items", order.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("order_items")
+        .select("id, product_name, product_image, sku, size_label, screw_color, with_installation, installation_fee, quantity, unit_price, line_total, customization")
+        .eq("order_id", order.id)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as unknown as OrderItemRow[];
+    },
+  });
+
+  const [adminNotes, setAdminNotes] = useState(order.admin_notes ?? "");
+  const [savingNotes, setSavingNotes] = useState(false);
+
+  const saveNotes = async () => {
+    setSavingNotes(true);
+    const { error } = await supabase.from("orders").update({ admin_notes: adminNotes }).eq("id", order.id);
+    setSavingNotes(false);
+    if (error) return toast.error(error.message);
+    toast.success("הערות נשמרו");
+    onChanged();
+  };
+
+  const address = order as unknown as { shipping_address: { street?: string; city?: string; zip?: string } | null };
+  const addr = address.shipping_address;
+
+  return (
+    <div onClick={onClose} className="fixed inset-0 z-[60] grid place-items-center bg-background/70 backdrop-blur-sm p-4 overflow-y-auto">
+      <div onClick={(e) => e.stopPropagation()} dir="rtl" className="w-full max-w-3xl my-8 rounded-2xl glass-strong p-6 space-y-5">
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="font-serif text-2xl">הזמנה <span className="font-mono" dir="ltr">#{order.order_number}</span></h2>
+            <p className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleString("he-IL")}</p>
+          </div>
+          <button onClick={onClose} aria-label="סגור" className="grid h-9 w-9 place-items-center rounded-full hover:bg-secondary"><X className="h-4 w-4" /></button>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-xl glass p-4 text-sm">
+            <div className="mb-2 text-xs uppercase tracking-wider text-rose-gold">לקוח</div>
+            <div className="font-medium">{order.customer_name || "—"}</div>
+            <div className="text-muted-foreground" dir="ltr">{order.customer_email}</div>
+            <div className="text-muted-foreground" dir="ltr">{order.customer_phone}</div>
+          </div>
+          <div className="rounded-xl glass p-4 text-sm">
+            <div className="mb-2 text-xs uppercase tracking-wider text-rose-gold">אספקה</div>
+            <div>{order.fulfillment_type === "pickup" ? "איסוף עצמי" : "משלוח מבוטח"}</div>
+            {addr && (
+              <div className="text-muted-foreground">{[addr.street, addr.city, addr.zip].filter(Boolean).join(", ")}</div>
+            )}
+            {order.notes && <div className="mt-1 text-xs text-muted-foreground">הערה: {order.notes}</div>}
+          </div>
+        </div>
+
+        <div className="rounded-xl glass p-4">
+          <div className="mb-3 text-xs uppercase tracking-wider text-rose-gold">פריטים</div>
+          {isLoading ? (
+            <div className="text-sm text-muted-foreground">טוען…</div>
+          ) : items.length === 0 ? (
+            <div className="text-sm text-muted-foreground">אין פריטים.</div>
+          ) : (
+            <ul className="space-y-3">
+              {items.map((it) => (
+                <li key={it.id} className="flex gap-3 border-t border-border/40 pt-3 first:border-0 first:pt-0">
+                  {it.product_image && <img src={it.product_image} alt="" className="h-14 w-14 shrink-0 rounded-md object-cover" />}
+                  <div className="min-w-0 flex-1 text-sm">
+                    <div className="font-medium">{it.product_name}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {it.size_label} · ברגי {it.customization?.screw_color_label ?? it.screw_color ?? "—"} · ×{it.quantity}
+                    </div>
+                    {it.with_installation && (
+                      <div className="text-xs text-rose-gold/90">כולל התקנה מקצועית (+₪{it.installation_fee})</div>
+                    )}
+                    {it.sku && <div className="text-[10px] font-mono text-muted-foreground/70" dir="ltr">SKU: {it.sku}</div>}
+                  </div>
+                  <div className="text-sm font-medium whitespace-nowrap">₪{it.line_total}</div>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="mt-4 space-y-1 border-t border-border/40 pt-3 text-sm">
+            <div className="flex justify-between text-muted-foreground"><span>מוצרים</span><span className="text-foreground">{currency(order.subtotal, order.currency)}</span></div>
+            {order.installation_fee > 0 && <div className="flex justify-between text-muted-foreground"><span>התקנה</span><span className="text-foreground">{currency(order.installation_fee, order.currency)}</span></div>}
+            <div className="flex justify-between text-muted-foreground"><span>{order.fulfillment_type === "pickup" ? "איסוף" : "משלוח"}</span><span className="text-foreground">{order.shipping_fee ? currency(order.shipping_fee, order.currency) : "חינם"}</span></div>
+            <div className="flex justify-between border-t border-border pt-2 font-semibold"><span>סה״כ</span><span className="text-rose-gold text-lg">{currency(order.total, order.currency)}</span></div>
+          </div>
+        </div>
+
+        <div className="rounded-xl glass p-4 space-y-2">
+          <div className="text-xs uppercase tracking-wider text-rose-gold">הערות לניהול פנימי</div>
+          <textarea value={adminNotes} onChange={(e) => setAdminNotes(e.target.value)} rows={3}
+            className={inputCls + " resize-none"} placeholder="הערות שרואה רק צוות הניהול" />
+          <div className="flex justify-end">
+            <button onClick={saveNotes} disabled={savingNotes}
+              className="rounded-full btn-rose px-5 py-2 text-sm font-semibold disabled:opacity-50">
+              {savingNotes ? "שומר…" : "שמור הערות"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 /* -------------------- SITE SETTINGS (Fulfillment / Payments) -------------------- */
 
