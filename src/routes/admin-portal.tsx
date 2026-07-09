@@ -9,8 +9,10 @@ import { categoriesQuery, productsQuery, type Category, type Product } from "@/l
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png.asset.json";
-import { siteSettingsQuery, saveSiteSettings, uploadSocialImage, DEFAULT_SITE_SETTINGS, type SiteSettings } from "@/lib/site-settings";
+import { siteSettingsQuery, saveSiteSettings, uploadSocialImage, DEFAULT_SITE_SETTINGS, type SiteSettings, type PaymentMethodConfig } from "@/lib/site-settings";
 import { allPageSeoQuery, savePageSeo, createPageSeo, deletePageSeo, type PageSeo } from "@/lib/page-seo";
+import { adminOrdersQuery, ORDER_STATUSES, PAYMENT_STATUSES, ORDER_STATUS_LABEL, PAYMENT_STATUS_LABEL, PAYMENT_METHOD_LABEL, type OrderRow, type OrderStatus, type PaymentStatus } from "@/lib/orders";
+
 
 export const Route = createFileRoute("/admin-portal")({
   head: () => ({
@@ -96,7 +98,7 @@ function NoAccessScreen({ email }: { email: string }) {
 
 function Dashboard() {
   const { user } = useSession();
-  const [tab, setTab] = useState<"products" | "categories" | "seo">("products");
+  const [tab, setTab] = useState<"products" | "categories" | "orders" | "settings" | "seo">("products");
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8 md:py-14">
@@ -118,16 +120,23 @@ function Dashboard() {
         </div>
       </header>
 
-      <div className="mb-6 inline-flex rounded-full glass p-1">
+      <div className="mb-6 inline-flex flex-wrap rounded-full glass p-1">
         <button onClick={() => setTab("products")} className={`rounded-full px-5 py-2 text-sm ${tab === "products" ? "btn-rose" : "text-muted-foreground"}`}>מוצרים</button>
         <button onClick={() => setTab("categories")} className={`rounded-full px-5 py-2 text-sm ${tab === "categories" ? "btn-rose" : "text-muted-foreground"}`}>קטגוריות</button>
+        <button onClick={() => setTab("orders")} className={`rounded-full px-5 py-2 text-sm ${tab === "orders" ? "btn-rose" : "text-muted-foreground"}`}>הזמנות</button>
+        <button onClick={() => setTab("settings")} className={`rounded-full px-5 py-2 text-sm ${tab === "settings" ? "btn-rose" : "text-muted-foreground"}`}>הגדרות אתר</button>
         <button onClick={() => setTab("seo")} className={`rounded-full px-5 py-2 text-sm ${tab === "seo" ? "btn-rose" : "text-muted-foreground"}`}>SEO</button>
       </div>
 
-      {tab === "products" ? <ProductsPanel /> : tab === "categories" ? <CategoriesPanel /> : <SeoPanel />}
+      {tab === "products" && <ProductsPanel />}
+      {tab === "categories" && <CategoriesPanel />}
+      {tab === "orders" && <OrdersPanel />}
+      {tab === "settings" && <SiteSettingsPanel />}
+      {tab === "seo" && <SeoPanel />}
     </div>
   );
 }
+
 
 /* -------------------- PRODUCTS PANEL -------------------- */
 
