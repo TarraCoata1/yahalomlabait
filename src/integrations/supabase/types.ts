@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_email_allowlist: {
+        Row: {
+          created_at: string
+          email: string
+          note: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          note?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          note?: string | null
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -47,6 +65,149 @@ export type Database = {
           sort_order?: number
           tagline?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          customization: Json
+          id: string
+          installation_fee: number
+          line_total: number
+          order_id: string
+          product_id: string | null
+          product_image: string | null
+          product_name: string
+          quantity: number
+          screw_color: string | null
+          size_id: string | null
+          size_label: string | null
+          sku: string | null
+          unit_price: number
+          with_installation: boolean
+        }
+        Insert: {
+          created_at?: string
+          customization?: Json
+          id?: string
+          installation_fee?: number
+          line_total?: number
+          order_id: string
+          product_id?: string | null
+          product_image?: string | null
+          product_name: string
+          quantity?: number
+          screw_color?: string | null
+          size_id?: string | null
+          size_label?: string | null
+          sku?: string | null
+          unit_price?: number
+          with_installation?: boolean
+        }
+        Update: {
+          created_at?: string
+          customization?: Json
+          id?: string
+          installation_fee?: number
+          line_total?: number
+          order_id?: string
+          product_id?: string | null
+          product_image?: string | null
+          product_name?: string
+          quantity?: number
+          screw_color?: string | null
+          size_id?: string | null
+          size_label?: string | null
+          sku?: string | null
+          unit_price?: number
+          with_installation?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          currency: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          discount: number
+          fulfillment_type: string
+          id: string
+          installation_fee: number
+          notes: string | null
+          order_number: number
+          payment_meta: Json
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_reference: string | null
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          shipping_address: Json
+          shipping_fee: number
+          status: Database["public"]["Enums"]["order_status"]
+          subtotal: number
+          total: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          currency?: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          discount?: number
+          fulfillment_type?: string
+          id?: string
+          installation_fee?: number
+          notes?: string | null
+          order_number?: number
+          payment_meta?: Json
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_reference?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          shipping_address?: Json
+          shipping_fee?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          currency?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          discount?: number
+          fulfillment_type?: string
+          id?: string
+          installation_fee?: number
+          notes?: string | null
+          order_number?: number
+          payment_meta?: Json
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          payment_reference?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          shipping_address?: Json
+          shipping_fee?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -124,6 +285,7 @@ export type Database = {
           image_key: string
           is_hidden: boolean
           name: string
+          sku: string | null
           slug: string
           sort_order: number
           style: string
@@ -139,6 +301,7 @@ export type Database = {
           image_key?: string
           is_hidden?: boolean
           name: string
+          sku?: string | null
           slug: string
           sort_order?: number
           style?: string
@@ -154,6 +317,7 @@ export type Database = {
           image_key?: string
           is_hidden?: boolean
           name?: string
+          sku?: string | null
           slug?: string
           sort_order?: number
           style?: string
@@ -185,7 +349,14 @@ export type Database = {
           gtm_container_id: string
           id: boolean
           instagram_url: string
+          large_size_install_note: string
           logo_url: string
+          payment_methods: Json
+          pickup_address: string
+          pickup_enabled: boolean
+          pickup_instructions: string
+          shipping_lead_time_text: string
+          show_warranty: boolean
           site_description: string
           site_title: string
           social_image_url: string
@@ -209,7 +380,14 @@ export type Database = {
           gtm_container_id?: string
           id?: boolean
           instagram_url?: string
+          large_size_install_note?: string
           logo_url?: string
+          payment_methods?: Json
+          pickup_address?: string
+          pickup_enabled?: boolean
+          pickup_instructions?: string
+          shipping_lead_time_text?: string
+          show_warranty?: boolean
           site_description?: string
           site_title?: string
           social_image_url?: string
@@ -233,7 +411,14 @@ export type Database = {
           gtm_container_id?: string
           id?: boolean
           instagram_url?: string
+          large_size_install_note?: string
           logo_url?: string
+          payment_methods?: Json
+          pickup_address?: string
+          pickup_enabled?: boolean
+          pickup_instructions?: string
+          shipping_lead_time_text?: string
+          show_warranty?: boolean
           site_description?: string
           site_title?: string
           social_image_url?: string
@@ -279,7 +464,16 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "moderator"
+      order_status:
+        | "pending_payment"
+        | "under_review"
+        | "customer_contact"
+        | "in_production"
+        | "completed"
+        | "cancelled"
+      payment_method: "bank_transfer" | "bit" | "cash" | "online"
+      payment_status: "pending" | "paid" | "refunded" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -407,7 +601,17 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "moderator"],
+      order_status: [
+        "pending_payment",
+        "under_review",
+        "customer_contact",
+        "in_production",
+        "completed",
+        "cancelled",
+      ],
+      payment_method: ["bank_transfer", "bit", "cash", "online"],
+      payment_status: ["pending", "paid", "refunded", "failed"],
     },
   },
 } as const
