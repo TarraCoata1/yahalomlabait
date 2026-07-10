@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.place_order(jsonb, jsonb, text, jsonb, text, jsonb, text) FROM anon, PUBLIC;
