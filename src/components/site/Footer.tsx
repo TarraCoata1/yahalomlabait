@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, Facebook, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import { Instagram, Facebook, Mail, Phone, MapPin } from "lucide-react";
 import logo from "@/assets/logo.png.asset.json";
 import { TarraCoataCredit } from "./TarraCoataCredit";
 
