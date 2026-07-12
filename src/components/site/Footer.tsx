@@ -20,9 +20,9 @@ export function Footer() {
           </ul>
           <div className="flex gap-2 pt-2">
             {[
-              { i: Instagram, href: "https://instagram.com/yahalom_labait", label: "אינסטגרם" },
-              { i: Facebook, href: "https://facebook.com/yahalomlabait", label: "פייסבוק" },
-              { i: Youtube, href: "https://youtube.com/@yahalomlabait", label: "יוטיוב" },
+              { i: Instagram, href: "https://www.instagram.com/yahalomlabait", label: "אינסטגרם" },
+              { i: Facebook, href: "https://www.facebook.com/share/18re8TBvB9/?mibextid=wwXIfr", label: "פייסבוק" },
+              { i: TikTokIcon, href: "https://www.tiktok.com/@yahalom_la_bait?_r=1&_t=ZS-97yzFuVFgB8", label: "טיקטוק" },
             ].map((s) => (
               <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
                 className="grid h-10 w-10 place-items-center rounded-full glass border border-border/60 text-rose-gold transition hover:scale-105 hover:border-rose-gold hover:bg-rose-gold/10">
