@@ -89,7 +89,7 @@ function Home() {
       </section>
 
       {/* Elegant light-mode divider — invisible in dark mode */}
-      <div aria-hidden className="relative hidden dark:hidden [html:not(.dark)_&]:block" style={{ marginTop: "-1px" }}>
+      <div aria-hidden className="relative block dark:hidden" style={{ marginTop: "-1px" }}>
         <svg
           viewBox="0 0 1440 90"
           preserveAspectRatio="none"
