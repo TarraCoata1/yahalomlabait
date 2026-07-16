@@ -6,7 +6,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { FROM_PRICE } from "@/lib/products";
 import { categoriesQuery, productsQuery } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
-import { localizedMeta, canonicalLink, breadcrumbSchema } from "@/lib/seo";
+import { breadcrumbSchema } from "@/lib/seo";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 
 const schema = z.object({
   cat: fallback(z.string(), "").default(""),
@@ -14,18 +15,16 @@ const schema = z.object({
 });
 
 export const Route = createFileRoute("/shop")({
-  head: () => ({
-    meta: localizedMeta({
-      title: "החנות | תמונות לבית ואמנות זכוכית - יהלום לבית",
-      description: "כל הקולקציה של תמונות לבית מיהלום לבית: אמנות מודרנית, יהודית ומינימליסטית על זכוכית מחוסמת. סננו לפי סגנון, צבע ומידה.",
-      path: "/shop",
+  head: ({ loaderData }) =>
+    buildSeoHead({
+      routePath: "/shop",
+      seo: loaderData?.[0] ?? null,
+      extraScripts: [breadcrumbSchema([{ name: "בית", path: "/" }, { name: "חנות", path: "/shop" }])],
     }),
-    links: canonicalLink("/shop"),
-    scripts: [breadcrumbSchema([{ name: "בית", path: "/" }, { name: "חנות", path: "/shop" }])],
-  }),
   validateSearch: zodValidator(schema),
   loader: ({ context }) =>
     Promise.all([
+      context.queryClient.ensureQueryData(pageSeoQuery("/shop")),
       context.queryClient.ensureQueryData(categoriesQuery),
       context.queryClient.ensureQueryData(productsQuery),
     ]),
