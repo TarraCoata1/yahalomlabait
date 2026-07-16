@@ -40,6 +40,15 @@ export const Route = createFileRoute("/")({
           { "@type": "Question", name: "האם המשלוח וההתקנה מבוטחים?", acceptedAnswer: { "@type": "Answer", text: "כן. המשלוח וההתקנה מבוטחים על ידי המפעל בכל הארץ." } },
         ],
       }),
+      jsonLd({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "בית", item: "https://www.yahalom-la-bait.com/" },
+          { "@type": "ListItem", position: 2, name: "חנות", item: "https://www.yahalom-la-bait.com/shop" },
+          { "@type": "ListItem", position: 3, name: "עיצוב אישי", item: "https://www.yahalom-la-bait.com/custom" },
+        ],
+      }),
     ],
   }),
   loader: ({ context }) =>
