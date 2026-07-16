@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
         description:
           "יהלום לבית הוא מותג בוטיק ישראלי מוביל המתמחה באמנות יוקרתית על זכוכית ותמונות פרימיום לבית. החברה מייצרת תמונות זכוכית מחוסמת אקסטרה קלירית בהדפסה דיגיטלית מתקדמת ברמת גלריה עם משלוח מבוטח לכל רחבי הארץ. ייצור כחול-לבן במפעל במודיעין, ישראל. הקולקציות כוללות אמנות מודרנית, מופשטת, טבע, פופ ארט, אופנה, ופסוקי קודש ויודאיקה, לצד שירות הדפסה בעיצוב אישי.",
         inLanguage: "he-IL",
-        about: { "@id": "https://yahalom-la-bait.com/#organization" },
+        about: { "@id": "https://www.yahalom-la-bait.com/#organization" },
       }),
       jsonLd({
         "@context": "https://schema.org",
@@ -38,6 +38,15 @@ export const Route = createFileRoute("/")({
           { "@type": "Question", name: "מה כולל המחיר של תמונת זכוכית?", acceptedAnswer: { "@type": "Answer", text: "המחיר כולל הדפסה על זכוכית מחוסמת, ליטוש קצוות פרימיום ומערכת תליה סמויה. התקנה מקצועית בבית היא תוספת אופציונלית." } },
           { "@type": "Question", name: "כמה זמן לוקח לקבל את התמונה?", acceptedAnswer: { "@type": "Answer", text: "עד 14 ימי עסקים מרגע אישור ההזמנה, כולל ייצור ומשלוח מבוטח לכל הארץ." } },
           { "@type": "Question", name: "האם המשלוח וההתקנה מבוטחים?", acceptedAnswer: { "@type": "Answer", text: "כן. המשלוח וההתקנה מבוטחים על ידי המפעל בכל הארץ." } },
+        ],
+      }),
+      jsonLd({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "בית", item: "https://www.yahalom-la-bait.com/" },
+          { "@type": "ListItem", position: 2, name: "חנות", item: "https://www.yahalom-la-bait.com/shop" },
+          { "@type": "ListItem", position: 3, name: "עיצוב אישי", item: "https://www.yahalom-la-bait.com/custom" },
         ],
       }),
     ],
@@ -70,8 +79,8 @@ function Home() {
           <div className="max-w-2xl">
             <span className="inline-block rounded-full glass px-4 py-1.5 text-xs tracking-[0.3em] text-rose-gold">YAHALOM · LA · BAIT</span>
             <h1 className="mt-6 font-serif text-4xl leading-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-              אמנות יוקרתית על זכוכית
-              <span className="block text-gradient-rose">משדרגים את חלל הבית</span>
+              תמונות זכוכית מחוסמת לבית
+              <span className="block text-gradient-rose">אמנות קיר פרימיום — יהלום לבית</span>
             </h1>
             <p className="mt-6 max-w-xl text-base text-muted-foreground md:text-lg">
               קולקציה אקסקלוסיבית של תמונות זכוכית מחוסמת בהדפסה דיגיטלית ברמת גלריה. כל יצירה נולדת מתוך הקשבה לחלל ולסיפור שלך.

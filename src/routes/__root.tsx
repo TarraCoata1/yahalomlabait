@@ -97,19 +97,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: s.site_title },
       { name: "twitter:description", content: s.site_description },
-      { name: "google-site-verification", content: "VP38nlGWNpno0uco5fv6vx_Odme8z00P2eWOQJ1IoVc" },
     ];
+    // google-site-verification: DB-driven only (avoid duplicate tags).
     if (s.gsc_verification) {
       meta.push({ name: "google-site-verification", content: s.gsc_verification });
+    } else {
+      meta.push({ name: "google-site-verification", content: "VP38nlGWNpno0uco5fv6vx_Odme8z00P2eWOQJ1IoVc" });
     }
     if (s.facebook_pixel_id) {
       meta.push({ name: "facebook-domain-verification", content: s.facebook_pixel_id });
     }
-    const ogImage = s.social_image_url || "https://yahalom-la-bait.com/og-cover.jpg";
-    meta.push({ property: "og:image", content: ogImage });
-    meta.push({ property: "og:image:width", content: "1200" });
-    meta.push({ property: "og:image:height", content: "630" });
-    meta.push({ name: "twitter:image", content: ogImage });
+    // NOTE: og:image is intentionally NOT set at the root — it would override
+    // every leaf route's share image. Leaf routes set their own og:image.
 
     const sameAs = [s.facebook_url, s.instagram_url, s.tiktok_url, s.youtube_url].filter(Boolean);
     const jsonLd = {
@@ -117,12 +116,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       "@graph": [
         {
           "@type": "LocalBusiness",
-          "@id": "https://yahalom-la-bait.com/#organization",
+          "@id": "https://www.yahalom-la-bait.com/#organization",
           name: s.company_name,
           alternateName: "יהלום לבית",
-          url: "https://yahalom-la-bait.com",
-          image: s.social_image_url || "https://yahalom-la-bait.com/og-cover.jpg",
-          logo: "https://yahalom-la-bait.com/logo.png",
+          url: "https://www.yahalom-la-bait.com",
+          image: s.social_image_url || "https://www.yahalom-la-bait.com/og-cover.jpg",
+          logo: "https://www.yahalom-la-bait.com/logo.png",
           description:
             "יהלום לבית — מותג פרימיום ישראלי לתמונות לבית ואמנות קיר יוקרתית: הדפסה דיגיטלית מתקדמת על זכוכית מחוסמת, בעיצוב אישי.",
           telephone: s.contact_phone,
@@ -146,14 +145,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         },
         {
           "@type": "WebSite",
-          "@id": "https://yahalom-la-bait.com/#website",
-          url: "https://yahalom-la-bait.com",
+          "@id": "https://www.yahalom-la-bait.com/#website",
+          url: "https://www.yahalom-la-bait.com",
           name: s.company_name,
           inLanguage: "he-IL",
-          publisher: { "@id": "https://yahalom-la-bait.com/#organization" },
+          publisher: { "@id": "https://www.yahalom-la-bait.com/#organization" },
           potentialAction: {
             "@type": "SearchAction",
-            target: "https://yahalom-la-bait.com/shop?cat={search_term_string}",
+            target: "https://www.yahalom-la-bait.com/shop?cat={search_term_string}",
             "query-input": "required name=search_term_string",
           },
         },
