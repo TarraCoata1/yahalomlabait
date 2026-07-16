@@ -88,6 +88,34 @@ function Home() {
         </div>
       </section>
 
+      {/* Elegant light-mode divider — invisible in dark mode */}
+      <div aria-hidden className="relative hidden dark:hidden [html:not(.dark)_&]:block" style={{ marginTop: "-1px" }}>
+        <svg
+          viewBox="0 0 1440 90"
+          preserveAspectRatio="none"
+          className="block h-14 w-full md:h-20"
+        >
+          <defs>
+            <linearGradient id="ylb-wave" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stopColor="#f7e5dc" stopOpacity="0" />
+              <stop offset="50%" stopColor="#f5dcd0" stopOpacity="0.55" />
+              <stop offset="100%" stopColor="#f7e5dc" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M0,50 C240,10 480,90 720,50 C960,10 1200,90 1440,50 L1440,90 L0,90 Z"
+            fill="url(#ylb-wave)"
+          />
+          <path
+            d="M0,60 C240,30 480,80 720,55 C960,30 1200,80 1440,55"
+            fill="none"
+            stroke="#e9c9b8"
+            strokeOpacity="0.35"
+            strokeWidth="1"
+          />
+        </svg>
+      </div>
+
       <USPBar />
 
       {/* GEO / AI search semantic context */}
