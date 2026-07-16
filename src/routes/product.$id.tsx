@@ -7,6 +7,7 @@ import { productQuery, productsQuery } from "@/lib/catalog";
 import { RECT_SIZES, SQUARE_SIZES, installationFee, FROM_PRICE } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/site/ProductCard";
+import { ProtectedImg } from "@/components/site/ProtectedImg";
 import { useSession, useIsAdmin } from "@/hooks/use-auth";
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
 import { localizedMeta, canonicalLink, canonical, jsonLd, breadcrumbSchema } from "@/lib/seo";
@@ -170,8 +171,23 @@ function ProductPage() {
         {/* Gallery */}
         <div>
           <div className="relative overflow-hidden rounded-2xl glass">
-            <img src={media[activeMedia]} alt={`${product.name} - תמונת זכוכית לבית מבית יהלום לבית`} width={800} height={1000} loading="eager" className="aspect-[4/5] w-full object-cover" />
-            <span className="absolute bottom-3 right-3 rounded-full bg-background/70 px-3 py-1 text-[11px] tracking-wider text-rose-gold backdrop-blur">
+            {/* Blurred backdrop so the full artwork shows without ugly letterbox */}
+            <div
+              aria-hidden
+              className="absolute inset-0 scale-110 opacity-40 blur-2xl"
+              style={{ backgroundImage: `url(${media[activeMedia]})`, backgroundSize: "cover", backgroundPosition: "center" }}
+            />
+            <ProtectedImg
+              src={media[activeMedia]}
+              alt={`${product.name} - תמונת זכוכית לבית מבית יהלום לבית`}
+              width={800}
+              height={1000}
+              loading="eager"
+              watermark
+              wrapperClassName="aspect-[4/5] w-full grid place-items-center bg-transparent"
+              className="relative z-10 max-h-full max-w-full object-contain drop-shadow-xl"
+            />
+            <span className="absolute z-20 bottom-3 right-3 rounded-full bg-background/70 px-3 py-1 text-[11px] tracking-wider text-rose-gold backdrop-blur">
               {activeMedia === 0 ? "תצוגת אמנות" : "תצוגה בסלון"}
             </span>
           </div>
@@ -181,11 +197,11 @@ function ProductPage() {
                 aria-label={i === 0 ? `הצג ${product.name} - תצוגת אמנות` : `הצג ${product.name} - תצוגה בסלון`}
                 aria-pressed={activeMedia === i}
                 className={`overflow-hidden rounded-lg border-2 transition ${activeMedia === i ? "border-rose-gold" : "border-transparent"}`}>
-                <img src={m} alt="" loading="lazy" width={80} height={80} className="h-20 w-20 object-cover" />
+                <img src={m} alt="" loading="lazy" width={80} height={80} draggable={false} onContextMenu={(e) => e.preventDefault()} className="h-20 w-20 object-cover" />
               </button>
             ))}
           </div>
-          <p className="mt-3 text-xs text-muted-foreground">תצוגה: היצירה ממוסגרת בזכוכית פרימיום, וסצנת חיים בחלל אמיתי.</p>
+          <p className="mt-3 text-xs text-muted-foreground">תצוגה: היצירה מוצגת במלואה על זכוכית פרימיום, וסצנת חיים בחלל אמיתי.</p>
         </div>
 
         {/* Details */}

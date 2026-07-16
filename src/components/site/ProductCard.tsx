@@ -64,9 +64,25 @@ export function ProductCard({ product }: { product: Product }) {
     <>
       <Link to="/product/$id" params={{ id: product.slug }} className="group relative block">
         <div className={`relative overflow-hidden rounded-2xl glass ${product.isHidden ? "opacity-60" : ""}`}>
-          <div className="aspect-[4/5] overflow-hidden">
-            <img src={product.image} alt={`${product.name} - תמונת זכוכית לבית ${product.style ?? ""} מיהלום לבית`} loading="lazy" width={480} height={600}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <div className="relative aspect-[4/5] overflow-hidden">
+            {/* Blurred backdrop lets us show the whole artwork without cropping it */}
+            <div
+              aria-hidden
+              className="absolute inset-0 scale-110 opacity-30 blur-xl"
+              style={{ backgroundImage: `url(${product.image})`, backgroundSize: "cover", backgroundPosition: "center" }}
+            />
+            <img
+              src={product.image}
+              alt={`${product.name} - תמונת זכוכית לבית ${product.style ?? ""} מיהלום לבית`}
+              loading="lazy"
+              width={480}
+              height={600}
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+              onDragStart={(e) => e.preventDefault()}
+              style={{ WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none" } as React.CSSProperties}
+              className="relative z-10 h-full w-full object-contain transition-transform duration-700 group-hover:scale-105"
+            />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
           <button onClick={handleQuickAdd} aria-label="הוסף לעגלה"
