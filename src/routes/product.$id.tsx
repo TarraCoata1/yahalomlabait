@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil } from "lucide-react";
+import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil, Droplet, Award } from "lucide-react";
 import hero from "@/assets/hero-living-room.jpg";
 import { productQuery, productsQuery } from "@/lib/catalog";
 import { RECT_SIZES, SQUARE_SIZES, installationFee, FROM_PRICE } from "@/lib/products";
@@ -11,6 +11,7 @@ import { ProtectedImg } from "@/components/site/ProtectedImg";
 import { useSession, useIsAdmin } from "@/hooks/use-auth";
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
 import { localizedMeta, canonicalLink, canonical, jsonLd, breadcrumbSchema } from "@/lib/seo";
+import { useRecentlyViewed } from "@/lib/recently-viewed";
 
 export const Route = createFileRoute("/product/$id")({
   loader: async ({ params, context }) => {
@@ -35,16 +36,33 @@ export const Route = createFileRoute("/product/$id")({
           "@id": `${canonical(path)}#product`,
           name: loaderData.name,
           description: loaderData.description,
-          image: [loaderData.image],
-          sku: String(loaderData.id ?? params.id),
+          image: [
+            {
+              "@type": "ImageObject",
+              url: loaderData.image,
+              width: 1200,
+              height: 1500,
+              caption: `${loaderData.name} — תמונת זכוכית מחוסמת מבית יהלום לבית`,
+            },
+          ],
+          sku: String(loaderData.sku ?? loaderData.id ?? params.id),
           mpn: String(loaderData.id ?? params.id),
-          brand: { "@type": "Brand", name: "יהלום לבית" },
-          category: loaderData.style ?? "אמנות קיר",
+          brand: { "@type": "Brand", name: "יהלום לבית", url: "https://www.yahalom-la-bait.com" },
+          manufacturer: { "@type": "Organization", name: "יהלום לבית" },
+          category: loaderData.style ?? "אמנות קיר על זכוכית",
+          material: "זכוכית מחוסמת אקסטרה קלירית 6 מ״מ",
+          additionalProperty: [
+            { "@type": "PropertyValue", name: "טכנולוגיית הדפסה", value: "UV דיגיטלי, עמיד בדהייה" },
+            { "@type": "PropertyValue", name: "מערכת תליה", value: "סמויה, כלולה במחיר" },
+            { "@type": "PropertyValue", name: "גימור", value: "ליטוש קצוות מקצועי" },
+          ],
           offers: {
-            "@type": "Offer",
+            "@type": "AggregateOffer",
             url: canonical(path),
             priceCurrency: "ILS",
-            price: String(FROM_PRICE),
+            lowPrice: String(FROM_PRICE),
+            highPrice: "2400",
+            offerCount: RECT_SIZES.length + SQUARE_SIZES.length,
             priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
             availability: "https://schema.org/InStock",
             itemCondition: "https://schema.org/NewCondition",
@@ -59,29 +77,12 @@ export const Route = createFileRoute("/product/$id")({
             },
             shippingDetails: {
               "@type": "OfferShippingDetails",
-              shippingRate: {
-                "@type": "MonetaryAmount",
-                value: "0",
-                currency: "ILS",
-              },
-              shippingDestination: {
-                "@type": "DefinedRegion",
-                addressCountry: "IL",
-              },
+              shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "ILS" },
+              shippingDestination: { "@type": "DefinedRegion", addressCountry: "IL" },
               deliveryTime: {
                 "@type": "ShippingDeliveryTime",
-                handlingTime: {
-                  "@type": "QuantitativeValue",
-                  minValue: 7,
-                  maxValue: 10,
-                  unitCode: "DAY",
-                },
-                transitTime: {
-                  "@type": "QuantitativeValue",
-                  minValue: 2,
-                  maxValue: 4,
-                  unitCode: "DAY",
-                },
+                handlingTime: { "@type": "QuantitativeValue", minValue: 7, maxValue: 10, unitCode: "DAY" },
+                transitTime: { "@type": "QuantitativeValue", minValue: 2, maxValue: 4, unitCode: "DAY" },
               },
             },
           },
@@ -120,10 +121,16 @@ function ProductPage() {
   const [sizeIdx, setSizeIdx] = useState(0);
   const [screwColor, setScrewColor] = useState<"silver" | "gold" | "black">("silver");
   const [withInstall, setWithInstall] = useState(false);
-  const [tab, setTab] = useState<"specs" | "shipping">("specs");
+  const [tab, setTab] = useState<"specs" | "shipping" | "care" | "why">("specs");
   const [activeMedia, setActiveMedia] = useState(0);
   const [editing, setEditing] = useState(false);
   const add = useCart((s) => s.add);
+  const pushRecent = useRecentlyViewed((s) => s.push);
+  const recentIds = useRecentlyViewed((s) => s.ids);
+
+  useEffect(() => {
+    if (product?.id) pushRecent(product.id);
+  }, [product?.id, pushRecent]);
 
   if (!product) return null;
 
@@ -141,6 +148,11 @@ function ProductPage() {
 
   const media = [product.image, hero];
   const related = allProducts.filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id && !p.isHidden).slice(0, 4);
+  const recentlyViewed = recentIds
+    .filter((id) => id !== product.id)
+    .map((id) => allProducts.find((p) => p.id === id))
+    .filter((p): p is (typeof allProducts)[number] => !!p && !p.isHidden)
+    .slice(0, 4);
 
   const switchShape = (s: "rect" | "square") => {
     setShape(s);
@@ -323,23 +335,43 @@ function ProductPage() {
 
           {/* Tabs */}
           <div className="mt-10 border-t border-border pt-6">
-            <div className="flex gap-6 text-sm">
-              <button onClick={() => setTab("specs")} className={`pb-2 ${tab === "specs" ? "border-b-2 border-rose-gold text-rose-gold" : "text-muted-foreground"}`}>פרטי המוצר</button>
-              <button onClick={() => setTab("shipping")} className={`pb-2 ${tab === "shipping" ? "border-b-2 border-rose-gold text-rose-gold" : "text-muted-foreground"}`}>משלוחים והחזרות</button>
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+              <button onClick={() => setTab("specs")} className={`pb-2 ${tab === "specs" ? "border-b-2 border-rose-gold text-rose-gold" : "text-muted-foreground hover:text-foreground"}`}>פרטי המוצר</button>
+              <button onClick={() => setTab("why")} className={`pb-2 ${tab === "why" ? "border-b-2 border-rose-gold text-rose-gold" : "text-muted-foreground hover:text-foreground"}`}>למה זכוכית</button>
+              <button onClick={() => setTab("care")} className={`pb-2 ${tab === "care" ? "border-b-2 border-rose-gold text-rose-gold" : "text-muted-foreground hover:text-foreground"}`}>ניקוי וטיפול</button>
+              <button onClick={() => setTab("shipping")} className={`pb-2 ${tab === "shipping" ? "border-b-2 border-rose-gold text-rose-gold" : "text-muted-foreground hover:text-foreground"}`}>משלוחים והחזרות</button>
             </div>
-            <div className="mt-5 space-y-3 text-sm text-muted-foreground">
-              {tab === "specs" ? (
+            <div className="mt-5 space-y-3 text-sm leading-relaxed text-muted-foreground">
+              {tab === "specs" && (
                 <>
-                  <p className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-rose-gold" />זכוכית מחוסמת אקסטרה קלירית בעובי 6 מ"מ</p>
+                  <p className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-rose-gold" />זכוכית מחוסמת אקסטרה קלירית בעובי 6 מ״מ</p>
                   <p className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-rose-gold" />הדפסה דיגיטלית בטכנולוגיית UV — עמידה בדהייה</p>
                   <p className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-rose-gold" />מערכת תליה סמויה הכלולה במחיר</p>
                   <p className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-rose-gold" />ליטוש קצוות מקצועי וגימור פרימיום</p>
                 </>
-              ) : (
+              )}
+              {tab === "why" && (
+                <>
+                  <p className="flex gap-2"><Award className="h-4 w-4 shrink-0 text-rose-gold" />זכוכית מחוסמת חזקה פי 5 מזכוכית רגילה, בטוחה לבית ולמשפחה.</p>
+                  <p className="flex gap-2"><Sparkles className="h-4 w-4 shrink-0 text-rose-gold" />שכבת אקסטרה קליר משמרת את צבעי המקור בבהירות מקסימלית — ללא גוון ירקרק.</p>
+                  <p className="flex gap-2"><ShieldCheck className="h-4 w-4 shrink-0 text-rose-gold" />הדפסת UV חודרנית שלא נמחקת עם השנים, לא דוהה מאור השמש ולא נסדקת מלחות.</p>
+                  <p className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-rose-gold" />משטח לא נקבובי — אנטיבקטריאלי, מתאים גם למטבחים ולחדרי רחצה.</p>
+                </>
+              )}
+              {tab === "care" && (
+                <>
+                  <p className="flex gap-2"><Droplet className="h-4 w-4 shrink-0 text-rose-gold" />ניקוי בסמרטוט מיקרופייבר לח בלבד — לא נדרש חומר מיוחד.</p>
+                  <p className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-rose-gold" />אין להשתמש בחומרים שוחקים, ספוגי ברזל או חומצות.</p>
+                  <p className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-rose-gold" />ניתן להשתמש בנוזל לניקוי חלונות — לרסס על המטלית ולא ישירות על היצירה.</p>
+                  <p className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-rose-gold" />לתחזוקה שוטפת מומלץ ניקוי אחת לשבועיים.</p>
+                </>
+              )}
+              {tab === "shipping" && (
                 <>
                   <p>זמן אספקה: עד 14 ימי עסקים מרגע אישור ההזמנה, כולל ייצור ומשלוח מבוטח.</p>
+                  <p>משלוח חינם בהזמנה מעל ₪1,800. מתחת לסכום זה — ₪59 דמי משלוח.</p>
                   <p>המשלוח וההתקנה מבוטחים. כל ההזמנות סופיות — לא ניתן לבטל הזמנה לאחר ביצועה.</p>
-                  <p>לתאום הובלה והרכבה בבית — סמנו "הוסף התקנה מקצועית" או צרו קשר בוואטסאפ.</p>
+                  <p>לתיאום הובלה והרכבה בבית — סמנו "הוסף התקנה מקצועית" או צרו קשר בוואטסאפ.</p>
                 </>
               )}
             </div>
@@ -355,6 +387,16 @@ function ProductPage() {
           </div>
         </section>
       )}
+
+      {recentlyViewed.length > 0 && (
+        <section className="mt-20">
+          <h2 className="mb-8 font-serif text-2xl md:text-3xl">צפית לאחרונה</h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {recentlyViewed.map((p) => <ProductCard key={p.id} product={p} />)}
+          </div>
+        </section>
+      )}
+
 
       {editing && <EditProductDialog product={product} onClose={() => setEditing(false)} />}
     </div>
