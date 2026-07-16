@@ -432,7 +432,27 @@ function useSettingsForm() {
   const save = async (patch?: Partial<SiteSettings>) => {
     setSaving(true);
     try {
-      await saveSiteSettings(patch ?? form);
+      // Only send fields that actually changed vs. the last loaded snapshot,
+      // so saving one panel never overwrites fields edited (or uploaded)
+      // in another panel that also holds a copy of the form.
+      let payload: Partial<SiteSettings>;
+      if (patch) {
+        payload = patch;
+      } else if (data) {
+        payload = {};
+        (Object.keys(form) as (keyof SiteSettings)[]).forEach((k) => {
+          if (JSON.stringify(form[k]) !== JSON.stringify(data[k])) {
+            (payload as Record<string, unknown>)[k as string] = form[k];
+          }
+        });
+      } else {
+        payload = form;
+      }
+      if (Object.keys(payload).length === 0) {
+        toast.success("אין שינויים לשמירה");
+        return;
+      }
+      await saveSiteSettings(payload);
       await qc.invalidateQueries({ queryKey: ["site_settings"] });
       router.invalidate();
       toast.success("הגדרות נשמרו");
