@@ -70,8 +70,8 @@ function Home() {
           <div className="max-w-2xl">
             <span className="inline-block rounded-full glass px-4 py-1.5 text-xs tracking-[0.3em] text-rose-gold">YAHALOM · LA · BAIT</span>
             <h1 className="mt-6 font-serif text-4xl leading-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-              אמנות יוקרתית על זכוכית
-              <span className="block text-gradient-rose">משדרגים את חלל הבית</span>
+              תמונות זכוכית מחוסמת לבית
+              <span className="block text-gradient-rose">אמנות קיר פרימיום — יהלום לבית</span>
             </h1>
             <p className="mt-6 max-w-xl text-base text-muted-foreground md:text-lg">
               קולקציה אקסקלוסיבית של תמונות זכוכית מחוסמת בהדפסה דיגיטלית ברמת גלריה. כל יצירה נולדת מתוך הקשבה לחלל ולסיפור שלך.
