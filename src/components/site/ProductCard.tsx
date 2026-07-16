@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Plus, Pencil, EyeOff, Eye, Trash2 } from "lucide-react";
+import { Plus, Pencil, EyeOff, Eye, Trash2, Heart, Eye as EyeIcon } from "lucide-react";
 import { useState } from "react";
 import type { Product } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
@@ -9,6 +9,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
+import { useWishlist } from "@/lib/wishlist";
+import { QuickViewDialog } from "@/components/site/QuickViewDialog";
 
 export function ProductCard({ product }: { product: Product }) {
   const add = useCart((s) => s.add);
@@ -16,6 +18,9 @@ export function ProductCard({ product }: { product: Product }) {
   const { data: isAdmin } = useIsAdmin(user);
   const qc = useQueryClient();
   const [editing, setEditing] = useState(false);
+  const [quickView, setQuickView] = useState(false);
+  const wishlisted = useWishlist((s) => s.ids.includes(product.id));
+  const toggleWish = useWishlist((s) => s.toggle);
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -85,9 +90,24 @@ export function ProductCard({ product }: { product: Product }) {
             />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-          <button onClick={handleQuickAdd} aria-label="הוסף לעגלה"
-            className="absolute bottom-4 right-4 grid h-11 w-11 translate-y-2 place-items-center rounded-full btn-rose opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-            <Plus className="h-5 w-5" />
+          <div className="absolute bottom-4 right-4 flex flex-col gap-2 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+            <button onClick={handleQuickAdd} aria-label="הוסף לעגלה"
+              className="grid h-11 w-11 place-items-center rounded-full btn-rose shadow-lg">
+              <Plus className="h-5 w-5" />
+            </button>
+            <button onClick={(e) => { stop(e); setQuickView(true); }} aria-label="תצוגה מהירה"
+              className="grid h-11 w-11 place-items-center rounded-full bg-background/90 text-foreground backdrop-blur ring-1 ring-rose-gold/40 shadow-lg hover:bg-background">
+              <EyeIcon className="h-5 w-5" />
+            </button>
+          </div>
+          <button
+            onClick={(e) => { stop(e); toggleWish(product.id); toast.success(wishlisted ? "הוסר מהמועדפים" : "נוסף למועדפים"); }}
+            aria-label={wishlisted ? "הסר ממועדפים" : "הוסף למועדפים"}
+            aria-pressed={wishlisted}
+            className={`absolute top-3 left-3 z-10 grid h-10 w-10 place-items-center rounded-full backdrop-blur transition ${
+              wishlisted ? "bg-rose-gold/90 text-white" : "bg-background/80 text-foreground hover:bg-background"
+            }`}>
+            <Heart className={`h-5 w-5 ${wishlisted ? "fill-current" : ""}`} />
           </button>
           {product.bestSeller && (
             <span className="absolute top-3 right-3 rounded-full bg-background/70 px-3 py-1 text-[11px] tracking-wider text-rose-gold backdrop-blur">
@@ -95,7 +115,7 @@ export function ProductCard({ product }: { product: Product }) {
             </span>
           )}
           {product.isHidden && (
-            <span className="absolute top-3 left-3 rounded-full bg-background/80 px-3 py-1 text-[11px] tracking-wider text-amber-400 backdrop-blur">
+            <span className="absolute top-14 left-3 rounded-full bg-background/80 px-3 py-1 text-[11px] tracking-wider text-amber-400 backdrop-blur">
               מוסתר
             </span>
           )}
@@ -130,6 +150,7 @@ export function ProductCard({ product }: { product: Product }) {
       </Link>
 
       {editing && <EditProductDialog product={product} onClose={() => setEditing(false)} />}
+      {quickView && <QuickViewDialog product={product} onClose={() => setQuickView(false)} />}
     </>
   );
 }
