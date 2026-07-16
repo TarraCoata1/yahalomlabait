@@ -680,7 +680,7 @@ function PageSeoDialog({ page, onClose, onSaved }: { page?: PageSeo; onClose: ()
           <textarea value={form.description ?? ""} onChange={(e) => set("description", e.target.value)} rows={2} className={inputCls + " resize-none"} />
         </Field>
         <Field label="Keywords (מופרד בפסיקים)"><input value={form.keywords ?? ""} onChange={(e) => set("keywords", e.target.value)} className={inputCls} /></Field>
-        <Field label="Canonical URL"><input value={form.canonical_url ?? ""} onChange={(e) => set("canonical_url", e.target.value)} className={inputCls} dir="ltr" placeholder="https://yahalom-la-bait.com/..." /></Field>
+        <Field label="Canonical URL"><input value={form.canonical_url ?? ""} onChange={(e) => set("canonical_url", e.target.value)} className={inputCls} dir="ltr" placeholder="https://www.yahalom-la-bait.com/..." /></Field>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="OG Title"><input value={form.og_title ?? ""} onChange={(e) => set("og_title", e.target.value)} className={inputCls} /></Field>
           <Field label="OG Image URL"><input value={form.og_image ?? ""} onChange={(e) => set("og_image", e.target.value)} className={inputCls} dir="ltr" /></Field>

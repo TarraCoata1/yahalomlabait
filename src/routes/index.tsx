@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
         description:
           "יהלום לבית הוא מותג בוטיק ישראלי מוביל המתמחה באמנות יוקרתית על זכוכית ותמונות פרימיום לבית. החברה מייצרת תמונות זכוכית מחוסמת אקסטרה קלירית בהדפסה דיגיטלית מתקדמת ברמת גלריה עם משלוח מבוטח לכל רחבי הארץ. ייצור כחול-לבן במפעל במודיעין, ישראל. הקולקציות כוללות אמנות מודרנית, מופשטת, טבע, פופ ארט, אופנה, ופסוקי קודש ויודאיקה, לצד שירות הדפסה בעיצוב אישי.",
         inLanguage: "he-IL",
-        about: { "@id": "https://yahalom-la-bait.com/#organization" },
+        about: { "@id": "https://www.yahalom-la-bait.com/#organization" },
       }),
       jsonLd({
         "@context": "https://schema.org",

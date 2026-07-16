@@ -105,7 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     if (s.facebook_pixel_id) {
       meta.push({ name: "facebook-domain-verification", content: s.facebook_pixel_id });
     }
-    const ogImage = s.social_image_url || "https://yahalom-la-bait.com/og-cover.jpg";
+    const ogImage = s.social_image_url || "https://www.yahalom-la-bait.com/og-cover.jpg";
     meta.push({ property: "og:image", content: ogImage });
     meta.push({ property: "og:image:width", content: "1200" });
     meta.push({ property: "og:image:height", content: "630" });
@@ -117,12 +117,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       "@graph": [
         {
           "@type": "LocalBusiness",
-          "@id": "https://yahalom-la-bait.com/#organization",
+          "@id": "https://www.yahalom-la-bait.com/#organization",
           name: s.company_name,
           alternateName: "יהלום לבית",
-          url: "https://yahalom-la-bait.com",
-          image: s.social_image_url || "https://yahalom-la-bait.com/og-cover.jpg",
-          logo: "https://yahalom-la-bait.com/logo.png",
+          url: "https://www.yahalom-la-bait.com",
+          image: s.social_image_url || "https://www.yahalom-la-bait.com/og-cover.jpg",
+          logo: "https://www.yahalom-la-bait.com/logo.png",
           description:
             "יהלום לבית — מותג פרימיום ישראלי לתמונות לבית ואמנות קיר יוקרתית: הדפסה דיגיטלית מתקדמת על זכוכית מחוסמת, בעיצוב אישי.",
           telephone: s.contact_phone,
@@ -146,14 +146,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         },
         {
           "@type": "WebSite",
-          "@id": "https://yahalom-la-bait.com/#website",
-          url: "https://yahalom-la-bait.com",
+          "@id": "https://www.yahalom-la-bait.com/#website",
+          url: "https://www.yahalom-la-bait.com",
           name: s.company_name,
           inLanguage: "he-IL",
-          publisher: { "@id": "https://yahalom-la-bait.com/#organization" },
+          publisher: { "@id": "https://www.yahalom-la-bait.com/#organization" },
           potentialAction: {
             "@type": "SearchAction",
-            target: "https://yahalom-la-bait.com/shop?cat={search_term_string}",
+            target: "https://www.yahalom-la-bait.com/shop?cat={search_term_string}",
             "query-input": "required name=search_term_string",
           },
         },
