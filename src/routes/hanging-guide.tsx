@@ -1,54 +1,55 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { localizedMeta, canonicalLink, jsonLd, canonical } from "@/lib/seo";
+import { jsonLd, canonical } from "@/lib/seo";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 
-const TITLE = "איך תולים תמונת זכוכית — מדריך התקנה מלא | יהלום לבית";
 const DESC =
   "מדריך שלב־אחר־שלב לתלייה נכונה של תמונת זכוכית מחוסמת: מערכת סטנד־אוף, סוגי קירות (גבס, בטון, בלוק), כלים, בטיחות ומיקום גובה עין. הוראות מקצועיות של יהלום לבית.";
 
 export const Route = createFileRoute("/hanging-guide")({
-  head: () => ({
-    meta: [
-      ...localizedMeta({ title: TITLE, description: DESC, path: "/hanging-guide", type: "article" }),
-    ],
-    links: canonicalLink("/hanging-guide"),
-    scripts: [
-      jsonLd({
-        "@context": "https://schema.org",
-        "@type": "HowTo",
-        name: "איך תולים תמונת זכוכית מחוסמת על קיר",
-        description: DESC,
-        inLanguage: "he-IL",
-        totalTime: "PT45M",
-        tool: [
-          { "@type": "HowToTool", name: "מקדחה" },
-          { "@type": "HowToTool", name: "פלס" },
-          { "@type": "HowToTool", name: "מטר" },
-          { "@type": "HowToTool", name: "עיפרון" },
-          { "@type": "HowToTool", name: "מברג פיליפס" },
-        ],
-        supply: [
-          { "@type": "HowToSupply", name: "מערכת סטנד־אוף (Standoff) המסופקת עם התמונה" },
-          { "@type": "HowToSupply", name: "דיבלים מתאימים לסוג הקיר" },
-        ],
-        step: [
-          { "@type": "HowToStep", name: "בחירת מיקום וגובה", text: "מרכז התמונה בגובה 145–155 ס\"מ מהרצפה (גובה עין). מעל ספה: 15–25 ס\"מ מעל משענת." },
-          { "@type": "HowToStep", name: "סימון נקודות הקידוח", text: "הצמידו את התבנית המסופקת לקיר, יישרו עם פלס וסמנו את שתי הנקודות בעיפרון." },
-          { "@type": "HowToStep", name: "קידוח לפי סוג הקיר", text: "גבס — מקדח 6 מ\"מ + דיבל פרפר. בטון/בלוק — מקדח וידיה 8 מ\"מ + דיבל פלסטיק. שאבו אבק לפני החדרת הדיבל." },
-          { "@type": "HowToStep", name: "הברגת בורגי הסטנד־אוף", text: "הבריגו את הבסיסים עד סוף התבריג. ודאו שהם ניצבים לקיר ויציבים לחלוטין." },
-          { "@type": "HowToStep", name: "התקנת התמונה", text: "בעזרת אדם נוסף, הניחו את חורי הזכוכית על הבסיסים והבריגו את כובעי הסטנד־אוף בעדינות ביד — לא במברגה חשמלית." },
-          { "@type": "HowToStep", name: "יישור וסיום", text: "בדקו עם פלס, נגבו את הזכוכית במטלית מיקרופייבר. סיימתם." },
-        ],
-      }),
-      jsonLd({
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "בית", item: canonical("/") },
-          { "@type": "ListItem", position: 2, name: "מדריך התקנה", item: canonical("/hanging-guide") },
-        ],
-      }),
-    ],
-  }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/hanging-guide")),
+  head: ({ loaderData }) =>
+    buildSeoHead({
+      routePath: "/hanging-guide",
+      seo: loaderData ?? null,
+      type: "article",
+      extraScripts: [
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          name: "איך תולים תמונת זכוכית מחוסמת על קיר",
+          description: DESC,
+          inLanguage: "he-IL",
+          totalTime: "PT45M",
+          tool: [
+            { "@type": "HowToTool", name: "מקדחה" },
+            { "@type": "HowToTool", name: "פלס" },
+            { "@type": "HowToTool", name: "מטר" },
+            { "@type": "HowToTool", name: "עיפרון" },
+            { "@type": "HowToTool", name: "מברג פיליפס" },
+          ],
+          supply: [
+            { "@type": "HowToSupply", name: "מערכת סטנד־אוף (Standoff) המסופקת עם התמונה" },
+            { "@type": "HowToSupply", name: "דיבלים מתאימים לסוג הקיר" },
+          ],
+          step: [
+            { "@type": "HowToStep", name: "בחירת מיקום וגובה", text: "מרכז התמונה בגובה 145–155 ס\"מ מהרצפה (גובה עין). מעל ספה: 15–25 ס\"מ מעל משענת." },
+            { "@type": "HowToStep", name: "סימון נקודות הקידוח", text: "הצמידו את התבנית המסופקת לקיר, יישרו עם פלס וסמנו את שתי הנקודות בעיפרון." },
+            { "@type": "HowToStep", name: "קידוח לפי סוג הקיר", text: "גבס — מקדח 6 מ\"מ + דיבל פרפר. בטון/בלוק — מקדח וידיה 8 מ\"מ + דיבל פלסטיק. שאבו אבק לפני החדרת הדיבל." },
+            { "@type": "HowToStep", name: "הברגת בורגי הסטנד־אוף", text: "הבריגו את הבסיסים עד סוף התבריג. ודאו שהם ניצבים לקיר ויציבים לחלוטין." },
+            { "@type": "HowToStep", name: "התקנת התמונה", text: "בעזרת אדם נוסף, הניחו את חורי הזכוכית על הבסיסים והבריגו את כובעי הסטנד־אוף בעדינות ביד — לא במברגה חשמלית." },
+            { "@type": "HowToStep", name: "יישור וסיום", text: "בדקו עם פלס, נגבו את הזכוכית במטלית מיקרופייבר. סיימתם." },
+          ],
+        }),
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "בית", item: canonical("/") },
+            { "@type": "ListItem", position: 2, name: "מדריך התקנה", item: canonical("/hanging-guide") },
+          ],
+        }),
+      ],
+    }),
   component: HangingGuidePage,
 });
 
