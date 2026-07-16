@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil } from "lucide-react";
+import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil, Droplet, Award } from "lucide-react";
 import hero from "@/assets/hero-living-room.jpg";
 import { productQuery, productsQuery } from "@/lib/catalog";
 import { RECT_SIZES, SQUARE_SIZES, installationFee, FROM_PRICE } from "@/lib/products";
@@ -11,6 +11,7 @@ import { ProtectedImg } from "@/components/site/ProtectedImg";
 import { useSession, useIsAdmin } from "@/hooks/use-auth";
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
 import { localizedMeta, canonicalLink, canonical, jsonLd, breadcrumbSchema } from "@/lib/seo";
+import { useRecentlyViewed } from "@/lib/recently-viewed";
 
 export const Route = createFileRoute("/product/$id")({
   loader: async ({ params, context }) => {
