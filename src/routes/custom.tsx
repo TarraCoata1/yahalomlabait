@@ -3,17 +3,11 @@ import { useMemo, useState, useRef } from "react";
 import { Upload, Sparkles, Check, Wrench } from "lucide-react";
 import { SIZES, installationFee } from "@/lib/products";
 import { useCart } from "@/lib/cart";
-import { localizedMeta, canonicalLink } from "@/lib/seo";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/custom")({
-  head: () => ({
-    meta: localizedMeta({
-      title: "עיצוב אישי | תמונות לבית מותאמות אישית - יהלום לבית",
-      description: "העלו את התמונה שלכם, בחרו מידה ופורמט, וקבלו תמונת זכוכית פרימיום בעיצוב אישי — הדפסה ברמת גלריה.",
-      path: "/custom",
-    }),
-    links: canonicalLink("/custom"),
-  }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/custom")),
+  head: ({ loaderData }) => buildSeoHead({ routePath: "/custom", seo: loaderData ?? null }),
   component: CustomPage,
 });
 
