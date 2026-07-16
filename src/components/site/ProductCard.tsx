@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Plus, Pencil, EyeOff, Eye, Trash2, Heart, Eye as EyeIcon } from "lucide-react";
+import { Plus, Pencil, EyeOff, Eye, Trash2, Heart } from "lucide-react";
 import { useState } from "react";
 import type { Product } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
@@ -97,7 +97,7 @@ export function ProductCard({ product }: { product: Product }) {
             </button>
             <button onClick={(e) => { stop(e); setQuickView(true); }} aria-label="תצוגה מהירה"
               className="grid h-11 w-11 place-items-center rounded-full bg-background/90 text-foreground backdrop-blur ring-1 ring-rose-gold/40 shadow-lg hover:bg-background">
-              <EyeIcon className="h-5 w-5" />
+              <Eye className="h-5 w-5" />
             </button>
           </div>
           <button
