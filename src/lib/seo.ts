@@ -1,5 +1,5 @@
 // Site-wide SEO constants and JSON-LD helpers.
-export const SITE_URL = "https://yahalom-la-bait.com";
+export const SITE_URL = "https://www.yahalom-la-bait.com";
 export const SITE_NAME = "יהלום לבית";
 export const SITE_NAME_EN = "יהלום לבית";
 
