@@ -151,7 +151,7 @@ function ProductPage() {
   const recentlyViewed = recentIds
     .filter((id) => id !== product.id)
     .map((id) => allProducts.find((p) => p.id === id))
-    .filter((p): p is NonNullable<typeof p> => Boolean(p) && !p.isHidden)
+    .filter((p): p is (typeof allProducts)[number] => !!p && !p.isHidden)
     .slice(0, 4);
 
   const switchShape = (s: "rect" | "square") => {
