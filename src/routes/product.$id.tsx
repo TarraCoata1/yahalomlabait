@@ -36,16 +36,33 @@ export const Route = createFileRoute("/product/$id")({
           "@id": `${canonical(path)}#product`,
           name: loaderData.name,
           description: loaderData.description,
-          image: [loaderData.image],
-          sku: String(loaderData.id ?? params.id),
+          image: [
+            {
+              "@type": "ImageObject",
+              url: loaderData.image,
+              width: 1200,
+              height: 1500,
+              caption: `${loaderData.name} — תמונת זכוכית מחוסמת מבית יהלום לבית`,
+            },
+          ],
+          sku: String(loaderData.sku ?? loaderData.id ?? params.id),
           mpn: String(loaderData.id ?? params.id),
-          brand: { "@type": "Brand", name: "יהלום לבית" },
-          category: loaderData.style ?? "אמנות קיר",
+          brand: { "@type": "Brand", name: "יהלום לבית", url: "https://www.yahalom-la-bait.com" },
+          manufacturer: { "@type": "Organization", name: "יהלום לבית" },
+          category: loaderData.style ?? "אמנות קיר על זכוכית",
+          material: "זכוכית מחוסמת אקסטרה קלירית 6 מ״מ",
+          additionalProperty: [
+            { "@type": "PropertyValue", name: "טכנולוגיית הדפסה", value: "UV דיגיטלי, עמיד בדהייה" },
+            { "@type": "PropertyValue", name: "מערכת תליה", value: "סמויה, כלולה במחיר" },
+            { "@type": "PropertyValue", name: "גימור", value: "ליטוש קצוות מקצועי" },
+          ],
           offers: {
-            "@type": "Offer",
+            "@type": "AggregateOffer",
             url: canonical(path),
             priceCurrency: "ILS",
-            price: String(FROM_PRICE),
+            lowPrice: String(FROM_PRICE),
+            highPrice: "2400",
+            offerCount: RECT_SIZES.length + SQUARE_SIZES.length,
             priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
             availability: "https://schema.org/InStock",
             itemCondition: "https://schema.org/NewCondition",
@@ -60,29 +77,12 @@ export const Route = createFileRoute("/product/$id")({
             },
             shippingDetails: {
               "@type": "OfferShippingDetails",
-              shippingRate: {
-                "@type": "MonetaryAmount",
-                value: "0",
-                currency: "ILS",
-              },
-              shippingDestination: {
-                "@type": "DefinedRegion",
-                addressCountry: "IL",
-              },
+              shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "ILS" },
+              shippingDestination: { "@type": "DefinedRegion", addressCountry: "IL" },
               deliveryTime: {
                 "@type": "ShippingDeliveryTime",
-                handlingTime: {
-                  "@type": "QuantitativeValue",
-                  minValue: 7,
-                  maxValue: 10,
-                  unitCode: "DAY",
-                },
-                transitTime: {
-                  "@type": "QuantitativeValue",
-                  minValue: 2,
-                  maxValue: 4,
-                  unitCode: "DAY",
-                },
+                handlingTime: { "@type": "QuantitativeValue", minValue: 7, maxValue: 10, unitCode: "DAY" },
+                transitTime: { "@type": "QuantitativeValue", minValue: 2, maxValue: 4, unitCode: "DAY" },
               },
             },
           },
@@ -121,10 +121,16 @@ function ProductPage() {
   const [sizeIdx, setSizeIdx] = useState(0);
   const [screwColor, setScrewColor] = useState<"silver" | "gold" | "black">("silver");
   const [withInstall, setWithInstall] = useState(false);
-  const [tab, setTab] = useState<"specs" | "shipping">("specs");
+  const [tab, setTab] = useState<"specs" | "shipping" | "care" | "why">("specs");
   const [activeMedia, setActiveMedia] = useState(0);
   const [editing, setEditing] = useState(false);
   const add = useCart((s) => s.add);
+  const pushRecent = useRecentlyViewed((s) => s.push);
+  const recentIds = useRecentlyViewed((s) => s.ids);
+
+  useEffect(() => {
+    if (product?.id) pushRecent(product.id);
+  }, [product?.id, pushRecent]);
 
   if (!product) return null;
 
@@ -142,6 +148,11 @@ function ProductPage() {
 
   const media = [product.image, hero];
   const related = allProducts.filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id && !p.isHidden).slice(0, 4);
+  const recentlyViewed = recentIds
+    .filter((id) => id !== product.id)
+    .map((id) => allProducts.find((p) => p.id === id))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p) && !p.isHidden)
+    .slice(0, 4);
 
   const switchShape = (s: "rect" | "square") => {
     setShape(s);
