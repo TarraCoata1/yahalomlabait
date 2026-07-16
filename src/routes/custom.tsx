@@ -17,7 +17,8 @@ export const Route = createFileRoute("/custom")({
   component: CustomPage,
 });
 
-const BASE = 750;
+// Custom-design surcharge (proof + file QA + revisions). VAT-inclusive.
+const BASE = 900;
 
 const SCREW_OPTIONS = [
   { id: "silver" as const, label: "כסוף", swatch: "linear-gradient(135deg, #e8e8ea 0%, #b8b8bd 50%, #9a9aa1 100%)" },
@@ -134,10 +135,10 @@ function CustomPage() {
                 <span className="font-medium">הוסף התקנה מקצועית לבית</span>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                תיאום מועד, מדידה והרכבה על ידי מתקין מוסמך. למידות עד 70×100 ס״מ — ₪250.
+                תיאום מועד, מדידה והרכבה על ידי מתקין מוסמך. למידות עד 70×100 ס״מ — ₪300 (כולל מע״מ).
               </p>
               <p className="mt-1 text-xs text-rose-gold/90">
-                למידות מעל 70×100 ס״מ, ההתקנה מתחילה מ־₪350 ועולה בהתאם למידה שנבחרה.
+                למידות מעל 70×100 ס״מ — ₪420 (כולל מע״מ).
               </p>
             </div>
             <div className="shrink-0 text-left">
@@ -155,7 +156,7 @@ function CustomPage() {
             </ul>
             <div className="mt-5 flex items-center justify-between">
               <div>
-                <div className="text-xs text-muted-foreground">סה"כ</div>
+                <div className="text-xs text-muted-foreground">סה"כ (כולל מע״מ)</div>
                 <div className="text-2xl font-semibold text-rose-gold">₪{price}</div>
                 {withInstall && (
                   <div className="mt-1 text-xs text-muted-foreground">

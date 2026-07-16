@@ -44,7 +44,7 @@ function Checkout() {
   const productSubtotal = subtotal - installationFee;
 
   const [fulfillment, setFulfillment] = useState<FulfillmentType>("shipping");
-  const shippingFee = fulfillment === "pickup" ? 0 : productSubtotal > 1500 ? 0 : 49;
+  const shippingFee = fulfillment === "pickup" ? 0 : productSubtotal > 1800 ? 0 : 59;
   const total = subtotal + shippingFee;
 
   const [method, setMethod] = useState<string>("");
@@ -170,7 +170,7 @@ function Checkout() {
                 onClick={() => setFulfillment("shipping")}
                 icon={Truck}
                 title="משלוח מבוטח"
-                subtitle={productSubtotal > 1500 ? "משלוח חינם להזמנה זו" : "₪49 · חינם מעל ₪1,500"}
+                subtitle={productSubtotal > 1800 ? "משלוח חינם להזמנה זו" : "₪59 · חינם מעל ₪1,800"}
               />
               {pickupEnabled && (
                 <FulfillmentOption
