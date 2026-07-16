@@ -1,16 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { InfoPage } from "@/components/site/InfoPage";
-import { localizedMeta, canonicalLink } from "@/lib/seo";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: localizedMeta({
-      title: "מדיניות פרטיות | יהלום לבית",
-      description: "מדיניות הפרטיות של יהלום לבית — כיצד אנו אוספים, שומרים ומשתמשים במידע שלכם.",
-      path: "/privacy",
-    }),
-    links: canonicalLink("/privacy"),
-  }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/privacy")),
+  head: ({ loaderData }) => buildSeoHead({ routePath: "/privacy", seo: loaderData ?? null }),
   component: () => (
     <InfoPage
       eyebrow="פרטיות"

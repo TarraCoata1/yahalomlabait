@@ -1,16 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { InfoPage } from "@/components/site/InfoPage";
-import { localizedMeta, canonicalLink } from "@/lib/seo";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: localizedMeta({
-      title: "תקנון האתר | יהלום לבית",
-      description: "תנאי השימוש, מדיניות הרכישה והתקנון של אתר יהלום לבית.",
-      path: "/terms",
-    }),
-    links: canonicalLink("/terms"),
-  }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/terms")),
+  head: ({ loaderData }) => buildSeoHead({ routePath: "/terms", seo: loaderData ?? null }),
   component: () => (
     <InfoPage
       eyebrow="תנאי שימוש"

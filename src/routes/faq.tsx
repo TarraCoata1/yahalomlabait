@@ -1,16 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { InfoPage } from "@/components/site/InfoPage";
-import { localizedMeta, canonicalLink } from "@/lib/seo";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/faq")({
-  head: () => ({
-    meta: localizedMeta({
-      title: "שאלות נפוצות | יהלום לבית - תמונות לבית ואמנות זכוכית",
-      description: "כל התשובות על תמונות לבית, איכות ההדפסה על זכוכית, משלוחים, החזרות ועיצוב אישי ביהלום לבית.",
-      path: "/faq",
-    }),
-    links: canonicalLink("/faq"),
-  }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/faq")),
+  head: ({ loaderData }) => buildSeoHead({ routePath: "/faq", seo: loaderData ?? null }),
   component: FAQPage,
 });
 
