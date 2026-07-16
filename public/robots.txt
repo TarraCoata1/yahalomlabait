@@ -18,4 +18,3 @@ User-agent: Google-Extended
 Allow: /
 
 Sitemap: https://www.yahalom-la-bait.com/sitemap.xml
-Sitemap: https://yahalomlabait.lovable.app/sitemap.xml
