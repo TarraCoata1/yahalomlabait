@@ -1,17 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { InfoPage } from "@/components/site/InfoPage";
-import { localizedMeta, canonicalLink } from "@/lib/seo";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/returns")({
-  head: () => ({
-    meta: localizedMeta({
-      title: "מדיניות החזרות וביטולים | יהלום לבית",
-      description:
-        "מדיניות ההחזרות והביטולים של יהלום לבית — כל ההזמנות סופיות. לא ניתן לבטל הזמנה לאחר ביצועה ולא מתקבלים החזרים.",
-      path: "/returns",
-    }),
-    links: canonicalLink("/returns"),
-  }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/returns")),
+  head: ({ loaderData }) => buildSeoHead({ routePath: "/returns", seo: loaderData ?? null }),
   component: () => (
     <InfoPage
       eyebrow="מדיניות"

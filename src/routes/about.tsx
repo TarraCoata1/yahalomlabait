@@ -1,17 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShieldCheck, Sparkles, Palette, Truck } from "lucide-react";
 import hero from "@/assets/hero-living-room.jpg";
-import { localizedMeta, canonicalLink } from "@/lib/seo";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: localizedMeta({
-      title: "אודות יהלום לבית | הסטודיו לתמונות זכוכית יוקרתיות",
-      description: "יהלום לבית — סטודיו ישראלי המתמחה ביצירת תמונות לבית ואמנות זכוכית בעיצוב אישי לחללים פרטיים.",
-      path: "/about",
-    }),
-    links: canonicalLink("/about"),
-  }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/about")),
+  head: ({ loaderData }) => buildSeoHead({ routePath: "/about", seo: loaderData ?? null }),
   component: About,
 });
 

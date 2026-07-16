@@ -8,51 +8,51 @@ import { categoriesQuery, productsQuery } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
 import { USPBar } from "@/components/site/USPBar";
 import { ScrollReveal } from "@/components/site/ScrollReveal";
-import { localizedMeta, canonicalLink, jsonLd } from "@/lib/seo";
-
-const HOME_TITLE = "יהלום לבית — תמונות זכוכית מחוסמת ואמנות קיר יוקרתית לבית";
-const HOME_DESC = "יהלום לבית: קולקציית תמונות זכוכית מחוסמת אקסטרה קליר בהדפסה דיגיטלית ברמת גלריה — אמנות מודרנית, נופים, יודאיקה ועיצוב אישי, ייצור בישראל, משלוח מבוטח עד 14 ימי עסקים.";
+import { jsonLd } from "@/lib/seo";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: localizedMeta({ title: HOME_TITLE, description: HOME_DESC, path: "/" }),
-    links: [
-      ...canonicalLink("/"),
-      { rel: "preload", as: "image", href: heroAvif, type: "image/avif", fetchpriority: "high" } as unknown as { rel: string; href: string },
-    ],
-    scripts: [
-      jsonLd({
-        "@context": "https://schema.org",
-        "@type": "AboutPage",
-        name: "אודות יהלום לבית",
-        description:
-          "יהלום לבית הוא מותג בוטיק ישראלי מוביל המתמחה באמנות יוקרתית על זכוכית ותמונות פרימיום לבית. החברה מייצרת תמונות זכוכית מחוסמת אקסטרה קלירית בהדפסה דיגיטלית מתקדמת ברמת גלריה עם משלוח מבוטח לכל רחבי הארץ. ייצור כחול-לבן במפעל במודיעין, ישראל. הקולקציות כוללות אמנות מודרנית, מופשטת, טבע, פופ ארט, אופנה, ופסוקי קודש ויודאיקה, לצד שירות הדפסה בעיצוב אישי.",
-        inLanguage: "he-IL",
-        about: { "@id": "https://www.yahalom-la-bait.com/#organization" },
-      }),
-      jsonLd({
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: [
-          { "@type": "Question", name: "מהן תמונות זכוכית מחוסמת של יהלום לבית?", acceptedAnswer: { "@type": "Answer", text: "תמונות זכוכית מחוסמת אקסטרה קלירית בהדפסה דיגיטלית UV ברמת גלריה, המשמשות כיצירות אמנות פרימיום לבית — לסלון, לחדר השינה ולכל חלל בבית." } },
-          { "@type": "Question", name: "מה כולל המחיר של תמונת זכוכית?", acceptedAnswer: { "@type": "Answer", text: "המחיר כולל הדפסה על זכוכית מחוסמת, ליטוש קצוות פרימיום ומערכת תליה סמויה. התקנה מקצועית בבית היא תוספת אופציונלית." } },
-          { "@type": "Question", name: "כמה זמן לוקח לקבל את התמונה?", acceptedAnswer: { "@type": "Answer", text: "עד 14 ימי עסקים מרגע אישור ההזמנה, כולל ייצור ומשלוח מבוטח לכל הארץ." } },
-          { "@type": "Question", name: "האם המשלוח וההתקנה מבוטחים?", acceptedAnswer: { "@type": "Answer", text: "כן. המשלוח וההתקנה מבוטחים על ידי המפעל בכל הארץ." } },
-        ],
-      }),
-      jsonLd({
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "בית", item: "https://www.yahalom-la-bait.com/" },
-          { "@type": "ListItem", position: 2, name: "חנות", item: "https://www.yahalom-la-bait.com/shop" },
-          { "@type": "ListItem", position: 3, name: "עיצוב אישי", item: "https://www.yahalom-la-bait.com/custom" },
-        ],
-      }),
-    ],
-  }),
+  head: ({ loaderData }) =>
+    buildSeoHead({
+      routePath: "/",
+      seo: loaderData?.[0] ?? null,
+      extraLinks: [
+        { rel: "preload", as: "image", href: heroAvif, type: "image/avif", fetchpriority: "high" } as unknown as { rel: string; href: string },
+      ],
+      extraScripts: [
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          name: "אודות יהלום לבית",
+          description:
+            "יהלום לבית הוא מותג בוטיק ישראלי מוביל המתמחה באמנות יוקרתית על זכוכית ותמונות פרימיום לבית. החברה מייצרת תמונות זכוכית מחוסמת אקסטרה קלירית בהדפסה דיגיטלית מתקדמת ברמת גלריה עם משלוח מבוטח לכל רחבי הארץ. ייצור כחול-לבן במפעל במודיעין, ישראל. הקולקציות כוללות אמנות מודרנית, מופשטת, טבע, פופ ארט, אופנה, ופסוקי קודש ויודאיקה, לצד שירות הדפסה בעיצוב אישי.",
+          inLanguage: "he-IL",
+          about: { "@id": "https://www.yahalom-la-bait.com/#organization" },
+        }),
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            { "@type": "Question", name: "מהן תמונות זכוכית מחוסמת של יהלום לבית?", acceptedAnswer: { "@type": "Answer", text: "תמונות זכוכית מחוסמת אקסטרה קלירית בהדפסה דיגיטלית UV ברמת גלריה, המשמשות כיצירות אמנות פרימיום לבית — לסלון, לחדר השינה ולכל חלל בבית." } },
+            { "@type": "Question", name: "מה כולל המחיר של תמונת זכוכית?", acceptedAnswer: { "@type": "Answer", text: "המחיר כולל הדפסה על זכוכית מחוסמת, ליטוש קצוות פרימיום ומערכת תליה סמויה. התקנה מקצועית בבית היא תוספת אופציונלית." } },
+            { "@type": "Question", name: "כמה זמן לוקח לקבל את התמונה?", acceptedAnswer: { "@type": "Answer", text: "עד 14 ימי עסקים מרגע אישור ההזמנה, כולל ייצור ומשלוח מבוטח לכל הארץ." } },
+            { "@type": "Question", name: "האם המשלוח וההתקנה מבוטחים?", acceptedAnswer: { "@type": "Answer", text: "כן. המשלוח וההתקנה מבוטחים על ידי המפעל בכל הארץ." } },
+          ],
+        }),
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "בית", item: "https://www.yahalom-la-bait.com/" },
+            { "@type": "ListItem", position: 2, name: "חנות", item: "https://www.yahalom-la-bait.com/shop" },
+            { "@type": "ListItem", position: 3, name: "עיצוב אישי", item: "https://www.yahalom-la-bait.com/custom" },
+          ],
+        }),
+      ],
+    }),
   loader: ({ context }) =>
     Promise.all([
+      context.queryClient.ensureQueryData(pageSeoQuery("/")),
       context.queryClient.ensureQueryData(categoriesQuery),
       context.queryClient.ensureQueryData(productsQuery),
     ]),

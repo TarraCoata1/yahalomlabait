@@ -1,56 +1,55 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { useState } from "react";
-import { localizedMeta, canonicalLink, jsonLd, breadcrumbSchema } from "@/lib/seo";
+import { jsonLd, breadcrumbSchema } from "@/lib/seo";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: localizedMeta({
-      title: "צור קשר | יהלום לבית - תמונות לבית ואמנות זכוכית",
-      description: "צרו קשר עם יהלום לבית — סטודיו תמונות זכוכית במודיעין. טלפון 053-320-6500, וואטסאפ ואימייל.",
-      path: "/contact",
-    }),
-    links: canonicalLink("/contact"),
-    scripts: [
-      breadcrumbSchema([{ name: "בית", path: "/" }, { name: "צור קשר", path: "/contact" }]),
-      jsonLd({
-        "@context": "https://schema.org",
-        "@type": "ContactPage",
-        name: "צור קשר · יהלום לבית",
-        url: "https://www.yahalom-la-bait.com/contact",
-        inLanguage: "he-IL",
-        mainEntity: {
-          "@type": "LocalBusiness",
-          "@id": "https://www.yahalom-la-bait.com/#organization",
-          name: "יהלום לבית",
-          alternateName: "יהלום לבית",
-          telephone: "+972-53-320-6500",
-          email: "moshemalkaa@gmail.com",
-          url: "https://www.yahalom-la-bait.com",
-          priceRange: "₪₪₪",
-          address: {
-            "@type": "PostalAddress",
-            addressLocality: "מודיעין",
-            addressCountry: "IL",
-          },
-          areaServed: { "@type": "Country", name: "Israel" },
-          openingHoursSpecification: [{
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
-            opens: "10:00",
-            closes: "18:00",
-          }],
-          contactPoint: [{
-            "@type": "ContactPoint",
+  loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/contact")),
+  head: ({ loaderData }) =>
+    buildSeoHead({
+      routePath: "/contact",
+      seo: loaderData ?? null,
+      extraScripts: [
+        breadcrumbSchema([{ name: "בית", path: "/" }, { name: "צור קשר", path: "/contact" }]),
+        jsonLd({
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: "צור קשר · יהלום לבית",
+          url: "https://www.yahalom-la-bait.com/contact",
+          inLanguage: "he-IL",
+          mainEntity: {
+            "@type": "LocalBusiness",
+            "@id": "https://www.yahalom-la-bait.com/#organization",
+            name: "יהלום לבית",
+            alternateName: "יהלום לבית",
             telephone: "+972-53-320-6500",
-            contactType: "customer service",
-            areaServed: "IL",
-            availableLanguage: ["Hebrew", "English"],
-          }],
-        },
-      }),
-    ],
-  }),
+            email: "moshemalkaa@gmail.com",
+            url: "https://www.yahalom-la-bait.com",
+            priceRange: "₪₪₪",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "מודיעין",
+              addressCountry: "IL",
+            },
+            areaServed: { "@type": "Country", name: "Israel" },
+            openingHoursSpecification: [{
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+              opens: "10:00",
+              closes: "18:00",
+            }],
+            contactPoint: [{
+              "@type": "ContactPoint",
+              telephone: "+972-53-320-6500",
+              contactType: "customer service",
+              areaServed: "IL",
+              availableLanguage: ["Hebrew", "English"],
+            }],
+          },
+        }),
+      ],
+    }),
   component: Contact,
 });
 

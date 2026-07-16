@@ -1,20 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { InfoPage } from "@/components/site/InfoPage";
-import { localizedMeta, canonicalLink } from "@/lib/seo";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 import { siteSettingsQuery } from "@/lib/site-settings";
 
 export const Route = createFileRoute("/shipping")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(siteSettingsQuery),
-  head: () => ({
-    meta: localizedMeta({
-      title: "משלוחים ואיסוף | יהלום לבית",
-      description:
-        "משלוח מבוטח באריזה הרמטית לכל הארץ, עד 14 ימי עסקים. פרטי זמנים, עלויות ואפשרויות איסוף עצמי של יהלום לבית.",
-      path: "/shipping",
-    }),
-    links: canonicalLink("/shipping"),
-  }),
+  loader: async ({ context }) => {
+    const [seo] = await Promise.all([
+      context.queryClient.ensureQueryData(pageSeoQuery("/shipping")),
+      context.queryClient.ensureQueryData(siteSettingsQuery),
+    ]);
+    return seo;
+  },
+  head: ({ loaderData }) => buildSeoHead({ routePath: "/shipping", seo: loaderData ?? null }),
   component: ShippingPage,
 });
 

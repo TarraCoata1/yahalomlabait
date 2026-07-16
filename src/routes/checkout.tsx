@@ -4,25 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { Lock, Check, Truck, Store, Loader2 } from "lucide-react";
 import { useCart, cartTotal, cartInstallationTotal } from "@/lib/cart";
 import { siteSettingsQuery, type PaymentMethodConfig } from "@/lib/site-settings";
+import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 import type { Json } from "@/integrations/supabase/types";
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/checkout")({
-  head: () => ({
-    meta: [
-      { title: "השלמת הזמנה | יהלום לבית" },
-      { name: "description", content: "השלמת ההזמנה ביהלום לבית — בחירת אמצעי תשלום (העברה בנקאית, ביט, מזומן) ומשלוח מבוטח או איסוף עצמי." },
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "השלמת הזמנה | יהלום לבית" },
-      { property: "og:description", content: "השלמת הזמנה מאובטחת ביהלום לבית." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "השלמת הזמנה | יהלום לבית" },
-      { name: "twitter:description", content: "השלמת הזמנה מאובטחת ביהלום לבית." },
-    ],
-  }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/checkout")),
+  head: ({ loaderData }) => buildSeoHead({ routePath: "/checkout", seo: loaderData ?? null }),
   component: Checkout,
 });
 
