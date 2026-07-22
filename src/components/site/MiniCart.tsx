@@ -56,6 +56,9 @@ export function MiniCart() {
                         {it.withInstallation && (
                           <p className="text-xs text-rose-gold/90">כולל התקנה מקצועית (+₪{it.installationFee})</p>
                         )}
+                        {it.attachments && it.attachments.length > 0 && (
+                          <p className="text-xs text-rose-gold/90">{it.attachments.length} קבצים מצורפים</p>
+                        )}
                         {it.sku && <p className="text-[10px] font-mono text-muted-foreground/70" dir="ltr">SKU: {it.sku}</p>}
                       </div>
                       <button onClick={() => remove(it.key)} aria-label={`הסר ${it.name}`} className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10">
