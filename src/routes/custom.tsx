@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState, useRef, useEffect } from "react";
 import { Upload, Sparkles, Check, Wrench, X, FileText, Loader2, AlertCircle } from "lucide-react";
 import { SIZES, installationFee } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
+import { useSession } from "@/hooks/use-auth";
 import {
   ACCEPT_ATTR,
   MAX_FILES,
@@ -40,7 +41,8 @@ function CustomPage() {
   const [screwColor, setScrewColor] = useState<"silver" | "gold" | "black">("silver");
   const [withInstall, setWithInstall] = useState(false);
   const [uploads, setUploads] = useState<UploadItem[]>([]);
-  const [sessionId] = useState(() => `s_${Date.now()}_${randomId()}`);
+  const { user } = useSession();
+  const sessionId = user?.id ?? "";
   const fileRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const add = useCart((s) => s.add);
@@ -66,6 +68,10 @@ function CustomPage() {
   }, []);
 
   const handleFiles = async (files: FileList | File[]) => {
+    if (!sessionId) {
+      toast.error("יש להתחבר כדי להעלות קבצים");
+      return;
+    }
     const arr = Array.from(files);
     if (uploads.length + arr.length > MAX_FILES) {
       toast.error(`ניתן להעלות עד ${MAX_FILES} קבצים`);
