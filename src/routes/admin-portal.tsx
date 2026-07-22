@@ -1012,6 +1012,47 @@ function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onC
   );
 }
 
+function AttachmentsList({ attachments }: { attachments: Array<{ path: string; name: string; size: number; type: string }> }) {
+  const [busy, setBusy] = useState<string | null>(null);
+  const openFile = async (path: string, name: string) => {
+    setBusy(path);
+    try {
+      const { data, error } = await supabase.storage
+        .from("custom-uploads")
+        .createSignedUrl(path, 60 * 10, { download: name });
+      if (error || !data?.signedUrl) throw error ?? new Error("no url");
+      window.open(data.signedUrl, "_blank", "noopener");
+    } catch (e) {
+      toast.error("שגיאה בפתיחת הקובץ: " + (e as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+  const formatSize = (b: number) =>
+    b < 1024 ? `${b} B` : b < 1024 * 1024 ? `${(b / 1024).toFixed(1)} KB` : `${(b / 1024 / 1024).toFixed(2)} MB`;
+  return (
+    <div className="mt-2 space-y-1">
+      <div className="text-xs uppercase tracking-wider text-rose-gold">קבצים שהעלה הלקוח</div>
+      <ul className="space-y-1">
+        {attachments.map((a) => (
+          <li key={a.path} className="flex items-center gap-2 text-xs">
+            <button
+              type="button"
+              onClick={() => openFile(a.path, a.name)}
+              disabled={busy === a.path}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card/50 px-2 py-1 hover:border-rose-gold hover:text-rose-gold disabled:opacity-50"
+            >
+              <FileDown className="h-3.5 w-3.5" />
+              <span className="max-w-[220px] truncate" dir="ltr">{a.name}</span>
+            </button>
+            <span className="text-muted-foreground">{formatSize(a.size)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 
 /* -------------------- SITE SETTINGS (Fulfillment / Payments) -------------------- */
 
