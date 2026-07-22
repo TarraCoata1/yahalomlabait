@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState, useRef, useEffect } from "react";
 import { Upload, Sparkles, Check, Wrench, X, FileText, Loader2, AlertCircle } from "lucide-react";
 import { SIZES, installationFee } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
+import { useSession } from "@/hooks/use-auth";
 import {
   ACCEPT_ATTR,
   MAX_FILES,
@@ -40,7 +41,8 @@ function CustomPage() {
   const [screwColor, setScrewColor] = useState<"silver" | "gold" | "black">("silver");
   const [withInstall, setWithInstall] = useState(false);
   const [uploads, setUploads] = useState<UploadItem[]>([]);
-  const [sessionId] = useState(() => `s_${Date.now()}_${randomId()}`);
+  const { user } = useSession();
+  const sessionId = user?.id ?? "";
   const fileRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const add = useCart((s) => s.add);
@@ -66,6 +68,10 @@ function CustomPage() {
   }, []);
 
   const handleFiles = async (files: FileList | File[]) => {
+    if (!sessionId) {
+      toast.error("יש להתחבר כדי להעלות קבצים");
+      return;
+    }
     const arr = Array.from(files);
     if (uploads.length + arr.length > MAX_FILES) {
       toast.error(`ניתן להעלות עד ${MAX_FILES} קבצים`);
@@ -176,18 +182,27 @@ function CustomPage() {
             </p>
             <input ref={fileRef} type="file" accept={ACCEPT_ATTR} multiple hidden
               onChange={(e) => e.target.files && handleFiles(e.target.files)} />
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={onDrop}
-              className={`mt-4 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed py-8 transition ${
-                dragOver ? "border-rose-gold bg-rose-gold/10" : "border-rose-gold/40 bg-rose-gold/5 hover:border-rose-gold"
-              }`}>
-              <Upload className="h-5 w-5 text-rose-gold" />
-              <span>{uploads.length ? "הוסיפו קבצים נוספים" : "בחרו קבצים או גררו לכאן"}</span>
-            </button>
+            {!sessionId ? (
+              <div className="mt-4 rounded-xl border-2 border-dashed border-rose-gold/40 bg-rose-gold/5 p-6 text-center text-sm">
+                <p className="text-muted-foreground">יש להתחבר לחשבון כדי להעלות קבצים ולהזמין.</p>
+                <Link to="/admin-portal" className="mt-3 inline-block rounded-full btn-rose px-5 py-2 text-sm font-semibold hover:btn-rose-hover">
+                  התחברות
+                </Link>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={onDrop}
+                className={`mt-4 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed py-8 transition ${
+                  dragOver ? "border-rose-gold bg-rose-gold/10" : "border-rose-gold/40 bg-rose-gold/5 hover:border-rose-gold"
+                }`}>
+                <Upload className="h-5 w-5 text-rose-gold" />
+                <span>{uploads.length ? "הוסיפו קבצים נוספים" : "בחרו קבצים או גררו לכאן"}</span>
+              </button>
+            )}
 
             {uploads.length > 0 && (
               <ul className="mt-4 space-y-2">
