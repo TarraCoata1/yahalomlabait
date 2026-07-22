@@ -100,6 +100,7 @@ function Checkout() {
         quantity: it.qty,
         customization: {
           screw_color_label: it.screwColorLabel,
+          attachments: it.attachments ?? [],
         },
       }));
 
@@ -222,6 +223,9 @@ function Checkout() {
                     <div className="truncate text-sm">{it.name}</div>
                     <div className="text-xs text-muted-foreground">{it.sizeLabel} · ברגי {it.screwColorLabel} · ×{it.qty}</div>
                     {it.withInstallation && <div className="text-xs text-rose-gold/90">כולל התקנה מקצועית</div>}
+                    {it.attachments && it.attachments.length > 0 && (
+                      <div className="text-xs text-rose-gold/90">{it.attachments.length} קבצים מצורפים</div>
+                    )}
                     {it.sku && <div className="text-[10px] font-mono text-muted-foreground/70" dir="ltr">SKU: {it.sku}</div>}
                   </div>
                   <div className="text-sm font-medium">₪{it.unitPrice * it.qty}</div>

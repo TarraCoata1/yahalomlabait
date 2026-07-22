@@ -1,9 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState, useRef } from "react";
-import { Upload, Sparkles, Check, Wrench } from "lucide-react";
+import { useMemo, useState, useRef, useEffect } from "react";
+import { Upload, Sparkles, Check, Wrench, X, FileText, Loader2, AlertCircle } from "lucide-react";
 import { SIZES, installationFee } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
+import {
+  ACCEPT_ATTR,
+  MAX_FILES,
+  MAX_FILE_MB,
+  formatSize,
+  isImage,
+  toAttachments,
+  uploadCustomFile,
+  validateFile,
+  type UploadItem,
+} from "@/lib/custom-uploads";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/custom")({
   loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/custom")),
@@ -11,7 +23,6 @@ export const Route = createFileRoute("/custom")({
   component: CustomPage,
 });
 
-// Custom-design surcharge (proof + file QA + revisions). VAT-inclusive.
 const BASE = 900;
 
 const SCREW_OPTIONS = [
@@ -20,23 +31,102 @@ const SCREW_OPTIONS = [
   { id: "black" as const,  label: "שחור", swatch: "linear-gradient(135deg, #3a3a3c 0%, #1a1a1c 50%, #050505 100%)" },
 ];
 
+function randomId() {
+  return Math.random().toString(36).slice(2, 10);
+}
+
 function CustomPage() {
-  const [image, setImage] = useState<string | null>(null);
   const [sizeIdx, setSizeIdx] = useState(1);
   const [screwColor, setScrewColor] = useState<"silver" | "gold" | "black">("silver");
   const [withInstall, setWithInstall] = useState(false);
+  const [uploads, setUploads] = useState<UploadItem[]>([]);
+  const [sessionId] = useState(() => `s_${Date.now()}_${randomId()}`);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [dragOver, setDragOver] = useState(false);
   const add = useCart((s) => s.add);
+
   const size = SIZES[sizeIdx];
   const basePrice = BASE + size.price;
   const installFee = useMemo(() => installationFee(size), [size]);
   const price = basePrice + (withInstall ? installFee : 0);
   const screw = SCREW_OPTIONS.find((s) => s.id === screwColor)!;
 
-  const onFile = (f?: File) => {
-    if (!f) return;
-    const url = URL.createObjectURL(f);
-    setImage(url);
+  const doneUploads = uploads.filter((u) => u.status === "done");
+  const hasPending = uploads.some((u) => u.status === "uploading" || u.status === "pending");
+  const primaryPreview = doneUploads.find((u) => u.previewUrl)?.previewUrl
+    ?? uploads.find((u) => u.previewUrl)?.previewUrl
+    ?? null;
+
+  // Cleanup blob URLs on unmount
+  useEffect(() => {
+    return () => {
+      uploads.forEach((u) => { if (u.previewUrl) URL.revokeObjectURL(u.previewUrl); });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleFiles = async (files: FileList | File[]) => {
+    const arr = Array.from(files);
+    if (uploads.length + arr.length > MAX_FILES) {
+      toast.error(`ניתן להעלות עד ${MAX_FILES} קבצים`);
+      return;
+    }
+    for (const file of arr) {
+      const err = validateFile(file);
+      const id = randomId();
+      const previewUrl = isImage(file) ? URL.createObjectURL(file) : null;
+      if (err) {
+        setUploads((u) => [...u, { id, file, previewUrl, progress: 0, status: "error", error: err }]);
+        continue;
+      }
+      setUploads((u) => [...u, { id, file, previewUrl, progress: 0, status: "uploading" }]);
+      try {
+        const path = await uploadCustomFile(sessionId, file, (pct) => {
+          setUploads((u) => u.map((it) => it.id === id ? { ...it, progress: pct } : it));
+        });
+        setUploads((u) => u.map((it) => it.id === id ? { ...it, status: "done", progress: 100, path } : it));
+      } catch (e) {
+        setUploads((u) => u.map((it) => it.id === id ? { ...it, status: "error", error: (e as Error).message } : it));
+        toast.error(`העלאה נכשלה: ${file.name}`);
+      }
+    }
+  };
+
+  const removeUpload = (id: string) => {
+    setUploads((u) => {
+      const it = u.find((x) => x.id === id);
+      if (it?.previewUrl) URL.revokeObjectURL(it.previewUrl);
+      return u.filter((x) => x.id !== id);
+    });
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    if (e.dataTransfer.files?.length) handleFiles(e.dataTransfer.files);
+  };
+
+  const canAdd = doneUploads.length > 0 && !hasPending;
+
+  const addToCart = () => {
+    if (!canAdd) return;
+    const attachments = toAttachments(uploads);
+    add({
+      productId: `custom-print-${sessionId}`,
+      sku: "CUSTOM",
+      name: "הדפסה בעיצוב אישי",
+      image: primaryPreview ?? "",
+      sizeId: size.id,
+      sizeLabel: size.label,
+      basePrice,
+      screwColor,
+      screwColorLabel: screw.label,
+      withInstallation: withInstall,
+      installationFee: withInstall ? installFee : 0,
+      unitPrice: price,
+      attachments,
+    });
+    toast.success("נוסף לעגלה");
   };
 
   return (
@@ -44,7 +134,7 @@ function CustomPage() {
       <header className="text-center">
         <span className="text-xs uppercase tracking-[0.3em] text-rose-gold">הדפס בעיצוב אישי</span>
         <h1 className="mt-3 font-serif text-4xl md:text-6xl">היצירה שלכם, על זכוכית פרימיום</h1>
-        <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">העלו תמונה, בחרו מידה וקבלו תצוגה מקדימה. הצוות שלנו יבדוק את האיכות לפני ההדפסה ויחזור אליכם לאישור.</p>
+        <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">העלו תמונה או קובץ עיצוב, בחרו מידה וקבלו תצוגה מקדימה. הצוות שלנו יבדוק את האיכות לפני ההדפסה ויחזור אליכם לאישור.</p>
       </header>
 
       <div className="mt-12 grid gap-10 lg:grid-cols-2">
@@ -55,13 +145,13 @@ function CustomPage() {
               <div className="absolute inset-0 bg-gradient-to-b from-secondary to-card" />
               <div className="absolute inset-x-12 bottom-6 top-10 grid place-items-center">
                 <div className="relative h-full w-full max-w-md rounded-md bg-card shadow-2xl ring-1 ring-rose-gold/40">
-                  {image ? (
-                    <img src={image} alt="תצוגה מקדימה" className="h-full w-full object-cover" />
+                  {primaryPreview ? (
+                    <img src={primaryPreview} alt="תצוגה מקדימה" className="h-full w-full object-cover" />
                   ) : (
                     <div className="grid h-full w-full place-items-center text-center text-muted-foreground">
                       <div>
                         <Upload className="mx-auto h-10 w-10 text-rose-gold/60" />
-                        <p className="mt-2 text-sm">העלו תמונה כדי לראות תצוגה מקדימה</p>
+                        <p className="mt-2 text-sm">העלו קובץ כדי לראות תצוגה מקדימה</p>
                       </div>
                     </div>
                   )}
@@ -77,14 +167,63 @@ function CustomPage() {
         {/* Form */}
         <div>
           <div className="rounded-2xl glass p-6">
-            <h3 className="font-serif text-xl">1. העלו את התמונה</h3>
-            <p className="mt-1 text-sm text-muted-foreground">JPG / PNG · רזולוציה גבוהה (מומלץ 300 dpi)</p>
-            <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onFile(e.target.files?.[0])} />
-            <button onClick={() => fileRef.current?.click()}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-rose-gold/40 bg-rose-gold/5 py-8 hover:border-rose-gold">
+            <div className="flex items-center justify-between">
+              <h3 className="font-serif text-xl">1. העלו קבצים</h3>
+              <span className="text-xs text-muted-foreground">{uploads.length}/{MAX_FILES}</span>
+            </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              תמונות (JPG/PNG/WEBP/HEIC/SVG) או קבצי עיצוב (PDF/AI/EPS) · עד {MAX_FILE_MB}MB לקובץ
+            </p>
+            <input ref={fileRef} type="file" accept={ACCEPT_ATTR} multiple hidden
+              onChange={(e) => e.target.files && handleFiles(e.target.files)} />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={onDrop}
+              className={`mt-4 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed py-8 transition ${
+                dragOver ? "border-rose-gold bg-rose-gold/10" : "border-rose-gold/40 bg-rose-gold/5 hover:border-rose-gold"
+              }`}>
               <Upload className="h-5 w-5 text-rose-gold" />
-              <span>{image ? "החלף תמונה" : "בחרו קובץ או גררו לכאן"}</span>
+              <span>{uploads.length ? "הוסיפו קבצים נוספים" : "בחרו קבצים או גררו לכאן"}</span>
             </button>
+
+            {uploads.length > 0 && (
+              <ul className="mt-4 space-y-2">
+                {uploads.map((u) => (
+                  <li key={u.id} className="flex items-center gap-3 rounded-xl border border-border bg-card/50 p-2.5">
+                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-secondary grid place-items-center">
+                      {u.previewUrl
+                        ? <img src={u.previewUrl} alt="" className="h-full w-full object-cover" />
+                        : <FileText className="h-5 w-5 text-muted-foreground" />}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm">{u.file.name}</div>
+                      <div className="text-xs text-muted-foreground">{formatSize(u.file.size)}</div>
+                      {u.status === "uploading" && (
+                        <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-secondary">
+                          <div className="h-full bg-rose-gold transition-all" style={{ width: `${u.progress}%` }} />
+                        </div>
+                      )}
+                      {u.status === "error" && (
+                        <div className="mt-0.5 flex items-center gap-1 text-xs text-destructive">
+                          <AlertCircle className="h-3 w-3" /> {u.error}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {u.status === "uploading" && <Loader2 className="h-4 w-4 animate-spin text-rose-gold" />}
+                      {u.status === "done" && <Check className="h-4 w-4 text-rose-gold" />}
+                      <button onClick={() => removeUpload(u.id)} aria-label="הסר קובץ"
+                        className="grid h-8 w-8 place-items-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div className="mt-5 rounded-2xl glass p-6">
@@ -100,7 +239,6 @@ function CustomPage() {
             </div>
           </div>
 
-          {/* Screw color */}
           <div className="mt-5 rounded-2xl glass p-6">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="font-serif text-xl">3. צבע ברגי תליה</h3>
@@ -120,7 +258,6 @@ function CustomPage() {
             <p className="mt-2 text-xs text-muted-foreground">ללא תוספת מחיר — בחירה בהתאמה לעיצוב החלל.</p>
           </div>
 
-          {/* Installation upsell */}
           <label className={`mt-5 flex cursor-pointer items-start gap-3 rounded-2xl border-2 p-4 transition ${withInstall ? "border-rose-gold bg-rose-gold/5" : "border-border hover:border-rose-gold/50"}`}>
             <input type="checkbox" checked={withInstall} onChange={(e) => setWithInstall(e.target.checked)} className="mt-1 h-5 w-5 accent-rose-gold" />
             <div className="flex-1">
@@ -157,14 +294,23 @@ function CustomPage() {
                     הדפסה ₪{basePrice} + התקנה ₪{installFee}
                   </div>
                 )}
+                {doneUploads.length > 0 && (
+                  <div className="mt-1 text-xs text-muted-foreground">{doneUploads.length} קבצים מצורפים</div>
+                )}
               </div>
               <button
-                disabled={!image}
-                onClick={() => add({ productId: "custom-print", sku: "CUSTOM", name: "הדפסה בעיצוב אישי", image: image!, sizeId: size.id, sizeLabel: size.label, basePrice, screwColor, screwColorLabel: screw.label, withInstallation: withInstall, installationFee: withInstall ? installFee : 0, unitPrice: price })}
+                disabled={!canAdd}
+                onClick={addToCart}
                 className="rounded-full btn-rose px-6 py-3 font-semibold disabled:cursor-not-allowed disabled:opacity-50 hover:btn-rose-hover">
-                <span className="inline-flex items-center gap-2"><Sparkles className="h-4 w-4" /> הוסף לעגלה</span>
+                <span className="inline-flex items-center gap-2">
+                  {hasPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                  {hasPending ? "מעלה קבצים…" : "הוסף לעגלה"}
+                </span>
               </button>
             </div>
+            {!canAdd && !hasPending && (
+              <p className="mt-3 text-center text-xs text-muted-foreground">יש להעלות לפחות קובץ אחד להמשך.</p>
+            )}
           </div>
         </div>
       </div>

@@ -1,6 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export type CartAttachment = {
+  path: string;
+  name: string;
+  size: number;
+  type: string;
+};
+
 export type CartItem = {
   key: string;
   productId: string;
@@ -16,6 +23,7 @@ export type CartItem = {
   installationFee: number;
   unitPrice: number;
   qty: number;
+  attachments?: CartAttachment[];
 };
 
 type CartState = {
