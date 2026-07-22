@@ -100,6 +100,7 @@ function Checkout() {
         quantity: it.qty,
         customization: {
           screw_color_label: it.screwColorLabel,
+          attachments: it.attachments ?? [],
         },
       }));
 
