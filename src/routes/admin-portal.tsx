@@ -895,7 +895,11 @@ type OrderItemRow = {
   quantity: number;
   unit_price: number;
   line_total: number;
-  customization: { screw_color_label?: string; base_price?: number } | null;
+  customization: {
+    screw_color_label?: string;
+    base_price?: number;
+    attachments?: Array<{ path: string; name: string; size: number; type: string }>;
+  } | null;
 };
 
 function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onClose: () => void; onChanged: () => void }) {
