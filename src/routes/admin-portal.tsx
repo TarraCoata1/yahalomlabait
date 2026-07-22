@@ -979,6 +979,9 @@ function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onC
                       <div className="text-xs text-rose-gold/90">כולל התקנה מקצועית (+₪{it.installation_fee})</div>
                     )}
                     {it.sku && <div className="text-[10px] font-mono text-muted-foreground/70" dir="ltr">SKU: {it.sku}</div>}
+                    {it.customization?.attachments && it.customization.attachments.length > 0 && (
+                      <AttachmentsList attachments={it.customization.attachments} />
+                    )}
                   </div>
                   <div className="text-sm font-medium whitespace-nowrap">₪{it.line_total}</div>
                 </li>
