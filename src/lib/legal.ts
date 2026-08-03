@@ -155,3 +155,22 @@ export function formatLegalDate(iso: string | null | undefined) {
     return "—";
   }
 }
+
+/** Restore a previous published version into the draft (admin only). */
+export async function restoreLegalVersion(
+  doc: LegalDocAdmin,
+  version: LegalVersion,
+  by: EditorMeta,
+) {
+  const { error } = await supabase
+    .from("legal_documents")
+    .update({
+      title: version.title,
+      intro: version.intro,
+      draft_content: version.content,
+      updated_by: by.userId,
+      updated_by_email: by.email,
+    })
+    .eq("id", doc.id);
+  if (error) throw error;
+}
