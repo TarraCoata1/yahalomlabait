@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { categoriesQuery, type Product } from "@/lib/catalog";
+import { categoriesQuery, DISPLAY_MODES, type DisplayMode, type Product } from "@/lib/catalog";
 import { toast } from "sonner";
 import { X } from "lucide-react";
 
