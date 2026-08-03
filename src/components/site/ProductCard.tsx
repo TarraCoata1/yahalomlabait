@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Plus, Pencil, EyeOff, Eye, Trash2, Heart } from "lucide-react";
 import { useState } from "react";
-import type { Product } from "@/lib/catalog";
+import { aspectClass, aspectDims, type Product } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
 import { RECT_SIZES, FROM_PRICE } from "@/lib/products";
 import { useSession, useIsAdmin } from "@/hooks/use-auth";
