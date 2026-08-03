@@ -17,6 +17,7 @@ import { MiniCart } from "@/components/site/MiniCart";
 import { FloatingWidgets } from "@/components/site/FloatingWidgets";
 import { BackToTop } from "@/components/site/BackToTop";
 import { Toaster } from "@/components/ui/sonner";
+import { CookieConsent } from "@/components/site/CookieConsent";
 
 function NotFoundComponent() {
   return (
@@ -233,6 +234,7 @@ function RootComponent() {
       <MiniCart />
       <FloatingWidgets />
       <BackToTop />
+      <CookieConsent />
       <Toaster />
     </QueryClientProvider>
   );

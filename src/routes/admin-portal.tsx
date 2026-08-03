@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession, useIsAdmin, signOut } from "@/hooks/use-auth";
 import { categoriesQuery, productsQuery, type Category, type Product } from "@/lib/catalog";
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
+import { LegalPanel } from "@/components/admin/LegalPanel";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png.asset.json";
 import { siteSettingsQuery, saveSiteSettings, uploadSocialImage, DEFAULT_SITE_SETTINGS, type SiteSettings, type PaymentMethodConfig } from "@/lib/site-settings";
@@ -98,7 +99,7 @@ function NoAccessScreen({ email }: { email: string }) {
 
 function Dashboard() {
   const { user } = useSession();
-  const [tab, setTab] = useState<"products" | "categories" | "orders" | "settings" | "seo">("products");
+  const [tab, setTab] = useState<"products" | "categories" | "orders" | "settings" | "seo" | "legal">("products");
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8 md:py-14">
@@ -126,6 +127,7 @@ function Dashboard() {
         <button onClick={() => setTab("orders")} className={`rounded-full px-5 py-2 text-sm ${tab === "orders" ? "btn-rose" : "text-muted-foreground"}`}>הזמנות</button>
         <button onClick={() => setTab("settings")} className={`rounded-full px-5 py-2 text-sm ${tab === "settings" ? "btn-rose" : "text-muted-foreground"}`}>הגדרות אתר</button>
         <button onClick={() => setTab("seo")} className={`rounded-full px-5 py-2 text-sm ${tab === "seo" ? "btn-rose" : "text-muted-foreground"}`}>SEO</button>
+        <button onClick={() => setTab("legal")} className={`rounded-full px-5 py-2 text-sm ${tab === "legal" ? "btn-rose" : "text-muted-foreground"}`}>עמודים משפטיים</button>
       </div>
 
       {tab === "products" && <ProductsPanel />}
@@ -133,6 +135,7 @@ function Dashboard() {
       {tab === "orders" && <OrdersPanel />}
       {tab === "settings" && <SiteSettingsPanel />}
       {tab === "seo" && <SeoPanel />}
+      {tab === "legal" && <LegalPanel editor={{ userId: user?.id ?? null, email: user?.email ?? "" }} />}
     </div>
   );
 }
