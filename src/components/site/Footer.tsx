@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { openCookieSettings } from "@/components/site/CookieConsent";
 import { Instagram, Facebook, Mail, Phone, MapPin } from "lucide-react";
 import logo from "@/assets/logo.png.asset.json";
 
@@ -67,6 +68,7 @@ export function Footer() {
             <li><Link to="/privacy" className="hover:text-primary link-underline">מדיניות פרטיות</Link></li>
             <li><Link to="/cookies" className="hover:text-primary link-underline">מדיניות עוגיות</Link></li>
             <li><Link to="/contact" className="hover:text-primary link-underline">שיתופי פעולה</Link></li>
+            <li><button type="button" onClick={openCookieSettings} className="hover:text-primary link-underline">הגדרות עוגיות</button></li>
 
           </ul>
         </div>

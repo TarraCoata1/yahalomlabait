@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Lock, Check, Truck, Store, Loader2 } from "lucide-react";
 import { useCart, cartTotal, cartInstallationTotal } from "@/lib/cart";
@@ -8,6 +8,8 @@ import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 import type { Json } from "@/integrations/supabase/types";
 
 import { supabase } from "@/integrations/supabase/client";
+import { LegalConsentCheckbox, MarketingConsentCheckbox } from "@/components/site/ConsentCheckboxes";
+import { readMarketingConsent, writeMarketingConsent } from "@/lib/consent";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/checkout")({
@@ -46,6 +48,9 @@ function Checkout() {
   });
   const setField = <K extends keyof typeof form>(k: K, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
+  const [legalConsent, setLegalConsent] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
+  useEffect(() => { setMarketingConsent(readMarketingConsent()); }, []);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<null | { method: PaymentMethodConfig | null; orderNumber: number | null }>(null);
 
@@ -82,6 +87,7 @@ function Checkout() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selected) { toast.error("בחר אמצעי תשלום"); return; }
+    if (!legalConsent) { toast.error("יש לאשר את התקנון ומדיניות הפרטיות"); return; }
     if (fulfillment === "shipping" && (!form.street.trim() || !form.city.trim())) {
       toast.error("יש למלא כתובת למשלוח"); return;
     }
@@ -118,7 +124,11 @@ function Checkout() {
         _payment_meta: { method_label: selected.label } as unknown as Json,
         _fulfillment: fulfillment,
         _shipping_address: (address ?? {}) as unknown as Json,
-        _notes: form.notes.trim() || "",
+        _notes: [
+          form.notes.trim(),
+          "אישור תקנון ומדיניות פרטיות: כן",
+          `הסכמה לדיוור שיווקי: ${marketingConsent ? "כן" : "לא"}`,
+        ].filter(Boolean).join("\n"),
       });
 
 
@@ -126,6 +136,7 @@ function Checkout() {
       const row = Array.isArray(rpcRes.data) ? rpcRes.data[0] : rpcRes.data;
       const orderNumber: number | null = (row?.order_number as number | undefined) ?? null;
 
+      writeMarketingConsent(marketingConsent);
       clear();
       setDone({ method: selected, orderNumber });
       setTimeout(() => navigate({ to: "/" }), 10000);
@@ -241,7 +252,11 @@ function Checkout() {
                 <span className="text-2xl font-semibold text-rose-gold">₪{total}</span>
               </div>
             </div>
-            <button type="submit" disabled={submitting || !selected}
+            <div className="mt-5 space-y-2">
+              <LegalConsentCheckbox checked={legalConsent} onChange={setLegalConsent} context="purchase" />
+              <MarketingConsentCheckbox checked={marketingConsent} onChange={setMarketingConsent} />
+            </div>
+            <button type="submit" disabled={submitting || !selected || !legalConsent}
               className="mt-5 flex w-full items-center justify-center gap-2 rounded-full btn-rose py-4 font-semibold hover:btn-rose-hover disabled:opacity-60">
               {submitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
               {submitting ? "שולח…" : `שלח הזמנה · ₪${total}`}
