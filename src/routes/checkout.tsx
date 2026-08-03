@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Lock, Check, Truck, Store, Loader2 } from "lucide-react";
 import { useCart, cartTotal, cartInstallationTotal } from "@/lib/cart";
@@ -50,6 +50,7 @@ function Checkout() {
 
   const [legalConsent, setLegalConsent] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
+  useEffect(() => { setMarketingConsent(readMarketingConsent()); }, []);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<null | { method: PaymentMethodConfig | null; orderNumber: number | null }>(null);
 

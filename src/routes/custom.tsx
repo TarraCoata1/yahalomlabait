@@ -1,3 +1,4 @@
+import { SignUpCard } from "@/components/site/SignUpCard";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState, useRef, useEffect } from "react";
 import { Upload, Sparkles, Check, Wrench, X, FileText, Loader2, AlertCircle } from "lucide-react";
@@ -183,11 +184,8 @@ function CustomPage() {
             <input ref={fileRef} type="file" accept={ACCEPT_ATTR} multiple hidden
               onChange={(e) => e.target.files && handleFiles(e.target.files)} />
             {!sessionId ? (
-              <div className="mt-4 rounded-xl border-2 border-dashed border-rose-gold/40 bg-rose-gold/5 p-6 text-center text-sm">
-                <p className="text-muted-foreground">יש להתחבר לחשבון כדי להעלות קבצים ולהזמין.</p>
-                <Link to="/admin-portal" className="mt-3 inline-block rounded-full btn-rose px-5 py-2 text-sm font-semibold hover:btn-rose-hover">
-                  התחברות
-                </Link>
+              <div className="mt-4">
+                <SignUpCard redirectPath="/custom" />
               </div>
             ) : (
               <button
