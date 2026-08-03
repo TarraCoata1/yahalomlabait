@@ -69,7 +69,7 @@ export function ProductCard({ product }: { product: Product }) {
     <>
       <Link to="/product/$id" params={{ id: product.slug }} className="group relative block">
         <div className={`relative overflow-hidden rounded-2xl glass ${product.isHidden ? "opacity-60" : ""}`}>
-          <div className="relative aspect-[4/5] overflow-hidden">
+          <div className={`relative ${aspectClass(product.displayMode)} overflow-hidden`}>
             {/* Blurred backdrop lets us show the whole artwork without cropping it */}
             <div
               aria-hidden
@@ -80,8 +80,8 @@ export function ProductCard({ product }: { product: Product }) {
               src={product.image}
               alt={`${product.name} - תמונת זכוכית לבית ${product.style ?? ""} מיהלום לבית`}
               loading="lazy"
-              width={480}
-              height={600}
+              width={aspectDims(product.displayMode).width}
+              height={aspectDims(product.displayMode).height}
               draggable={false}
               onContextMenu={(e) => e.preventDefault()}
               onDragStart={(e) => e.preventDefault()}
@@ -89,6 +89,7 @@ export function ProductCard({ product }: { product: Product }) {
               className="relative z-10 h-full w-full object-contain transition-transform duration-700 group-hover:scale-105"
             />
           </div>
+
           <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
           <div className="absolute bottom-4 right-4 flex flex-col gap-2 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
             <button onClick={handleQuickAdd} aria-label="הוסף לעגלה"
