@@ -14,6 +14,7 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
   const [style, setStyle] = useState(product.style);
   const [sku, setSku] = useState(product.sku ?? "");
   const [bestSeller, setBestSeller] = useState(product.bestSeller);
+  const [displayMode, setDisplayMode] = useState<DisplayMode>(product.displayMode);
   const [saving, setSaving] = useState(false);
 
 
@@ -28,8 +29,10 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
         style: style.trim(),
         sku: sku.trim() || null,
         best_seller: bestSeller,
+        display_mode: displayMode,
       })
       .eq("id", product.id);
+
 
     setSaving(false);
     if (error) return toast.error("שגיאה בשמירה: " + error.message);
