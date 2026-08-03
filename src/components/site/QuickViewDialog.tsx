@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { X, Plus, ArrowLeft } from "lucide-react";
-import type { Product } from "@/lib/catalog";
+import { aspectClass, type Product } from "@/lib/catalog";
 import { RECT_SIZES } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ProtectedImg } from "@/components/site/ProtectedImg";
@@ -60,7 +60,7 @@ export function QuickViewDialog({ product, onClose }: { product: Product; onClos
         </button>
 
         <div className="grid gap-0 md:grid-cols-2">
-          <div className="relative aspect-square md:aspect-auto">
+          <div className={`relative ${aspectClass(product.displayMode)} md:aspect-auto`}>
             <div
               aria-hidden
               className="absolute inset-0 scale-110 opacity-30 blur-2xl"

@@ -18,6 +18,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as HangingGuideRouteImport } from './routes/hanging-guide'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CustomRouteImport } from './routes/custom'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as AdminPortalRouteImport } from './routes/admin-portal'
@@ -70,6 +71,11 @@ const CustomRoute = CustomRouteImport.update({
   path: '/custom',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/admin-portal': typeof AdminPortalRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/custom': typeof CustomRoute
   '/faq': typeof FaqRoute
   '/hanging-guide': typeof HangingGuideRoute
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/admin-portal': typeof AdminPortalRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/custom': typeof CustomRoute
   '/faq': typeof FaqRoute
   '/hanging-guide': typeof HangingGuideRoute
@@ -142,6 +150,7 @@ export interface FileRoutesById {
   '/admin-portal': typeof AdminPortalRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/custom': typeof CustomRoute
   '/faq': typeof FaqRoute
   '/hanging-guide': typeof HangingGuideRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/admin-portal'
     | '/checkout'
     | '/contact'
+    | '/cookies'
     | '/custom'
     | '/faq'
     | '/hanging-guide'
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
     | '/admin-portal'
     | '/checkout'
     | '/contact'
+    | '/cookies'
     | '/custom'
     | '/faq'
     | '/hanging-guide'
@@ -195,6 +206,7 @@ export interface FileRouteTypes {
     | '/admin-portal'
     | '/checkout'
     | '/contact'
+    | '/cookies'
     | '/custom'
     | '/faq'
     | '/hanging-guide'
@@ -213,6 +225,7 @@ export interface RootRouteChildren {
   AdminPortalRoute: typeof AdminPortalRoute
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
+  CookiesRoute: typeof CookiesRoute
   CustomRoute: typeof CustomRoute
   FaqRoute: typeof FaqRoute
   HangingGuideRoute: typeof HangingGuideRoute
@@ -290,6 +303,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -341,6 +361,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminPortalRoute: AdminPortalRoute,
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
+  CookiesRoute: CookiesRoute,
   CustomRoute: CustomRoute,
   FaqRoute: FaqRoute,
   HangingGuideRoute: HangingGuideRoute,

@@ -29,6 +29,45 @@ export function resolveImage(key: string | null | undefined): string {
   return ASSET_MAP[key] ?? "";
 }
 
+/** Aspect-ratio presentation mode for a product image. */
+export type DisplayMode = "square" | "landscape" | "portrait";
+
+export const DISPLAY_MODES: { id: DisplayMode; label: string; ratio: string }[] = [
+  { id: "portrait", label: "פורטרט (4:5)", ratio: "4 / 5" },
+  { id: "square", label: "מרובע (1:1)", ratio: "1 / 1" },
+  { id: "landscape", label: "לרוחב (4:3)", ratio: "4 / 3" },
+];
+
+export const DEFAULT_DISPLAY_MODE: DisplayMode = "portrait";
+
+export function normalizeDisplayMode(v: string | null | undefined): DisplayMode {
+  return v === "square" || v === "landscape" || v === "portrait" ? v : DEFAULT_DISPLAY_MODE;
+}
+
+/** Tailwind aspect utility for a display mode (used by every product image frame). */
+export function aspectClass(mode: DisplayMode | string | null | undefined): string {
+  switch (normalizeDisplayMode(mode as string)) {
+    case "square":
+      return "aspect-square";
+    case "landscape":
+      return "aspect-[4/3]";
+    default:
+      return "aspect-[4/5]";
+  }
+}
+
+/** Intrinsic width/height hints matching the mode — prevents CLS. */
+export function aspectDims(mode: DisplayMode | string | null | undefined): { width: number; height: number } {
+  switch (normalizeDisplayMode(mode as string)) {
+    case "square":
+      return { width: 600, height: 600 };
+    case "landscape":
+      return { width: 640, height: 480 };
+    default:
+      return { width: 480, height: 600 };
+  }
+}
+
 export type Category = {
   id: string;
   slug: string;
@@ -55,7 +94,9 @@ export type Product = {
   isHidden: boolean;
   sort_order: number;
   sku: string;
+  displayMode: DisplayMode;
 };
+
 
 
 type CategoryRow = {
@@ -81,7 +122,9 @@ type ProductRow = {
   is_hidden: boolean;
   sort_order: number;
   sku: string | null;
+  display_mode?: string | null;
   category?: { slug: string } | null;
+
 };
 
 
@@ -114,6 +157,8 @@ function toProduct(r: ProductRow): Product {
     isHidden: r.is_hidden,
     sort_order: r.sort_order,
     sku: r.sku ?? "",
+    displayMode: normalizeDisplayMode(r.display_mode),
+
   };
 
 }

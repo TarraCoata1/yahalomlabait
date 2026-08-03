@@ -68,6 +68,95 @@ export type Database = {
         }
         Relationships: []
       }
+      legal_document_versions: {
+        Row: {
+          content: string
+          created_at: string
+          document_id: string
+          id: string
+          intro: string
+          published_by: string | null
+          published_by_email: string
+          title: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          document_id: string
+          id?: string
+          intro?: string
+          published_by?: string | null
+          published_by_email?: string
+          title?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          document_id?: string
+          id?: string
+          intro?: string
+          published_by?: string | null
+          published_by_email?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "legal_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_documents: {
+        Row: {
+          created_at: string
+          draft_content: string
+          eyebrow: string
+          id: string
+          intro: string
+          page_label: string
+          published_at: string | null
+          published_content: string
+          slug: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+          updated_by_email: string
+        }
+        Insert: {
+          created_at?: string
+          draft_content?: string
+          eyebrow?: string
+          id?: string
+          intro?: string
+          page_label?: string
+          published_at?: string | null
+          published_content?: string
+          slug: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_email?: string
+        }
+        Update: {
+          created_at?: string
+          draft_content?: string
+          eyebrow?: string
+          id?: string
+          intro?: string
+          page_label?: string
+          published_at?: string | null
+          published_content?: string
+          slug?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_email?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -281,6 +370,7 @@ export type Database = {
           colors: string[]
           created_at: string
           description: string
+          display_mode: string
           id: string
           image_key: string
           is_hidden: boolean
@@ -297,6 +387,7 @@ export type Database = {
           colors?: string[]
           created_at?: string
           description?: string
+          display_mode?: string
           id?: string
           image_key?: string
           is_hidden?: boolean
@@ -313,6 +404,7 @@ export type Database = {
           colors?: string[]
           created_at?: string
           description?: string
+          display_mode?: string
           id?: string
           image_key?: string
           is_hidden?: boolean

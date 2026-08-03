@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { categoriesQuery, type Product } from "@/lib/catalog";
+import { categoriesQuery, DISPLAY_MODES, type DisplayMode, type Product } from "@/lib/catalog";
 import { toast } from "sonner";
 import { X } from "lucide-react";
 
@@ -14,6 +14,7 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
   const [style, setStyle] = useState(product.style);
   const [sku, setSku] = useState(product.sku ?? "");
   const [bestSeller, setBestSeller] = useState(product.bestSeller);
+  const [displayMode, setDisplayMode] = useState<DisplayMode>(product.displayMode);
   const [saving, setSaving] = useState(false);
 
 
@@ -28,8 +29,10 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
         style: style.trim(),
         sku: sku.trim() || null,
         best_seller: bestSeller,
+        display_mode: displayMode,
       })
       .eq("id", product.id);
+
 
     setSaving(false);
     if (error) return toast.error("שגיאה בשמירה: " + error.message);
@@ -85,6 +88,33 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4}
               className="mt-1 w-full rounded-xl bg-card border border-border px-4 py-2.5 focus:border-rose-gold outline-none resize-none" />
           </label>
+          <div>
+            <span className="text-xs text-muted-foreground">מצב תצוגת תמונה</span>
+            <div className="mt-1 grid grid-cols-3 gap-2">
+              {DISPLAY_MODES.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => setDisplayMode(m.id)}
+                  aria-pressed={displayMode === m.id}
+                  className={`rounded-xl border-2 px-2 py-2 text-xs transition ${
+                    displayMode === m.id ? "border-rose-gold bg-rose-gold/10 text-rose-gold" : "border-border hover:border-rose-gold/50"
+                  }`}
+                >
+                  <span
+                    aria-hidden
+                    className="mx-auto mb-1.5 block w-8 rounded border border-current opacity-70"
+                    style={{ aspectRatio: m.ratio }}
+                  />
+                  {m.label}
+                </button>
+              ))}
+            </div>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              יחס התמונה בכל הגלריות באתר — התמונה תמיד מוצגת במלואה ללא חיתוך.
+            </p>
+          </div>
+
           <label className="flex items-center gap-2">
             <input type="checkbox" checked={bestSeller} onChange={(e) => setBestSeller(e.target.checked)}
               className="h-4 w-4 accent-rose-gold" />

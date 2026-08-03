@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil, Droplet, Award } from "lucide-react";
 import hero from "@/assets/hero-living-room.jpg";
-import { productQuery, productsQuery } from "@/lib/catalog";
+import { aspectClass, productQuery, productsQuery } from "@/lib/catalog";
 import { RECT_SIZES, SQUARE_SIZES, installationFee, FROM_PRICE } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -196,7 +196,7 @@ function ProductPage() {
               height={1000}
               loading="eager"
               watermark
-              wrapperClassName="aspect-[4/5] w-full grid place-items-center bg-transparent"
+              wrapperClassName={`${aspectClass(product.displayMode)} w-full grid place-items-center bg-transparent`}
               className="relative z-10 max-h-full max-w-full object-contain drop-shadow-xl"
             />
             <span className="absolute z-20 bottom-3 right-3 rounded-full bg-background/70 px-3 py-1 text-[11px] tracking-wider text-rose-gold backdrop-blur">

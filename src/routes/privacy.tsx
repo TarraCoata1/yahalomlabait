@@ -1,22 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { InfoPage } from "@/components/site/InfoPage";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { LegalPage } from "@/components/site/LegalDoc";
 import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
+import { legalDocQuery } from "@/lib/legal";
 
 export const Route = createFileRoute("/privacy")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/privacy")),
+  loader: async ({ context }) => {
+    const [seo] = await Promise.all([
+      context.queryClient.ensureQueryData(pageSeoQuery("/privacy")),
+      context.queryClient.ensureQueryData(legalDocQuery("privacy")),
+    ]);
+    return seo;
+  },
   head: ({ loaderData }) => buildSeoHead({ routePath: "/privacy", seo: loaderData ?? null }),
-  component: () => (
-    <InfoPage
-      eyebrow="פרטיות"
-      title="מדיניות פרטיות"
-      intro="אנו מכבדים את פרטיותכם ופועלים לפי חוק הגנת הפרטיות בישראל."
-      sections={[
-        { q: "המידע שאנו אוספים", a: "פרטי התקשרות (שם, טלפון, אימייל, כתובת) הנחוצים להשלמת ההזמנה והמשלוח בלבד." },
-        { q: "שימוש במידע", a: "לצורך מימוש ההזמנה, שירות לקוחות ושליחת עדכונים שיווקיים במידה ואישרתם זאת מפורשות." },
-        { q: "אבטחת מידע", a: "אנו משתמשים בתקני SSL וספקי תשלום מאובטחים (Stripe/PayPal). פרטי אשראי אינם נשמרים אצלנו." },
-        { q: "עוגיות", a: "האתר משתמש בעוגיות טכניות בלבד לשיפור חוויית הגלישה. ניתן לחסום אותן בהגדרות הדפדפן." },
-        { q: "זכויותיכם", a: "בכל עת ניתן לפנות אלינו לצורך עיון, תיקון או מחיקת המידע האישי שלכם ממאגרינו." },
-      ]}
-    />
-  ),
+  component: PrivacyPage,
 });
+
+function PrivacyPage() {
+  const { data: doc } = useSuspenseQuery(legalDocQuery("privacy"));
+  return (
+    <LegalPage
+      eyebrow={doc?.eyebrow || "פרטיות"}
+      title={doc?.title || "מדיניות פרטיות"}
+      intro={doc?.intro || "אנו מכבדים את פרטיותכם ופועלים לפי חוק הגנת הפרטיות בישראל."}
+      content={doc?.published_content ?? ""}
+      updatedAt={doc?.published_at ?? doc?.updated_at ?? null}
+    />
+  );
+}

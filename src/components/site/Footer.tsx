@@ -63,9 +63,11 @@ export function Footer() {
           <h4 className="mb-3 font-serif text-lg">אודות ומידע</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li><Link to="/about" className="hover:text-primary link-underline">אודות</Link></li>
+            <li><Link to="/terms" className="hover:text-primary link-underline">תקנון ותנאי שימוש</Link></li>
             <li><Link to="/privacy" className="hover:text-primary link-underline">מדיניות פרטיות</Link></li>
-            <li><Link to="/terms" className="hover:text-primary link-underline">תקנון האתר</Link></li>
+            <li><Link to="/cookies" className="hover:text-primary link-underline">מדיניות עוגיות</Link></li>
             <li><Link to="/contact" className="hover:text-primary link-underline">שיתופי פעולה</Link></li>
+
           </ul>
         </div>
       </div>
