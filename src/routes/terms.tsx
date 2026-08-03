@@ -1,23 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { InfoPage } from "@/components/site/InfoPage";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { LegalPage } from "@/components/site/LegalDoc";
 import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
+import { legalDocQuery } from "@/lib/legal";
 
 export const Route = createFileRoute("/terms")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(pageSeoQuery("/terms")),
+  loader: async ({ context }) => {
+    const [seo] = await Promise.all([
+      context.queryClient.ensureQueryData(pageSeoQuery("/terms")),
+      context.queryClient.ensureQueryData(legalDocQuery("terms")),
+    ]);
+    return seo;
+  },
   head: ({ loaderData }) => buildSeoHead({ routePath: "/terms", seo: loaderData ?? null }),
-  component: () => (
-    <InfoPage
-      eyebrow="תנאי שימוש"
-      title="תקנון האתר"
-      intro="השימוש באתר ורכישה דרכו כפופים לתנאים המפורטים בתקנון זה."
-      sections={[
-        { q: "כללי", a: "התקנון מנוסח בלשון זכר לצרכי נוחות בלבד ומתייחס לכל המגדרים כאחד." },
-        { q: "ביצוע הזמנה", a: "רכישה תושלם רק לאחר קבלת אישור ההזמנה במייל וקבלת התשלום המלא." },
-        { q: "מחירים", a: "המחירים באתר בשקלים חדשים כוללים מע״מ. יהלום לבית שומרת על הזכות לעדכן מחירים בכל עת." },
-        { q: "ביטולים והחזרות", a: "כל ההזמנות סופיות. לא ניתן לבטל הזמנה לאחר ביצועה ולא מתקבלים החזרים. המשלוח וההתקנה מבוטחים במקרה של נזק." },
-        { q: "קניין רוחני", a: "כל התכנים, התמונות והעיצובים באתר הם קניינה של יהלום לבית ואסורים בשימוש מסחרי ללא אישור בכתב." },
-        { q: "שיפוט", a: "בכל מחלוקת, סמכות השיפוט הבלעדית נתונה לבתי המשפט המוסמכים במחוז מרכז, ישראל." },
-      ]}
-    />
-  ),
+  component: TermsPage,
 });
+
+function TermsPage() {
+  const { data: doc } = useSuspenseQuery(legalDocQuery("terms"));
+  return (
+    <LegalPage
+      eyebrow={doc?.eyebrow || "תנאי שימוש"}
+      title={doc?.title || "תקנון ותנאי שימוש"}
+      intro={doc?.intro || "השימוש באתר ורכישה דרכו כפופים לתנאים המפורטים בתקנון זה."}
+      content={doc?.published_content ?? ""}
+      updatedAt={doc?.published_at ?? doc?.updated_at ?? null}
+    />
+  );
+}
