@@ -234,7 +234,7 @@ function Checkout() {
                   <img src={it.image} alt="" className="h-14 w-14 shrink-0 rounded-md object-cover" />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm">{it.name}</div>
-                    <div className="text-xs text-muted-foreground">{it.sizeLabel} · ברגי {it.screwColorLabel} · ×{it.qty}</div>
+                    <div className="text-xs text-muted-foreground">{orientationLabel(it.orientation)} · {it.sizeLabel} · ברגי {it.screwColorLabel} · ×{it.qty}</div>
                     {it.withInstallation && <div className="text-xs text-rose-gold/90">כולל התקנה מקצועית</div>}
                     {it.attachments && it.attachments.length > 0 && (
                       <div className="text-xs text-rose-gold/90">{it.attachments.length} קבצים מצורפים</div>

@@ -906,6 +906,7 @@ type OrderItemRow = {
   product_image: string | null;
   sku: string | null;
   size_label: string;
+  orientation: string | null;
   screw_color: string | null;
   with_installation: boolean;
   installation_fee: number;
@@ -925,7 +926,7 @@ function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onC
     queryFn: async () => {
       const { data, error } = await supabase
         .from("order_items")
-        .select("id, product_name, product_image, sku, size_label, screw_color, with_installation, installation_fee, quantity, unit_price, line_total, customization")
+        .select("id, product_name, product_image, sku, size_label, orientation, screw_color, with_installation, installation_fee, quantity, unit_price, line_total, customization")
         .eq("order_id", order.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
@@ -990,7 +991,7 @@ function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onC
                   <div className="min-w-0 flex-1 text-sm">
                     <div className="font-medium">{it.product_name}</div>
                     <div className="text-xs text-muted-foreground">
-                      {it.size_label} · ברגי {it.customization?.screw_color_label ?? it.screw_color ?? "—"} · ×{it.quantity}
+                      {orientationLabel(normalizeOrientation(it.orientation))} · {it.size_label} · ברגי {it.customization?.screw_color_label ?? it.screw_color ?? "—"} · ×{it.quantity}
                     </div>
                     {it.with_installation && (
                       <div className="text-xs text-rose-gold/90">כולל התקנה מקצועית (+₪{it.installation_fee})</div>
