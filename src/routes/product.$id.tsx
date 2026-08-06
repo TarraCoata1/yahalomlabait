@@ -5,6 +5,7 @@ import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil, Droplet, Award } f
 import hero from "@/assets/hero-living-room.jpg";
 import { orientationLabel, orientationPath, orientationPluralLabel, aspectClass, productQuery, productsQuery } from "@/lib/catalog";
 import { RECT_SIZES, SQUARE_SIZES, sizesFor, fromPriceFor, installationFee, FROM_PRICE } from "@/lib/products";
+import { trackAddToCart } from "@/lib/analytics";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProtectedImg } from "@/components/site/ProtectedImg";

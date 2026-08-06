@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { X, Plus, ArrowLeft } from "lucide-react";
 import { aspectClass, type Product } from "@/lib/catalog";
 import { sizesFor } from "@/lib/products";
+import { trackAddToCart } from "@/lib/analytics";
 import { useCart } from "@/lib/cart";
 import { ProtectedImg } from "@/components/site/ProtectedImg";
 

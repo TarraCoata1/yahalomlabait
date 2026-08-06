@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Plus, Pencil, EyeOff, Eye, Trash2, Heart } from "lucide-react";
 import { useState } from "react";
 import { aspectClass, aspectDims, type Product } from "@/lib/catalog";
+import { trackAddToCart } from "@/lib/analytics";
 import { useCart } from "@/lib/cart";
 import { sizesFor, fromPriceFor } from "@/lib/products";
 import { useSession, useIsAdmin } from "@/hooks/use-auth";

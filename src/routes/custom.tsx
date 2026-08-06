@@ -4,6 +4,7 @@ import { useMemo, useState, useRef, useEffect } from "react";
 import { Upload, Sparkles, Check, Wrench, X, FileText, Loader2, AlertCircle } from "lucide-react";
 import { sizesFor, installationFee } from "@/lib/products";
 import { ORIENTATIONS, orientationLabel, type Orientation } from "@/lib/catalog";
+import { trackAddToCart } from "@/lib/analytics";
 import { useCart } from "@/lib/cart";
 import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 import { useSession } from "@/hooks/use-auth";
