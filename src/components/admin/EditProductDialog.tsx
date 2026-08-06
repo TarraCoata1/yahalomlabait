@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { categoriesQuery, DISPLAY_MODES, type DisplayMode, type Product } from "@/lib/catalog";
+import {
+  categoriesQuery,
+  DISPLAY_MODES,
+  ORIENTATIONS,
+  displayModesFor,
+  type DisplayMode,
+  type Orientation,
+  type Product,
+} from "@/lib/catalog";
 import { toast } from "sonner";
 import { X } from "lucide-react";
 
@@ -14,11 +22,21 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
   const [style, setStyle] = useState(product.style);
   const [sku, setSku] = useState(product.sku ?? "");
   const [bestSeller, setBestSeller] = useState(product.bestSeller);
+  const [orientation, setOrientation] = useState<Orientation | "">(product.orientation ?? "");
   const [displayMode, setDisplayMode] = useState<DisplayMode>(product.displayMode);
   const [saving, setSaving] = useState(false);
 
+  const allowedModes = orientation ? displayModesFor(orientation) : [];
+  const effectiveMode: DisplayMode =
+    orientation === "square" ? "square" : allowedModes.includes(displayMode) ? displayMode : "portrait";
+
+  const pickOrientation = (o: Orientation) => {
+    setOrientation(o);
+    setDisplayMode(o === "square" ? "square" : displayMode === "square" ? "portrait" : displayMode);
+  };
 
   const save = async () => {
+    if (!orientation) return toast.error("יש לבחור פורמט יצירה (מרובע או מלבני)");
     setSaving(true);
     const { error } = await supabase
       .from("products")
@@ -29,7 +47,8 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
         style: style.trim(),
         sku: sku.trim() || null,
         best_seller: bestSeller,
-        display_mode: displayMode,
+        orientation,
+        display_mode: effectiveMode,
       })
       .eq("id", product.id);
 
@@ -41,6 +60,7 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
     qc.invalidateQueries({ queryKey: ["product", product.slug] });
     onClose();
   };
+
 
   return (
     <div
