@@ -375,6 +375,7 @@ export type Database = {
           image_key: string
           is_hidden: boolean
           name: string
+          orientation: Database["public"]["Enums"]["artwork_orientation"]
           sku: string | null
           slug: string
           sort_order: number
@@ -392,6 +393,7 @@ export type Database = {
           image_key?: string
           is_hidden?: boolean
           name: string
+          orientation?: Database["public"]["Enums"]["artwork_orientation"]
           sku?: string | null
           slug: string
           sort_order?: number
@@ -409,6 +411,7 @@ export type Database = {
           image_key?: string
           is_hidden?: boolean
           name?: string
+          orientation?: Database["public"]["Enums"]["artwork_orientation"]
           sku?: string | null
           slug?: string
           sort_order?: number
@@ -565,6 +568,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user" | "moderator"
+      artwork_orientation: "square" | "rectangle"
       order_status:
         | "pending_payment"
         | "under_review"
@@ -702,6 +706,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user", "moderator"],
+      artwork_orientation: ["square", "rectangle"],
       order_status: [
         "pending_payment",
         "under_review",
