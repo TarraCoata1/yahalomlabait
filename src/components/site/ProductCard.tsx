@@ -41,6 +41,7 @@ export function ProductCard({ product }: { product: Product }) {
       installationFee: 0,
       unitPrice: s.price,
     });
+    trackAddToCart({ sku: product.sku, name: product.name, orientation: product.orientation, sizeId: s.id, unitPrice: s.price });
   };
 
 

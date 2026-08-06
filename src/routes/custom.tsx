@@ -138,6 +138,7 @@ function CustomPage() {
       unitPrice: price,
       attachments,
     });
+    trackAddToCart({ sku: "CUSTOM", name: "הדפסה בעיצוב אישי", orientation, sizeId: size.id, unitPrice: price, withInstallation: withInstall });
     toast.success("נוסף לעגלה");
   };
 

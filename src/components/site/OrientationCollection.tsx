@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { productsQuery, type Orientation } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
 import { FROM_PRICE, SQUARE_SIZES, RECT_SIZES } from "@/lib/products";
+import { trackCollectionView } from "@/lib/analytics";
 
 type Copy = {
   heading: string;
@@ -44,6 +45,10 @@ export function OrientationCollection({ orientation }: { orientation: Orientatio
     () => (styles.length ? inCollection.filter((p) => styles.includes(p.style)) : inCollection),
     [inCollection, styles],
   );
+
+  useEffect(() => {
+    trackCollectionView(orientation, inCollection.length);
+  }, [orientation, inCollection.length]);
 
   const toggle = (v: string) =>
     setStyles((prev) => (prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]));

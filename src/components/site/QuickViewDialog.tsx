@@ -39,6 +39,7 @@ export function QuickViewDialog({ product, onClose }: { product: Product; onClos
       installationFee: 0,
       unitPrice: size.price,
     });
+    trackAddToCart({ sku: product.sku, name: product.name, orientation: product.orientation, sizeId: size.id, unitPrice: size.price });
     onClose();
   };
 

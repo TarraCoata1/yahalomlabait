@@ -313,7 +313,7 @@ function ProductPage() {
           </label>
 
           <button
-            onClick={() =>
+            onClick={() => {
               add({
                 productId: product.id,
                 sku: product.sku ?? "",
@@ -328,8 +328,16 @@ function ProductPage() {
                 withInstallation: withInstall,
                 installationFee: withInstall ? installFee : 0,
                 unitPrice: total,
-              })
-            }
+              });
+              trackAddToCart({
+                sku: product.sku,
+                name: product.name,
+                orientation: product.orientation,
+                sizeId: size.id,
+                unitPrice: total,
+                withInstallation: withInstall,
+              });
+            }}
             className="mt-6 w-full rounded-full btn-rose py-4 font-semibold hover:btn-rose-hover">
             הוסף לעגלה · ₪{total}
           </button>
