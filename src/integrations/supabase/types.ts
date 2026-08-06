@@ -165,6 +165,7 @@ export type Database = {
           installation_fee: number
           line_total: number
           order_id: string
+          orientation: Database["public"]["Enums"]["artwork_orientation"] | null
           product_id: string | null
           product_image: string | null
           product_name: string
@@ -183,6 +184,9 @@ export type Database = {
           installation_fee?: number
           line_total?: number
           order_id: string
+          orientation?:
+            | Database["public"]["Enums"]["artwork_orientation"]
+            | null
           product_id?: string | null
           product_image?: string | null
           product_name: string
@@ -201,6 +205,9 @@ export type Database = {
           installation_fee?: number
           line_total?: number
           order_id?: string
+          orientation?:
+            | Database["public"]["Enums"]["artwork_orientation"]
+            | null
           product_id?: string | null
           product_image?: string | null
           product_name?: string
