@@ -5,7 +5,7 @@ import { LogOut, ShieldCheck, Plus, Pencil, Trash2, EyeOff, Eye, Search, Upload,
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession, useIsAdmin, signOut } from "@/hooks/use-auth";
-import { categoriesQuery, productsQuery, type Category, type Product } from "@/lib/catalog";
+import { categoriesQuery, productsQuery, orientationLabel, type Category, type Product } from "@/lib/catalog";
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
 import { LegalPanel } from "@/components/admin/LegalPanel";
 import { toast } from "sonner";
