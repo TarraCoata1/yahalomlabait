@@ -141,12 +141,19 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="mt-4 flex items-start justify-between gap-3 px-1">
           <div className="min-w-0">
             <h3 className="truncate font-serif text-lg text-foreground">{product.name}</h3>
-            <p className="text-xs text-muted-foreground">{product.style}</p>
+            <p className="text-xs text-muted-foreground">
+              {product.style}
+              {product.style ? " · " : ""}
+              {product.orientation === "square" ? "מרובע" : "מלבני"}
+            </p>
           </div>
           <div className="shrink-0 text-left">
             <div className="text-sm text-muted-foreground">החל מ־</div>
-            <div className="font-semibold text-rose-gold">₪{FROM_PRICE}</div>
+            <div className="font-semibold text-rose-gold">
+              ₪{(product.orientation === "square" ? SQUARE_SIZES : RECT_SIZES)[0].price}
+            </div>
           </div>
+
         </div>
       </Link>
 
