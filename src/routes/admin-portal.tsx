@@ -247,7 +247,7 @@ function ProductsPanel() {
                 );
               })}
               {filtered.length === 0 && (
-                <tr><td colSpan={7} className="p-8 text-center text-sm text-muted-foreground">אין מוצרים להצגה.</td></tr>
+                <tr><td colSpan={8} className="p-8 text-center text-sm text-muted-foreground">אין מוצרים להצגה.</td></tr>
               )}
 
             </tbody>
