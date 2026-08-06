@@ -189,6 +189,7 @@ function toCategory(r: CategoryRow): Category {
 }
 
 function toProduct(r: ProductRow): Product {
+  const orientation = normalizeOrientation(r.orientation);
   return {
     id: r.id,
     slug: r.slug,
@@ -204,12 +205,12 @@ function toProduct(r: ProductRow): Product {
     isHidden: r.is_hidden,
     sort_order: r.sort_order,
     sku: r.sku ?? "",
-    displayMode: normalizeDisplayMode(r.display_mode),
-    orientation: normalizeOrientation(r.orientation),
-
+    orientation,
+    // Presentation only — orientation is the authority.
+    displayMode: enforceDisplayMode(orientation, r.display_mode),
   };
-
 }
+
 
 export const categoriesQuery = queryOptions({
   queryKey: ["categories"],
