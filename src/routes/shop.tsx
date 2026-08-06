@@ -133,7 +133,7 @@ function Shop() {
           )}
           <div className="rounded-2xl glass p-5 text-sm text-muted-foreground">
             <h3 className="mb-2 font-serif text-lg text-foreground">מחיר</h3>
-            <p>המחירים מתחילים מ־₪{FROM_PRICE} ומשתנים לפי מידה ופורמט. בעמוד המוצר תוכלו לבחור גם פורמט ריבועי ולהוסיף התקנה מקצועית.</p>
+            <p>המחירים מתחילים מ־₪{FROM_PRICE} ומשתנים לפי המידה שנבחרה. לכל יצירה פורמט קבוע (מרובע או מלבני) עם טבלת המידות המתאימה, וניתן להוסיף התקנה מקצועית בעמוד המוצר.</p>
           </div>
         </aside>
 
@@ -155,7 +155,7 @@ function Shop() {
               {filtered.map((p) => <ProductCard key={p.id} product={p} />)}
             </div>
           )}
-          <p className="mt-8 text-xs text-muted-foreground">* המחירים החל מ־₪{FROM_PRICE} (מידה 15×20). מידות נוספות, פורמט ריבועי והתקנה מקצועית בעמוד המוצר.</p>
+          <p className="mt-8 text-xs text-muted-foreground">* המחירים החל מ־₪{FROM_PRICE} (מידה 15×20). המידות הזמינות נגזרות מפורמט היצירה, והתקנה מקצועית ניתנת להוספה בעמוד המוצר.</p>
         </section>
       </div>
     </div>

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { productsQuery, type Orientation } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
-import { FROM_PRICE, SQUARE_SIZES, RECT_SIZES } from "@/lib/products";
+import { fromPriceFor, SQUARE_SIZES, RECT_SIZES } from "@/lib/products";
 import { trackCollectionView } from "@/lib/analytics";
 
 type Copy = {
@@ -113,7 +113,7 @@ export function OrientationCollection({ orientation }: { orientation: Orientatio
       )}
 
       <p className="mt-8 text-xs text-muted-foreground">
-        * המחירים החל מ־₪{FROM_PRICE} וכוללים מע״מ. כל יצירה נוצרה בפרופורציה קבועה ומוצגת במלואה — ללא חיתוך או מתיחה.
+        * המחירים החל מ־₪{fromPriceFor(orientation)} וכוללים מע״מ. כל יצירה נוצרה בפרופורציה קבועה ומוצגת במלואה — ללא חיתוך או מתיחה.
       </p>
     </div>
   );

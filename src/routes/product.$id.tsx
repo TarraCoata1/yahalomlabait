@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil, Droplet, Award } from "lucide-react";
 import hero from "@/assets/hero-living-room.jpg";
-import { orientationLabel, orientationPath, orientationPluralLabel, aspectClass, productQuery, productsQuery } from "@/lib/catalog";
+import { normalizeOrientation, orientationLabel, orientationPath, orientationPluralLabel, aspectClass, productQuery, productsQuery } from "@/lib/catalog";
 import { RECT_SIZES, SQUARE_SIZES, sizesFor, fromPriceFor, installationFee, FROM_PRICE } from "@/lib/products";
 import { trackAddToCart } from "@/lib/analytics";
 import { useCart } from "@/lib/cart";
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/product/$id")({
     }
     const path = `/product/${params.id}`;
     const title = `${loaderData.name} | תמונות לבית - יהלום לבית`;
-    const description = `${loaderData.description} החל מ־₪${FROM_PRICE}. משלוח מבוטח עד 14 ימי עסקים — יהלום לבית.`;
+    const description = `${loaderData.description} החל מ־₪${fromPriceFor(normalizeOrientation(loaderData.orientation))}. משלוח מבוטח עד 14 ימי עסקים — יהלום לבית.`;
     return {
       meta: localizedMeta({ title, description, path, image: loaderData.image, type: "product" }),
       links: canonicalLink(path),
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/product/$id")({
             "@type": "AggregateOffer",
             url: canonical(path),
             priceCurrency: "ILS",
-            lowPrice: String(FROM_PRICE),
+            lowPrice: String(fromPriceFor(normalizeOrientation(loaderData.orientation))),
             highPrice: "2400",
             offerCount: RECT_SIZES.length + SQUARE_SIZES.length,
             priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
