@@ -6,6 +6,8 @@
  * Catalog data (categories + products) lives in the database — see `src/lib/catalog.ts`.
  */
 
+import type { Orientation } from "@/lib/catalog";
+
 export type Size = { id: string; label: string; price: number; w: number; h: number };
 
 /** Rectangular sizes — absolute price in NIS, VAT included */
