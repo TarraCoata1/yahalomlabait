@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+import { orientationLabel } from "@/lib/catalog";
 import { useCart, cartTotal } from "@/lib/cart";
 
 export function MiniCart() {
@@ -49,7 +50,9 @@ export function MiniCart() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <h3 className="truncate font-medium">{it.name}</h3>
-                        <p className="text-xs text-muted-foreground">{it.sizeLabel}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {orientationLabel(it.orientation)} · {it.sizeLabel}
+                        </p>
                         <p className="text-xs text-muted-foreground">
                           ברגי תליה: <span className="text-foreground/80">{it.screwColorLabel}</span>
                         </p>

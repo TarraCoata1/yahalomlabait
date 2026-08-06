@@ -6,6 +6,8 @@
  * Catalog data (categories + products) lives in the database — see `src/lib/catalog.ts`.
  */
 
+import type { Orientation } from "@/lib/catalog";
+
 export type Size = { id: string; label: string; price: number; w: number; h: number };
 
 /** Rectangular sizes — absolute price in NIS, VAT included */
@@ -40,8 +42,27 @@ export const SQUARE_SIZES: Size[] = [
   { id: "100x100",label: "100×100 ס\"מ", price: 1080, w: 100, h: 100 },
 ];
 
-export const SIZES: Size[] = RECT_SIZES;
+/** Every size the workshop produces — rectangular first, then square. */
+export const ALL_SIZES: Size[] = [...RECT_SIZES, ...SQUARE_SIZES];
+
 export const FROM_PRICE = 300;
+
+/** Orientation is the source of truth for which sizes an artwork can be ordered in. */
+export const sizesFor = (orientation: Orientation): Size[] =>
+  orientation === "square" ? SQUARE_SIZES : RECT_SIZES;
+
+/** Lowest price available for an orientation ("starting from"). */
+export const fromPriceFor = (orientation: Orientation): number => sizesFor(orientation)[0].price;
+
+/** Derive the orientation a size belongs to (mirrors app_private.size_orientation). */
+export const sizeOrientation = (sizeId: string): Orientation => {
+  const [w, h] = sizeId.split("x");
+  return w && h && w === h ? "square" : "rectangle";
+};
+
+/** Look up a size within its orientation; never returns a mismatched size. */
+export const findSize = (orientation: Orientation, sizeId: string): Size | undefined =>
+  sizesFor(orientation).find((s) => s.id === sizeId);
 
 /** Installation fee — VAT included */
 export const installationFee = (size: Size): number => {
@@ -52,4 +73,5 @@ export const installationFee = (size: Size): number => {
 };
 
 // Re-export DB types for components that need a Product shape.
-export type { Product, Category } from "@/lib/catalog";
+export type { Product, Category, Orientation } from "@/lib/catalog";
+

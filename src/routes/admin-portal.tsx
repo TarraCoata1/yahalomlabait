@@ -5,7 +5,7 @@ import { LogOut, ShieldCheck, Plus, Pencil, Trash2, EyeOff, Eye, Search, Upload,
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession, useIsAdmin, signOut } from "@/hooks/use-auth";
-import { categoriesQuery, productsQuery, orientationLabel, type Category, type Product } from "@/lib/catalog";
+import { categoriesQuery, productsQuery, orientationLabel, normalizeOrientation, ORIENTATIONS, type Orientation, type Category, type Product } from "@/lib/catalog";
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
 import { LegalPanel } from "@/components/admin/LegalPanel";
 import { toast } from "sonner";
@@ -166,6 +166,50 @@ function ProductsPanel() {
   });
 
 
+  /** CSV round-trip — orientation is a required column, validated on import. */
+  const exportCsv = () => {
+    const head = ["id", "sku", "name", "orientation", "display_mode", "style", "category_slug", "best_seller", "is_hidden"];
+    const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const rows = filtered.map((p) =>
+      [p.id, p.sku, p.name, p.orientation, p.displayMode, p.style, p.categorySlug ?? "", p.bestSeller, p.isHidden].map(esc).join(","),
+    );
+    const blob = new Blob(["\uFEFF" + [head.join(","), ...rows].join("\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `products-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importCsv = async (file: File) => {
+    const text = await file.text();
+    const lines = text.replace(/^\uFEFF/, "").trim().split(/\r?\n/);
+    const head = lines.shift()?.split(",").map((h) => h.trim().replace(/^"|"$/g, "")) ?? [];
+    const iId = head.indexOf("id");
+    const iOrient = head.indexOf("orientation");
+    if (iId < 0 || iOrient < 0) return toast.error("ה-CSV חייב לכלול עמודות id ו-orientation");
+    const cells = (line: string) =>
+      (line.match(/("([^"]|"")*"|[^,]*)/g) ?? []).filter((_, i) => i % 2 === 0).map((c) => c.replace(/^"|"$/g, "").replace(/""/g, '"'));
+    let ok = 0;
+    let bad = 0;
+    for (const line of lines) {
+      const c = cells(line);
+      const id = c[iId]?.trim();
+      const raw = (c[iOrient] ?? "").trim();
+      if (!id) continue;
+      if (raw !== "square" && raw !== "rectangle") { bad++; continue; }
+      const orientation = raw as Orientation;
+      const { error } = await supabase
+        .from("products")
+        .update({ orientation, display_mode: orientation === "square" ? "square" : "portrait" })
+        .eq("id", id);
+      if (error) bad++; else ok++;
+    }
+    toast[bad ? "warning" : "success"](`עודכנו ${ok} מוצרים${bad ? `, ${bad} שורות נדחו (פורמט חסר/שגוי)` : ""}`);
+    qc.invalidateQueries({ queryKey: ["products"] });
+  };
+
   const toggleHidden = async (p: Product) => {
     const { error } = await supabase.from("products").update({ is_hidden: !p.isHidden }).eq("id", p.id);
     if (error) return toast.error(error.message);
@@ -198,6 +242,20 @@ function ProductsPanel() {
           ))}
         </div>
         <span className="text-xs text-muted-foreground">{filtered.length} / {products.length} מוצרים</span>
+        <button onClick={exportCsv} className="rounded-full border border-border px-4 py-2 text-xs hover:bg-secondary">ייצוא CSV</button>
+        <label className="cursor-pointer rounded-full border border-border px-4 py-2 text-xs hover:bg-secondary">
+          ייבוא CSV
+          <input
+            type="file"
+            accept=".csv,text/csv"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              e.target.value = "";
+              if (f) void importCsv(f);
+            }}
+          />
+        </label>
       </div>
 
       <div className="overflow-hidden rounded-2xl glass">
@@ -906,6 +964,7 @@ type OrderItemRow = {
   product_image: string | null;
   sku: string | null;
   size_label: string;
+  orientation: string | null;
   screw_color: string | null;
   with_installation: boolean;
   installation_fee: number;
@@ -925,7 +984,7 @@ function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onC
     queryFn: async () => {
       const { data, error } = await supabase
         .from("order_items")
-        .select("id, product_name, product_image, sku, size_label, screw_color, with_installation, installation_fee, quantity, unit_price, line_total, customization")
+        .select("id, product_name, product_image, sku, size_label, orientation, screw_color, with_installation, installation_fee, quantity, unit_price, line_total, customization")
         .eq("order_id", order.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
@@ -990,7 +1049,7 @@ function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onC
                   <div className="min-w-0 flex-1 text-sm">
                     <div className="font-medium">{it.product_name}</div>
                     <div className="text-xs text-muted-foreground">
-                      {it.size_label} · ברגי {it.customization?.screw_color_label ?? it.screw_color ?? "—"} · ×{it.quantity}
+                      {orientationLabel(normalizeOrientation(it.orientation))} · {it.size_label} · ברגי {it.customization?.screw_color_label ?? it.screw_color ?? "—"} · ×{it.quantity}
                     </div>
                     {it.with_installation && (
                       <div className="text-xs text-rose-gold/90">כולל התקנה מקצועית (+₪{it.installation_fee})</div>

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { Orientation } from "@/lib/catalog";
 
 export type CartAttachment = {
   path: string;
@@ -14,6 +15,8 @@ export type CartItem = {
   sku: string;
   name: string;
   image: string;
+  /** Canonical artwork format — carried end-to-end into the order. */
+  orientation: Orientation;
   sizeId: string;
   sizeLabel: string;
   basePrice: number;
@@ -43,7 +46,7 @@ export const useCart = create<CartState>()(
       open: false,
       add: (item) =>
         set((s) => {
-          const key = `${item.productId}-${item.sizeId}-${item.screwColor}-${item.withInstallation ? "inst" : "noinst"}`;
+          const key = `${item.productId}-${item.orientation}-${item.sizeId}-${item.screwColor}-${item.withInstallation ? "inst" : "noinst"}`;
           const existing = s.items.find((i) => i.key === key);
           const qty = item.qty ?? 1;
           const items = existing
@@ -61,7 +64,7 @@ export const useCart = create<CartState>()(
     }),
     {
       name: "ylb-cart",
-      version: 2,
+      version: 3,
       migrate: () => ({ items: [], open: false } as unknown as CartState),
     },
   ),

@@ -2,7 +2,9 @@ import { SignUpCard } from "@/components/site/SignUpCard";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState, useRef, useEffect } from "react";
 import { Upload, Sparkles, Check, Wrench, X, FileText, Loader2, AlertCircle } from "lucide-react";
-import { SIZES, installationFee } from "@/lib/products";
+import { sizesFor, installationFee } from "@/lib/products";
+import { ORIENTATIONS, orientationLabel, type Orientation } from "@/lib/catalog";
+import { trackAddToCart } from "@/lib/analytics";
 import { useCart } from "@/lib/cart";
 import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 import { useSession } from "@/hooks/use-auth";
@@ -38,6 +40,7 @@ function randomId() {
 }
 
 function CustomPage() {
+  const [orientation, setOrientation] = useState<Orientation>("rectangle");
   const [sizeIdx, setSizeIdx] = useState(1);
   const [screwColor, setScrewColor] = useState<"silver" | "gold" | "black">("silver");
   const [withInstall, setWithInstall] = useState(false);
@@ -48,7 +51,8 @@ function CustomPage() {
   const [dragOver, setDragOver] = useState(false);
   const add = useCart((s) => s.add);
 
-  const size = SIZES[sizeIdx];
+  const sizeList = sizesFor(orientation);
+  const size = sizeList[Math.min(sizeIdx, sizeList.length - 1)];
   const basePrice = BASE + size.price;
   const installFee = useMemo(() => installationFee(size), [size]);
   const price = basePrice + (withInstall ? installFee : 0);
@@ -123,6 +127,7 @@ function CustomPage() {
       sku: "CUSTOM",
       name: "הדפסה בעיצוב אישי",
       image: primaryPreview ?? "",
+      orientation,
       sizeId: size.id,
       sizeLabel: size.label,
       basePrice,
@@ -133,6 +138,7 @@ function CustomPage() {
       unitPrice: price,
       attachments,
     });
+    trackAddToCart({ sku: "CUSTOM", name: "הדפסה בעיצוב אישי", orientation, sizeId: size.id, unitPrice: price, withInstallation: withInstall });
     toast.success("נוסף לעגלה");
   };
 
@@ -240,17 +246,45 @@ function CustomPage() {
           </div>
 
           <div className="mt-5 rounded-2xl glass p-6">
-            <h3 className="font-serif text-xl">2. בחרו מידה</h3>
+            <h3 className="font-serif text-xl">2. בחרו פורמט ומידה</h3>
+            <fieldset className="mt-4">
+              <legend className="text-xs text-muted-foreground">פורמט היצירה</legend>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                {ORIENTATIONS.map((o) => (
+                  <label
+                    key={o.id}
+                    className={`flex cursor-pointer items-center gap-2 rounded-xl border-2 px-3 py-2.5 text-sm transition ${
+                      orientation === o.id ? "border-rose-gold bg-rose-gold/10 text-rose-gold" : "border-border hover:border-rose-gold/50"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="custom-orientation"
+                      value={o.id}
+                      checked={orientation === o.id}
+                      onChange={() => { setOrientation(o.id); setSizeIdx(0); }}
+                      className="h-4 w-4 accent-rose-gold"
+                    />
+                    <span aria-hidden className="block w-5 rounded border border-current opacity-70" style={{ aspectRatio: o.ratio }} />
+                    <span>{o.label}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
             <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {SIZES.map((s, i) => (
+              {sizeList.map((s, i) => (
                 <button key={s.id} onClick={() => setSizeIdx(i)}
-                  className={`rounded-xl border-2 px-3 py-3 text-sm transition ${sizeIdx === i ? "border-rose-gold bg-rose-gold/10 text-rose-gold" : "border-border hover:border-rose-gold/50"}`}>
+                  className={`rounded-xl border-2 px-3 py-3 text-sm transition ${size.id === s.id ? "border-rose-gold bg-rose-gold/10 text-rose-gold" : "border-border hover:border-rose-gold/50"}`}>
                   <div className="font-medium">{s.label}</div>
                   <div className="text-xs text-muted-foreground">₪{BASE + s.price}</div>
                 </button>
               ))}
             </div>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              המידות הזמינות נגזרות מהפורמט שנבחר ({orientationLabel(orientation)}) — לא ניתן לשלב מידה מפורמט אחר.
+            </p>
           </div>
+
 
           <div className="mt-5 rounded-2xl glass p-6">
             <div className="mb-3 flex items-center justify-between">

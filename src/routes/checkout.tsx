@@ -5,6 +5,7 @@ import { Lock, Check, Truck, Store, Loader2 } from "lucide-react";
 import { useCart, cartTotal, cartInstallationTotal } from "@/lib/cart";
 import { siteSettingsQuery, type PaymentMethodConfig } from "@/lib/site-settings";
 import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
+import { orientationLabel } from "@/lib/catalog";
 import type { Json } from "@/integrations/supabase/types";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -99,12 +100,14 @@ function Checkout() {
 
       const itemsPayload = items.map((it) => ({
         product_id: it.productId,
+        orientation: it.orientation,
         size_id: it.sizeId,
         size_label: it.sizeLabel,
         screw_color: it.screwColor,
         with_installation: it.withInstallation,
         quantity: it.qty,
         customization: {
+          orientation: it.orientation,
           screw_color_label: it.screwColorLabel,
           attachments: it.attachments ?? [],
         },
@@ -232,7 +235,7 @@ function Checkout() {
                   <img src={it.image} alt="" className="h-14 w-14 shrink-0 rounded-md object-cover" />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm">{it.name}</div>
-                    <div className="text-xs text-muted-foreground">{it.sizeLabel} · ברגי {it.screwColorLabel} · ×{it.qty}</div>
+                    <div className="text-xs text-muted-foreground">{orientationLabel(it.orientation)} · {it.sizeLabel} · ברגי {it.screwColorLabel} · ×{it.qty}</div>
                     {it.withInstallation && <div className="text-xs text-rose-gold/90">כולל התקנה מקצועית</div>}
                     {it.attachments && it.attachments.length > 0 && (
                       <div className="text-xs text-rose-gold/90">{it.attachments.length} קבצים מצורפים</div>

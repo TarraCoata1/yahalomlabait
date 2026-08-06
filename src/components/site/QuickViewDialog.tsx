@@ -2,14 +2,15 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { X, Plus, ArrowLeft } from "lucide-react";
 import { aspectClass, type Product } from "@/lib/catalog";
-import { RECT_SIZES, SQUARE_SIZES } from "@/lib/products";
+import { sizesFor } from "@/lib/products";
+import { trackAddToCart } from "@/lib/analytics";
 import { useCart } from "@/lib/cart";
 import { ProtectedImg } from "@/components/site/ProtectedImg";
 
 export function QuickViewDialog({ product, onClose }: { product: Product; onClose: () => void }) {
   const add = useCart((s) => s.add);
   const [sizeIdx, setSizeIdx] = useState(0);
-  const sizeList = product.orientation === "square" ? SQUARE_SIZES : RECT_SIZES;
+  const sizeList = sizesFor(product.orientation);
   const size = sizeList[sizeIdx] ?? sizeList[0];
 
   useEffect(() => {
@@ -34,9 +35,11 @@ export function QuickViewDialog({ product, onClose }: { product: Product; onClos
       screwColor: "silver",
       screwColorLabel: "כסוף",
       withInstallation: false,
+      orientation: product.orientation,
       installationFee: 0,
       unitPrice: size.price,
     });
+    trackAddToCart({ sku: product.sku, name: product.name, orientation: product.orientation, sizeId: size.id, unitPrice: size.price });
     onClose();
   };
 

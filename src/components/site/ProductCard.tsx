@@ -2,8 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { Plus, Pencil, EyeOff, Eye, Trash2, Heart } from "lucide-react";
 import { useState } from "react";
 import { aspectClass, aspectDims, type Product } from "@/lib/catalog";
+import { trackAddToCart } from "@/lib/analytics";
 import { useCart } from "@/lib/cart";
-import { RECT_SIZES, SQUARE_SIZES } from "@/lib/products";
+import { sizesFor, fromPriceFor } from "@/lib/products";
 import { useSession, useIsAdmin } from "@/hooks/use-auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +25,7 @@ export function ProductCard({ product }: { product: Product }) {
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
-    const s = (product.orientation === "square" ? SQUARE_SIZES : RECT_SIZES)[0];
+    const s = sizesFor(product.orientation)[0];
     add({
       productId: product.id,
       sku: product.sku ?? "",
@@ -36,9 +37,11 @@ export function ProductCard({ product }: { product: Product }) {
       screwColor: "silver",
       screwColorLabel: "כסוף",
       withInstallation: false,
+      orientation: product.orientation,
       installationFee: 0,
       unitPrice: s.price,
     });
+    trackAddToCart({ sku: product.sku, name: product.name, orientation: product.orientation, sizeId: s.id, unitPrice: s.price });
   };
 
 
@@ -150,7 +153,7 @@ export function ProductCard({ product }: { product: Product }) {
           <div className="shrink-0 text-left">
             <div className="text-sm text-muted-foreground">החל מ־</div>
             <div className="font-semibold text-rose-gold">
-              ₪{(product.orientation === "square" ? SQUARE_SIZES : RECT_SIZES)[0].price}
+              ₪{fromPriceFor(product.orientation)}
             </div>
           </div>
 
