@@ -5,6 +5,7 @@ import { Lock, Check, Truck, Store, Loader2 } from "lucide-react";
 import { useCart, cartTotal, cartInstallationTotal } from "@/lib/cart";
 import { siteSettingsQuery, type PaymentMethodConfig } from "@/lib/site-settings";
 import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
+import { orientationLabel } from "@/lib/catalog";
 import type { Json } from "@/integrations/supabase/types";
 
 import { supabase } from "@/integrations/supabase/client";
