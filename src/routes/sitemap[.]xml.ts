@@ -20,7 +20,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         ]);
 
         const paths = [
-          "/", "/shop", "/custom", "/about", "/contact",
+          "/", "/shop", "/shop/square", "/shop/rectangle", "/custom", "/about", "/contact",
           "/faq", "/shipping", "/returns", "/privacy", "/terms", "/hanging-guide",
           ...(prods ?? []).map((p) => `/product/${p.slug}`),
         ];
