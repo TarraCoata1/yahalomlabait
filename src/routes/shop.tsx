@@ -4,13 +4,14 @@ import { z } from "zod";
 import { useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { FROM_PRICE } from "@/lib/products";
-import { categoriesQuery, productsQuery } from "@/lib/catalog";
+import { categoriesQuery, productsQuery, ORIENTATIONS, orientationPath, type Orientation } from "@/lib/catalog";
 import { ProductCard } from "@/components/site/ProductCard";
 import { breadcrumbSchema } from "@/lib/seo";
 import { pageSeoQuery, buildSeoHead } from "@/lib/page-seo";
 
 const schema = z.object({
   cat: fallback(z.string(), "").default(""),
+  orient: fallback(z.enum(["all", "square", "rectangle"]), "all").default("all"),
   sort: fallback(z.enum(["featured", "low", "high"]), "featured").default("featured"),
 });
 
@@ -32,7 +33,7 @@ export const Route = createFileRoute("/shop")({
 });
 
 function Shop() {
-  const { cat, sort } = Route.useSearch();
+  const { cat, sort, orient } = Route.useSearch();
   const navigate = Route.useNavigate();
   const { data: categories } = useSuspenseQuery(categoriesQuery);
   const { data: products } = useSuspenseQuery(productsQuery);
@@ -44,17 +45,20 @@ function Shop() {
 
   const filtered = useMemo(() => {
     let list = products.filter((p) => !p.isHidden);
+    if (orient !== "all") list = list.filter((p) => p.orientation === orient);
     if (cat) list = list.filter((p) => p.categorySlug === cat);
     if (styles.length) list = list.filter((p) => styles.includes(p.style));
     if (colors.length) list = list.filter((p) => p.colors.some((c) => colors.includes(c)));
     if (sort === "low") list.sort((a, b) => a.name.localeCompare(b.name));
     if (sort === "high") list.sort((a, b) => b.name.localeCompare(a.name));
     return list;
-  }, [cat, sort, styles, colors, products]);
+  }, [cat, orient, sort, styles, colors, products]);
 
   const toggle = (arr: string[], v: string, set: (a: string[]) => void) =>
     set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
 
+  const setOrient = (o: "all" | Orientation) =>
+    navigate({ to: ".", search: (p: z.infer<typeof schema>) => ({ ...p, orient: o }) });
   const setCat = (c?: string) => navigate({ search: (p: z.infer<typeof schema>) => ({ ...p, cat: c ?? "" }) });
   const activeCat = categories.find((c) => c.slug === cat);
 
