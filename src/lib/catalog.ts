@@ -120,6 +120,7 @@ export type Product = {
   sort_order: number;
   sku: string;
   displayMode: DisplayMode;
+  orientation: Orientation;
 };
 
 
@@ -148,6 +149,7 @@ type ProductRow = {
   sort_order: number;
   sku: string | null;
   display_mode?: string | null;
+  orientation?: string | null;
   category?: { slug: string } | null;
 
 };
@@ -183,6 +185,7 @@ function toProduct(r: ProductRow): Product {
     sort_order: r.sort_order,
     sku: r.sku ?? "",
     displayMode: normalizeDisplayMode(r.display_mode),
+    orientation: normalizeOrientation(r.orientation),
 
   };
 
