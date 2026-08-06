@@ -99,12 +99,14 @@ function Checkout() {
 
       const itemsPayload = items.map((it) => ({
         product_id: it.productId,
+        orientation: it.orientation,
         size_id: it.sizeId,
         size_label: it.sizeLabel,
         screw_color: it.screwColor,
         with_installation: it.withInstallation,
         quantity: it.qty,
         customization: {
+          orientation: it.orientation,
           screw_color_label: it.screwColorLabel,
           attachments: it.attachments ?? [],
         },

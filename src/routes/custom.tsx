@@ -126,6 +126,7 @@ function CustomPage() {
       sku: "CUSTOM",
       name: "הדפסה בעיצוב אישי",
       image: primaryPreview ?? "",
+      orientation,
       sizeId: size.id,
       sizeLabel: size.label,
       basePrice,

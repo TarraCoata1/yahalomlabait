@@ -3,8 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil, Droplet, Award } from "lucide-react";
 import hero from "@/assets/hero-living-room.jpg";
-import { orientationLabel, aspectClass, productQuery, productsQuery } from "@/lib/catalog";
-import { RECT_SIZES, SQUARE_SIZES, installationFee, FROM_PRICE } from "@/lib/products";
+import { orientationLabel, orientationPath, orientationPluralLabel, aspectClass, productQuery, productsQuery } from "@/lib/catalog";
+import { RECT_SIZES, SQUARE_SIZES, sizesFor, fromPriceFor, installationFee, FROM_PRICE } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProtectedImg } from "@/components/site/ProtectedImg";
@@ -140,13 +140,18 @@ function ProductPage() {
   ];
   const screw = SCREW_OPTIONS.find((s) => s.id === screwColor)!;
 
-  const sizeList = product.orientation === "square" ? SQUARE_SIZES : RECT_SIZES;
+  const sizeList = sizesFor(product.orientation);
   const size = sizeList[sizeIdx] ?? sizeList[0];
   const installFee = useMemo(() => installationFee(size), [size]);
   const total = size.price + (withInstall ? installFee : 0);
 
   const media = [product.image, hero];
-  const related = allProducts.filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id && !p.isHidden).slice(0, 4);
+  // Recommendations respect orientation first (same format), then category.
+  const candidates = allProducts.filter((p) => p.id !== product.id && !p.isHidden);
+  const related = [
+    ...candidates.filter((p) => p.orientation === product.orientation && p.categorySlug === product.categorySlug),
+    ...candidates.filter((p) => p.orientation === product.orientation && p.categorySlug !== product.categorySlug),
+  ].slice(0, 4);
   const recentlyViewed = recentIds
     .filter((id) => id !== product.id)
     .map((id) => allProducts.find((p) => p.id === id))
@@ -240,10 +245,10 @@ function ProductPage() {
             <p className="mt-2 text-xs text-muted-foreground">
               היצירה נוצרה בפרופורציה זו ומוצגת תמיד במלואה — ללא חיתוך ומתיחה.{" "}
               <Link
-                to={product.orientation === "square" ? "/shop/square" : "/shop/rectangle"}
+                to={orientationPath(product.orientation)}
                 className="text-rose-gold hover:underline"
               >
-                {product.orientation === "square" ? "לכל היצירות המרובעות" : "לכל היצירות המלבניות"}
+                לכל ה{orientationPluralLabel(product.orientation)}
               </Link>
             </p>
           </div>
@@ -313,6 +318,7 @@ function ProductPage() {
                 sku: product.sku ?? "",
                 name: product.name,
                 image: product.image,
+                orientation: product.orientation,
                 sizeId: size.id,
                 sizeLabel: size.label,
                 basePrice: size.price,
@@ -382,7 +388,7 @@ function ProductPage() {
 
       {related.length > 0 && (
         <section className="mt-24">
-          <h2 className="mb-8 font-serif text-2xl md:text-3xl">יצירות נוספות מהקטגוריה</h2>
+          <h2 className="mb-8 font-serif text-2xl md:text-3xl">{orientationPluralLabel(product.orientation)} נוספות</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {related.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
