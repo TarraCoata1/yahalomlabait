@@ -39,6 +39,7 @@ function randomId() {
 }
 
 function CustomPage() {
+  const [orientation, setOrientation] = useState<Orientation>("rectangle");
   const [sizeIdx, setSizeIdx] = useState(1);
   const [screwColor, setScrewColor] = useState<"silver" | "gold" | "black">("silver");
   const [withInstall, setWithInstall] = useState(false);
@@ -49,7 +50,8 @@ function CustomPage() {
   const [dragOver, setDragOver] = useState(false);
   const add = useCart((s) => s.add);
 
-  const size = SIZES[sizeIdx];
+  const sizeList = sizesFor(orientation);
+  const size = sizeList[Math.min(sizeIdx, sizeList.length - 1)];
   const basePrice = BASE + size.price;
   const installFee = useMemo(() => installationFee(size), [size]);
   const price = basePrice + (withInstall ? installFee : 0);
