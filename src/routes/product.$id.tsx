@@ -4,7 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil, Droplet, Award } from "lucide-react";
 import hero from "@/assets/hero-living-room.jpg";
 import { normalizeOrientation, orientationLabel, orientationPath, orientationPluralLabel, aspectClass, productQuery, productsQuery } from "@/lib/catalog";
-import { RECT_SIZES, SQUARE_SIZES, sizesFor, fromPriceFor, installationFee, FROM_PRICE } from "@/lib/products";
+import { sizesFor, fromPriceFor, installationFee } from "@/lib/products";
 import { trackAddToCart } from "@/lib/analytics";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -63,7 +63,7 @@ export const Route = createFileRoute("/product/$id")({
             priceCurrency: "ILS",
             lowPrice: String(fromPriceFor(normalizeOrientation(loaderData.orientation))),
             highPrice: "2400",
-            offerCount: RECT_SIZES.length + SQUARE_SIZES.length,
+            offerCount: sizesFor(normalizeOrientation(loaderData.orientation)).length,
             priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
             availability: "https://schema.org/InStock",
             itemCondition: "https://schema.org/NewCondition",
