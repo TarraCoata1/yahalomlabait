@@ -150,6 +150,7 @@ function ProductsPanel() {
   const [search, setSearch] = useState("");
   const [orient, setOrient] = useState<"all" | "square" | "rectangle">("all");
   const [editing, setEditing] = useState<Product | null>(null);
+  const [creating, setCreating] = useState(false);
 
   const q = search.trim().toLowerCase();
   const filtered = products.filter((p) => {
@@ -168,10 +169,10 @@ function ProductsPanel() {
 
   /** CSV round-trip — orientation is a required column, validated on import. */
   const exportCsv = () => {
-    const head = ["id", "sku", "name", "orientation", "display_mode", "style", "category_slug", "best_seller", "is_hidden"];
+    const head = ["id", "slug", "sku", "name", "orientation", "display_mode", "style", "category_slug", "best_seller", "is_hidden"];
     const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
     const rows = filtered.map((p) =>
-      [p.id, p.sku, p.name, p.orientation, p.displayMode, p.style, p.categorySlug ?? "", p.bestSeller, p.isHidden].map(esc).join(","),
+      [p.id, p.slug, p.sku, p.name, p.orientation, p.displayMode, p.style, p.categorySlug ?? "", p.bestSeller, p.isHidden].map(esc).join(","),
     );
     const blob = new Blob(["\uFEFF" + [head.join(","), ...rows].join("\n")], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -188,22 +189,36 @@ function ProductsPanel() {
     const head = lines.shift()?.split(",").map((h) => h.trim().replace(/^"|"$/g, "")) ?? [];
     const iId = head.indexOf("id");
     const iOrient = head.indexOf("orientation");
-    if (iId < 0 || iOrient < 0) return toast.error("ה-CSV חייב לכלול עמודות id ו-orientation");
+    const iSlug = head.indexOf("slug");
+    const iName = head.indexOf("name");
+    const iSku = head.indexOf("sku");
+    const iStyle = head.indexOf("style");
+    if (iOrient < 0 || (iId < 0 && iSlug < 0)) return toast.error("ה-CSV חייב לכלול orientation וגם id או slug");
     const cells = (line: string) =>
       (line.match(/("([^"]|"")*"|[^,]*)/g) ?? []).filter((_, i) => i % 2 === 0).map((c) => c.replace(/^"|"$/g, "").replace(/""/g, '"'));
     let ok = 0;
     let bad = 0;
     for (const line of lines) {
       const c = cells(line);
-      const id = c[iId]?.trim();
+      const id = iId >= 0 ? c[iId]?.trim() : "";
       const raw = (c[iOrient] ?? "").trim();
-      if (!id) continue;
+      const rowSlug = iSlug >= 0 ? (c[iSlug] ?? "").trim().toLowerCase() : "";
+      if (!id && !rowSlug) continue;
       if (raw !== "square" && raw !== "rectangle") { bad++; continue; }
       const orientation = raw as Orientation;
-      const { error } = await supabase
-        .from("products")
-        .update({ orientation, display_mode: orientation === "square" ? "square" : "portrait" })
-        .eq("id", id);
+      const core = { orientation, display_mode: orientation === "square" ? "square" : ("portrait" as string) };
+      const { error } = id
+        ? await supabase.from("products").update(core).eq("id", id)
+        : await supabase.from("products").upsert(
+            {
+              ...core,
+              slug: rowSlug,
+              name: (iName >= 0 ? c[iName]?.trim() : "") || rowSlug,
+              sku: (iSku >= 0 ? c[iSku]?.trim() : "") || null,
+              style: (iStyle >= 0 ? c[iStyle]?.trim() : "") || "",
+            },
+            { onConflict: "slug" },
+          );
       if (error) bad++; else ok++;
     }
     toast[bad ? "warning" : "success"](`עודכנו ${ok} מוצרים${bad ? `, ${bad} שורות נדחו (פורמט חסר/שגוי)` : ""}`);
@@ -242,6 +257,9 @@ function ProductsPanel() {
           ))}
         </div>
         <span className="text-xs text-muted-foreground">{filtered.length} / {products.length} מוצרים</span>
+        <button onClick={() => setCreating(true)} className="inline-flex items-center gap-1.5 rounded-full btn-rose px-4 py-2 text-xs">
+          <Plus className="h-3.5 w-3.5" /> מוצר חדש
+        </button>
         <button onClick={exportCsv} className="rounded-full border border-border px-4 py-2 text-xs hover:bg-secondary">ייצוא CSV</button>
         <label className="cursor-pointer rounded-full border border-border px-4 py-2 text-xs hover:bg-secondary">
           ייבוא CSV
@@ -314,6 +332,7 @@ function ProductsPanel() {
       </div>
 
       {editing && <EditProductDialog product={editing} onClose={() => setEditing(null)} />}
+      {creating && <EditProductDialog product={null} onClose={() => setCreating(false)} />}
     </section>
   );
 }

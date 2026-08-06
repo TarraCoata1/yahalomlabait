@@ -13,17 +13,20 @@ import {
 import { toast } from "sonner";
 import { X } from "lucide-react";
 
-export function EditProductDialog({ product, onClose }: { product: Product; onClose: () => void }) {
+/** Create + edit dialog. `product === null` creates a new artwork. */
+export function EditProductDialog({ product, onClose }: { product: Product | null; onClose: () => void }) {
   const { data: categories = [] } = useQuery(categoriesQuery);
   const qc = useQueryClient();
-  const [name, setName] = useState(product.name);
-  const [description, setDescription] = useState(product.description);
-  const [categoryId, setCategoryId] = useState<string>(product.categoryId ?? "");
-  const [style, setStyle] = useState(product.style);
-  const [sku, setSku] = useState(product.sku ?? "");
-  const [bestSeller, setBestSeller] = useState(product.bestSeller);
-  const [orientation, setOrientation] = useState<Orientation | "">(product.orientation ?? "");
-  const [displayMode, setDisplayMode] = useState<DisplayMode>(product.displayMode);
+  const isNew = product === null;
+  const [name, setName] = useState(product?.name ?? "");
+  const [slug, setSlug] = useState(product?.slug ?? "");
+  const [description, setDescription] = useState(product?.description ?? "");
+  const [categoryId, setCategoryId] = useState<string>(product?.categoryId ?? "");
+  const [style, setStyle] = useState(product?.style ?? "");
+  const [sku, setSku] = useState(product?.sku ?? "");
+  const [bestSeller, setBestSeller] = useState(product?.bestSeller ?? false);
+  const [orientation, setOrientation] = useState<Orientation | "">(product?.orientation ?? "");
+  const [displayMode, setDisplayMode] = useState<DisplayMode>(product?.displayMode ?? "portrait");
   const [saving, setSaving] = useState(false);
 
   const allowedModes = orientation ? displayModesFor(orientation) : [];
@@ -37,27 +40,29 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
 
   const save = async () => {
     if (!orientation) return toast.error("יש לבחור פורמט יצירה (מרובע או מלבני)");
+    if (!name.trim()) return toast.error("יש להזין שם מוצר");
+    const cleanSlug = slug.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-|-$/g, "");
+    if (isNew && !cleanSlug) return toast.error("יש להזין כתובת (slug) באנגלית");
     setSaving(true);
-    const { error } = await supabase
-      .from("products")
-      .update({
-        name: name.trim(),
-        description: description.trim(),
-        category_id: categoryId || null,
-        style: style.trim(),
-        sku: sku.trim() || null,
-        best_seller: bestSeller,
-        orientation,
-        display_mode: effectiveMode,
-      })
-      .eq("id", product.id);
-
+    const payload = {
+      name: name.trim(),
+      description: description.trim(),
+      category_id: categoryId || null,
+      style: style.trim(),
+      sku: sku.trim() || null,
+      best_seller: bestSeller,
+      orientation,
+      display_mode: effectiveMode,
+    };
+    const { error } = isNew
+      ? await supabase.from("products").insert({ ...payload, slug: cleanSlug })
+      : await supabase.from("products").update(payload).eq("id", product.id);
 
     setSaving(false);
     if (error) return toast.error("שגיאה בשמירה: " + error.message);
-    toast.success("המוצר עודכן");
+    toast.success(isNew ? "המוצר נוצר" : "המוצר עודכן");
     qc.invalidateQueries({ queryKey: ["products"] });
-    qc.invalidateQueries({ queryKey: ["product", product.slug] });
+    if (product) qc.invalidateQueries({ queryKey: ["product", product.slug] });
     onClose();
   };
 
@@ -75,13 +80,20 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
         <button onClick={onClose} aria-label="סגור" className="absolute top-3 left-3 grid h-9 w-9 place-items-center rounded-full hover:bg-secondary">
           <X className="h-5 w-5" />
         </button>
-        <h2 className="font-serif text-2xl">עריכת מוצר</h2>
+        <h2 className="font-serif text-2xl">{isNew ? "מוצר חדש" : "עריכת מוצר"}</h2>
         <div className="space-y-3 text-sm">
           <label className="block">
             <span className="text-xs text-muted-foreground">שם המוצר</span>
             <input value={name} onChange={(e) => setName(e.target.value)}
               className="mt-1 w-full rounded-xl bg-card border border-border px-4 py-2.5 focus:border-rose-gold outline-none" />
           </label>
+          {isNew && (
+            <label className="block">
+              <span className="text-xs text-muted-foreground">כתובת באנגלית (slug) <span className="text-rose-gold">*</span></span>
+              <input value={slug} onChange={(e) => setSlug(e.target.value)} dir="ltr" placeholder="modern-gold-lines"
+                className="mt-1 w-full rounded-xl bg-card border border-border px-4 py-2.5 focus:border-rose-gold outline-none" />
+            </label>
+          )}
           <label className="block">
             <span className="text-xs text-muted-foreground">סגנון</span>
             <input value={style} onChange={(e) => setStyle(e.target.value)}
@@ -178,7 +190,7 @@ export function EditProductDialog({ product, onClose }: { product: Product; onCl
         <div className="flex gap-2 pt-2">
           <button onClick={save} disabled={saving}
             className="flex-1 rounded-full btn-rose py-3 font-semibold hover:btn-rose-hover disabled:opacity-50">
-            {saving ? "שומר…" : "שמור שינויים"}
+            {saving ? "שומר…" : isNew ? "צור מוצר" : "שמור שינויים"}
           </button>
           <button onClick={onClose} className="rounded-full border border-border px-6 py-3 text-sm hover:bg-secondary">
             ביטול
