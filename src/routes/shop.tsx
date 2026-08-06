@@ -86,6 +86,26 @@ function Shop() {
       <div className="grid gap-10 lg:grid-cols-[260px_minmax(0,1fr)]">
         {/* Filters */}
         <aside className="space-y-6">
+          <div className="rounded-2xl glass p-5">
+            <h3 className="mb-3 font-serif text-lg">פורמט היצירה</h3>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={() => setOrient("all")} aria-pressed={orient === "all"}
+                className={`rounded-full px-3 py-1.5 text-xs transition ${orient === "all" ? "btn-rose" : "border border-border hover:border-rose-gold"}`}>הכל</button>
+              {ORIENTATIONS.map((o) => (
+                <button key={o.id} onClick={() => setOrient(o.id)} aria-pressed={orient === o.id}
+                  className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs transition ${orient === o.id ? "btn-rose" : "border border-border hover:border-rose-gold"}`}>
+                  <span aria-hidden className="block w-3 rounded border border-current opacity-70" style={{ aspectRatio: o.ratio }} />
+                  {o.label}
+                </button>
+              ))}
+            </div>
+            {orient !== "all" && (
+              <Link to={orientationPath(orient)} className="mt-3 inline-block text-xs text-rose-gold hover:underline">
+                לעמוד הקולקציה המלא
+              </Link>
+            )}
+          </div>
+
           {allStyles.length > 0 && (
             <div className="rounded-2xl glass p-5">
               <h3 className="mb-3 font-serif text-lg">סגנון</h3>
