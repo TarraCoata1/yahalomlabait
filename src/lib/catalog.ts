@@ -48,7 +48,19 @@ export function orientationLabel(v: Orientation): string {
   return v === "square" ? "מרובע" : "מלבני";
 }
 
-/** Aspect-ratio presentation mode for a product image. */
+export function orientationPluralLabel(v: Orientation): string {
+  return v === "square" ? "יצירות מרובעות" : "יצירות מלבניות";
+}
+
+/** Canonical collection path for an orientation — used by nav, breadcrumbs, sitemap, SEO. */
+export function orientationPath(v: Orientation): "/shop/square" | "/shop/rectangle" {
+  return v === "square" ? "/shop/square" : "/shop/rectangle";
+}
+
+/**
+ * Presentation-only aspect mode for a rectangular artwork's image.
+ * NEVER a classification: orientation decides what is allowed here.
+ */
 export type DisplayMode = "square" | "landscape" | "portrait";
 
 export const DISPLAY_MODES: { id: DisplayMode; label: string; ratio: string }[] = [
@@ -67,6 +79,14 @@ export function normalizeDisplayMode(v: string | null | undefined): DisplayMode 
 export function displayModesFor(orientation: Orientation): DisplayMode[] {
   return orientation === "square" ? ["square"] : ["portrait", "landscape"];
 }
+
+/** Orientation always wins: coerce a stored display mode into a legal value. */
+export function enforceDisplayMode(orientation: Orientation, v: string | null | undefined): DisplayMode {
+  const allowed = displayModesFor(orientation);
+  const mode = normalizeDisplayMode(v);
+  return allowed.includes(mode) ? mode : allowed[0];
+}
+
 
 
 /** Tailwind aspect utility for a display mode (used by every product image frame). */
