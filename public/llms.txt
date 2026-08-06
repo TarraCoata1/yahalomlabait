@@ -7,7 +7,9 @@
 ## Pages
 
 - [Home](/): Brand overview, featured categories and best-selling glass art pieces.
-- [Shop](/shop): Full catalog of glass wall art with style, color and size filters.
+- [Shop](/shop): Full catalog of glass wall art with format, style, color and size filters.
+- [Square artworks](/shop/square): Collection of square-format tempered-glass artworks (1:1 sizes).
+- [Rectangular artworks](/shop/rectangle): Collection of rectangular-format tempered-glass artworks (portrait and landscape sizes).
 - [Custom design](/custom): Upload your own image and order a personalized tempered-glass print.
 - [About](/about): Studio story, materials, production process and craftsmanship.
 - [Contact](/contact): Phone, WhatsApp, email and studio location in Modi'in, Israel.
