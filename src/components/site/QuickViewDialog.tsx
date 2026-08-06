@@ -2,14 +2,15 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { X, Plus, ArrowLeft } from "lucide-react";
 import { aspectClass, type Product } from "@/lib/catalog";
-import { RECT_SIZES } from "@/lib/products";
+import { RECT_SIZES, SQUARE_SIZES } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ProtectedImg } from "@/components/site/ProtectedImg";
 
 export function QuickViewDialog({ product, onClose }: { product: Product; onClose: () => void }) {
   const add = useCart((s) => s.add);
   const [sizeIdx, setSizeIdx] = useState(0);
-  const size = RECT_SIZES[sizeIdx];
+  const sizeList = product.orientation === "square" ? SQUARE_SIZES : RECT_SIZES;
+  const size = sizeList[sizeIdx] ?? sizeList[0];
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -85,7 +86,7 @@ export function QuickViewDialog({ product, onClose }: { product: Product; onClos
                 <span className="text-xs text-muted-foreground">{size.label} · ₪{size.price} כולל מע״מ</span>
               </div>
               <div className="grid grid-cols-3 gap-2 max-h-40 overflow-y-auto pr-1">
-                {RECT_SIZES.slice(0, 9).map((s, i) => (
+                {sizeList.slice(0, 9).map((s, i) => (
                   <button
                     key={s.id}
                     onClick={() => setSizeIdx(i)}

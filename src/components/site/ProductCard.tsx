@@ -3,7 +3,7 @@ import { Plus, Pencil, EyeOff, Eye, Trash2, Heart } from "lucide-react";
 import { useState } from "react";
 import { aspectClass, aspectDims, type Product } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
-import { RECT_SIZES, FROM_PRICE } from "@/lib/products";
+import { RECT_SIZES, SQUARE_SIZES, FROM_PRICE } from "@/lib/products";
 import { useSession, useIsAdmin } from "@/hooks/use-auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +24,7 @@ export function ProductCard({ product }: { product: Product }) {
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
-    const s = RECT_SIZES[0];
+    const s = (product.orientation === "square" ? SQUARE_SIZES : RECT_SIZES)[0];
     add({
       productId: product.id,
       sku: product.sku ?? "",
