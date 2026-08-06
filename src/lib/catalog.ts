@@ -29,6 +29,25 @@ export function resolveImage(key: string | null | undefined): string {
   return ASSET_MAP[key] ?? "";
 }
 
+/**
+ * Canonical artwork orientation — a core, immutable product attribute.
+ * An artwork is composed either square or rectangular; it can never be both.
+ */
+export type Orientation = "square" | "rectangle";
+
+export const ORIENTATIONS: { id: Orientation; label: string; slug: string; ratio: string }[] = [
+  { id: "square", label: "מרובע", slug: "square", ratio: "1 / 1" },
+  { id: "rectangle", label: "מלבני", slug: "rectangle", ratio: "4 / 5" },
+];
+
+export function normalizeOrientation(v: string | null | undefined): Orientation {
+  return v === "square" ? "square" : "rectangle";
+}
+
+export function orientationLabel(v: Orientation): string {
+  return v === "square" ? "מרובע" : "מלבני";
+}
+
 /** Aspect-ratio presentation mode for a product image. */
 export type DisplayMode = "square" | "landscape" | "portrait";
 
@@ -43,6 +62,12 @@ export const DEFAULT_DISPLAY_MODE: DisplayMode = "portrait";
 export function normalizeDisplayMode(v: string | null | undefined): DisplayMode {
   return v === "square" || v === "landscape" || v === "portrait" ? v : DEFAULT_DISPLAY_MODE;
 }
+
+/** Display modes valid for a given orientation — square art is always shown 1:1. */
+export function displayModesFor(orientation: Orientation): DisplayMode[] {
+  return orientation === "square" ? ["square"] : ["portrait", "landscape"];
+}
+
 
 /** Tailwind aspect utility for a display mode (used by every product image frame). */
 export function aspectClass(mode: DisplayMode | string | null | undefined): string {
@@ -95,6 +120,7 @@ export type Product = {
   sort_order: number;
   sku: string;
   displayMode: DisplayMode;
+  orientation: Orientation;
 };
 
 
@@ -123,6 +149,7 @@ type ProductRow = {
   sort_order: number;
   sku: string | null;
   display_mode?: string | null;
+  orientation?: string | null;
   category?: { slug: string } | null;
 
 };
@@ -158,6 +185,7 @@ function toProduct(r: ProductRow): Product {
     sort_order: r.sort_order,
     sku: r.sku ?? "",
     displayMode: normalizeDisplayMode(r.display_mode),
+    orientation: normalizeOrientation(r.orientation),
 
   };
 

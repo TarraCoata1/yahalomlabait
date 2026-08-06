@@ -5,7 +5,7 @@ import { LogOut, ShieldCheck, Plus, Pencil, Trash2, EyeOff, Eye, Search, Upload,
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession, useIsAdmin, signOut } from "@/hooks/use-auth";
-import { categoriesQuery, productsQuery, type Category, type Product } from "@/lib/catalog";
+import { categoriesQuery, productsQuery, orientationLabel, type Category, type Product } from "@/lib/catalog";
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
 import { LegalPanel } from "@/components/admin/LegalPanel";
 import { toast } from "sonner";
@@ -148,13 +148,17 @@ function ProductsPanel() {
   const { data: categories = [] } = useQuery(categoriesQuery);
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
+  const [orient, setOrient] = useState<"all" | "square" | "rectangle">("all");
   const [editing, setEditing] = useState<Product | null>(null);
 
   const q = search.trim().toLowerCase();
   const filtered = products.filter((p) => {
+    if (orient !== "all" && p.orientation !== orient) return false;
     if (!q) return true;
     return (
       p.name.toLowerCase().includes(q) ||
+      orientationLabel(p.orientation).includes(q) ||
+      p.orientation.includes(q) ||
       p.style.toLowerCase().includes(q) ||
       (p.sku ?? "").toLowerCase().includes(q) ||
       (p.categorySlug ?? "").toLowerCase().includes(q)
@@ -182,8 +186,16 @@ function ProductsPanel() {
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="חיפוש לפי שם, מק״ט, סגנון…"
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="חיפוש לפי שם, מק״ט, סגנון, פורמט…"
             className="w-full rounded-full bg-card border border-border pr-10 pl-4 py-2.5 text-sm focus:border-rose-gold outline-none" />
+        </div>
+        <div className="inline-flex rounded-full glass p-1 text-xs">
+          {([["all", "הכל"], ["square", "מרובעות"], ["rectangle", "מלבניות"]] as const).map(([id, label]) => (
+            <button key={id} onClick={() => setOrient(id)} aria-pressed={orient === id}
+              className={`rounded-full px-3 py-1.5 transition ${orient === id ? "btn-rose" : "text-muted-foreground hover:text-foreground"}`}>
+              {label}
+            </button>
+          ))}
         </div>
         <span className="text-xs text-muted-foreground">{filtered.length} / {products.length} מוצרים</span>
       </div>
@@ -200,6 +212,7 @@ function ProductsPanel() {
                 <th className="px-3 py-3 text-right hidden sm:table-cell">מק״ט</th>
                 <th className="px-3 py-3 text-right hidden md:table-cell">קטגוריה</th>
                 <th className="px-3 py-3 text-right hidden lg:table-cell">סגנון</th>
+                <th className="px-3 py-3 text-right hidden md:table-cell">פורמט</th>
                 <th className="px-3 py-3 text-right">סטטוס</th>
                 <th className="px-3 py-3 text-left">פעולות</th>
               </tr>
@@ -219,6 +232,7 @@ function ProductsPanel() {
                     <td className="px-3 py-3 hidden sm:table-cell font-mono text-xs" dir="ltr">{p.sku || <span className="text-muted-foreground">—</span>}</td>
                     <td className="px-3 py-3 hidden md:table-cell">{catName}</td>
                     <td className="px-3 py-3 hidden lg:table-cell">{p.style}</td>
+                    <td className="px-3 py-3 hidden md:table-cell">{orientationLabel(p.orientation)}</td>
                     <td className="px-3 py-3">
                       {p.isHidden ? <span className="text-amber-400">מוסתר</span> : <span className="text-emerald-400">מוצג</span>}
                     </td>
@@ -233,7 +247,7 @@ function ProductsPanel() {
                 );
               })}
               {filtered.length === 0 && (
-                <tr><td colSpan={7} className="p-8 text-center text-sm text-muted-foreground">אין מוצרים להצגה.</td></tr>
+                <tr><td colSpan={8} className="p-8 text-center text-sm text-muted-foreground">אין מוצרים להצגה.</td></tr>
               )}
 
             </tbody>

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Check, ShieldCheck, Truck, Sparkles, Wrench, Pencil, Droplet, Award } from "lucide-react";
 import hero from "@/assets/hero-living-room.jpg";
-import { aspectClass, productQuery, productsQuery } from "@/lib/catalog";
+import { orientationLabel, aspectClass, productQuery, productsQuery } from "@/lib/catalog";
 import { RECT_SIZES, SQUARE_SIZES, installationFee, FROM_PRICE } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -117,7 +117,6 @@ function ProductPage() {
   const { user } = useSession();
   const { data: isAdmin } = useIsAdmin(user);
 
-  const [shape, setShape] = useState<"rect" | "square">("rect");
   const [sizeIdx, setSizeIdx] = useState(0);
   const [screwColor, setScrewColor] = useState<"silver" | "gold" | "black">("silver");
   const [withInstall, setWithInstall] = useState(false);
@@ -141,7 +140,7 @@ function ProductPage() {
   ];
   const screw = SCREW_OPTIONS.find((s) => s.id === screwColor)!;
 
-  const sizeList = shape === "rect" ? RECT_SIZES : SQUARE_SIZES;
+  const sizeList = product.orientation === "square" ? SQUARE_SIZES : RECT_SIZES;
   const size = sizeList[sizeIdx] ?? sizeList[0];
   const installFee = useMemo(() => installationFee(size), [size]);
   const total = size.price + (withInstall ? installFee : 0);
@@ -153,11 +152,6 @@ function ProductPage() {
     .map((id) => allProducts.find((p) => p.id === id))
     .filter((p): p is (typeof allProducts)[number] => !!p && !p.isHidden)
     .slice(0, 4);
-
-  const switchShape = (s: "rect" | "square") => {
-    setShape(s);
-    setSizeIdx(0);
-  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8 md:py-14">
@@ -232,19 +226,26 @@ function ProductPage() {
 
           <p className="mt-6 leading-relaxed text-muted-foreground">{product.description}</p>
 
-          {/* Shape toggle */}
+          {/* Orientation (fixed attribute of the artwork) */}
           <div className="mt-8">
-            <h3 className="mb-3 font-medium">פורמט</h3>
-            <div className="inline-flex rounded-full glass p-1">
-              <button onClick={() => switchShape("rect")}
-                className={`rounded-full px-5 py-2 text-sm transition ${shape === "rect" ? "btn-rose" : "text-muted-foreground hover:text-foreground"}`}>
-                מלבני
-              </button>
-              <button onClick={() => switchShape("square")}
-                className={`rounded-full px-5 py-2 text-sm transition ${shape === "square" ? "btn-rose" : "text-muted-foreground hover:text-foreground"}`}>
-                ריבועי
-              </button>
+            <h3 className="mb-3 font-medium">פורמט היצירה</h3>
+            <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-sm">
+              <span
+                aria-hidden
+                className="block w-4 rounded border border-rose-gold/70"
+                style={{ aspectRatio: product.orientation === "square" ? "1 / 1" : "4 / 5" }}
+              />
+              <span className="text-rose-gold">{orientationLabel(product.orientation)}</span>
             </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              היצירה נוצרה בפרופורציה זו ומוצגת תמיד במלואה — ללא חיתוך ומתיחה.{" "}
+              <Link
+                to={product.orientation === "square" ? "/shop/square" : "/shop/rectangle"}
+                className="text-rose-gold hover:underline"
+              >
+                {product.orientation === "square" ? "לכל היצירות המרובעות" : "לכל היצירות המלבניות"}
+              </Link>
+            </p>
           </div>
 
           {/* Sizes */}
