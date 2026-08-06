@@ -9,6 +9,8 @@ import { useSession, useIsAdmin } from "@/hooks/use-auth";
 const nav = [
   { to: "/", label: "בית" },
   { to: "/shop", label: "חנות" },
+  { to: "/shop/square", label: "מרובעות" },
+  { to: "/shop/rectangle", label: "מלבניות" },
   { to: "/custom", label: "עיצוב אישי" },
   { to: "/about", label: "אודות" },
   { to: "/contact", label: "צור קשר" },

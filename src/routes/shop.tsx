@@ -71,6 +71,8 @@ function Shop() {
 
       {/* category pills */}
       <div className="mb-8 flex flex-wrap gap-2">
+        <Link to="/shop/square" className="rounded-full glass px-4 py-2 text-sm transition hover:border-rose-gold/40">מרובעות</Link>
+        <Link to="/shop/rectangle" className="rounded-full glass px-4 py-2 text-sm transition hover:border-rose-gold/40">מלבניות</Link>
         <button onClick={() => setCat(undefined)} className={`rounded-full px-4 py-2 text-sm transition ${!cat ? "btn-rose" : "glass hover:border-rose-gold/40"}`}>הכל</button>
         {categories.filter((c) => c.is_active).map((c) => (
           <button key={c.id} onClick={() => setCat(c.slug)} className={`rounded-full px-4 py-2 text-sm transition ${cat === c.slug ? "btn-rose" : "glass hover:border-rose-gold/40"}`}>{c.name}</button>

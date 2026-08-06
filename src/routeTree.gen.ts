@@ -25,6 +25,7 @@ import { Route as AdminPortalRouteImport } from './routes/admin-portal'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShopSquareRouteImport } from './routes/shop_.square'
+import { Route as ShopRectangleRouteImport } from './routes/shop_.rectangle'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 
 const TermsRoute = TermsRouteImport.update({
@@ -107,6 +108,11 @@ const ShopSquareRoute = ShopSquareRouteImport.update({
   path: '/shop/square',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShopRectangleRoute = ShopRectangleRouteImport.update({
+  id: '/shop_/rectangle',
+  path: '/shop/rectangle',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
   path: '/product/$id',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/product/$id': typeof ProductIdRoute
+  '/shop/rectangle': typeof ShopRectangleRoute
   '/shop/square': typeof ShopSquareRoute
 }
 export interface FileRoutesByTo {
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/product/$id': typeof ProductIdRoute
+  '/shop/rectangle': typeof ShopRectangleRoute
   '/shop/square': typeof ShopSquareRoute
 }
 export interface FileRoutesById {
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/product/$id': typeof ProductIdRoute
+  '/shop_/rectangle': typeof ShopRectangleRoute
   '/shop_/square': typeof ShopSquareRoute
 }
 export interface FileRouteTypes {
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/product/$id'
+    | '/shop/rectangle'
     | '/shop/square'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/product/$id'
+    | '/shop/rectangle'
     | '/shop/square'
   id:
     | '__root__'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/product/$id'
+    | '/shop_/rectangle'
     | '/shop_/square'
   fileRoutesById: FileRoutesById
 }
@@ -248,6 +260,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   ProductIdRoute: typeof ProductIdRoute
+  ShopRectangleRoute: typeof ShopRectangleRoute
   ShopSquareRoute: typeof ShopSquareRoute
 }
 
@@ -365,6 +378,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopSquareRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shop_/rectangle': {
+      id: '/shop_/rectangle'
+      path: '/shop/rectangle'
+      fullPath: '/shop/rectangle'
+      preLoaderRoute: typeof ShopRectangleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product/$id': {
       id: '/product/$id'
       path: '/product/$id'
@@ -392,6 +412,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   ProductIdRoute: ProductIdRoute,
+  ShopRectangleRoute: ShopRectangleRoute,
   ShopSquareRoute: ShopSquareRoute,
 }
 export const routeTree = rootRouteImport
