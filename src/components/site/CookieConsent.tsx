@@ -46,7 +46,8 @@ export function CookieConsent() {
     setCustomize(false);
   };
 
-  if (!open) return null;
+  // The admin panel is a private tool with its own modals — no consent banner there.
+  if (!open || pathname.startsWith("/admin-portal")) return null;
 
   return (
     <div
