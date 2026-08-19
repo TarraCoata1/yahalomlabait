@@ -381,11 +381,13 @@ export type Database = {
           id: string
           image_key: string
           is_hidden: boolean
+          low_stock_threshold: number
           name: string
           orientation: Database["public"]["Enums"]["artwork_orientation"]
           sku: string | null
           slug: string
           sort_order: number
+          stock_quantity: number
           style: string
           updated_at: string
         }
@@ -399,11 +401,13 @@ export type Database = {
           id?: string
           image_key?: string
           is_hidden?: boolean
+          low_stock_threshold?: number
           name: string
           orientation?: Database["public"]["Enums"]["artwork_orientation"]
           sku?: string | null
           slug: string
           sort_order?: number
+          stock_quantity?: number
           style?: string
           updated_at?: string
         }
@@ -417,11 +421,13 @@ export type Database = {
           id?: string
           image_key?: string
           is_hidden?: boolean
+          low_stock_threshold?: number
           name?: string
           orientation?: Database["public"]["Enums"]["artwork_orientation"]
           sku?: string | null
           slug?: string
           sort_order?: number
+          stock_quantity?: number
           style?: string
           updated_at?: string
         }
