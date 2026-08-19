@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Cookie, SlidersHorizontal, X } from "lucide-react";
 import {
   COOKIE_CONSENT_EVENT,
@@ -12,6 +12,7 @@ import {
  * Essential cookies are always on (session, cart, security).
  */
 export function CookieConsent() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
   const [customize, setCustomize] = useState(false);
   const [analytics, setAnalytics] = useState(false);
@@ -45,7 +46,8 @@ export function CookieConsent() {
     setCustomize(false);
   };
 
-  if (!open) return null;
+  // The admin panel is a private tool with its own modals — no consent banner there.
+  if (!open || pathname.startsWith("/admin-portal")) return null;
 
   return (
     <div
