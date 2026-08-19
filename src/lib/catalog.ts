@@ -255,3 +255,18 @@ export const productQuery = (slug: string) =>
       return data ? toProduct(data as unknown as ProductRow) : null;
     },
   });
+
+/** Minimal stock status used by the admin products table and product page. */
+export type StockStatus = "out" | "low" | "in";
+
+export function stockStatus(p: Pick<Product, "stockQuantity" | "lowStockThreshold">): StockStatus {
+  if (p.stockQuantity <= 0) return "out";
+  if (p.lowStockThreshold > 0 && p.stockQuantity <= p.lowStockThreshold) return "low";
+  return "in";
+}
+
+export const STOCK_STATUS_LABEL: Record<StockStatus, string> = {
+  out: "אזל מהמלאי",
+  low: "מלאי נמוך",
+  in: "במלאי",
+};
