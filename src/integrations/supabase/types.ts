@@ -563,6 +563,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_legal_documents: {
+        Args: never
+        Returns: {
+          created_at: string
+          draft_content: string
+          eyebrow: string
+          id: string
+          intro: string
+          page_label: string
+          published_at: string
+          published_content: string
+          slug: string
+          title: string
+          updated_at: string
+          updated_by: string
+          updated_by_email: string
+        }[]
+      }
       place_order: {
         Args: {
           _customer: Json
