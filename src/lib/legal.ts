@@ -63,14 +63,15 @@ export const legalDocQuery = (slug: LegalSlug) =>
     staleTime: 30_000,
   });
 
-/** Admin-only: includes drafts. */
+/**
+ * Admin-only: includes drafts.
+ * Draft columns are not readable through the table (anon/authenticated only have
+ * column grants on published fields), so this goes through an admin-gated RPC.
+ */
 export const legalDocsAdminQuery = queryOptions({
   queryKey: ["legal_docs", "admin"],
   queryFn: async (): Promise<LegalDocAdmin[]> => {
-    const { data, error } = await supabase
-      .from("legal_documents")
-      .select("*")
-      .order("slug");
+    const { data, error } = await supabase.rpc("admin_legal_documents");
     if (error) throw error;
     return (data ?? []) as LegalDocAdmin[];
   },
