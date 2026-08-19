@@ -12,6 +12,7 @@ import {
  * Essential cookies are always on (session, cart, security).
  */
 export function CookieConsent() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
   const [customize, setCustomize] = useState(false);
   const [analytics, setAnalytics] = useState(false);
