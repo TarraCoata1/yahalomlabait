@@ -5,7 +5,7 @@ import { LogOut, ShieldCheck, Plus, Pencil, Trash2, EyeOff, Eye, Search, Upload,
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession, useIsAdmin, signOut } from "@/hooks/use-auth";
-import { categoriesQuery, productsQuery, orientationLabel, normalizeOrientation, ORIENTATIONS, type Orientation, type Category, type Product } from "@/lib/catalog";
+import { categoriesQuery, productsQuery, orientationLabel, normalizeOrientation, stockStatus, STOCK_STATUS_LABEL, ORIENTATIONS, type Orientation, type Category, type Product } from "@/lib/catalog";
 import { EditProductDialog } from "@/components/admin/EditProductDialog";
 import { LegalPanel } from "@/components/admin/LegalPanel";
 import { toast } from "sonner";
@@ -169,10 +169,10 @@ function ProductsPanel() {
 
   /** CSV round-trip — orientation is a required column, validated on import. */
   const exportCsv = () => {
-    const head = ["id", "slug", "sku", "name", "orientation", "display_mode", "style", "category_slug", "best_seller", "is_hidden"];
+    const head = ["id", "slug", "sku", "name", "orientation", "display_mode", "style", "category_slug", "best_seller", "is_hidden", "stock_quantity", "low_stock_threshold"];
     const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
     const rows = filtered.map((p) =>
-      [p.id, p.slug, p.sku, p.name, p.orientation, p.displayMode, p.style, p.categorySlug ?? "", p.bestSeller, p.isHidden].map(esc).join(","),
+      [p.id, p.slug, p.sku, p.name, p.orientation, p.displayMode, p.style, p.categorySlug ?? "", p.bestSeller, p.isHidden, p.stockQuantity, p.lowStockThreshold].map(esc).join(","),
     );
     const blob = new Blob(["\uFEFF" + [head.join(","), ...rows].join("\n")], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -193,6 +193,8 @@ function ProductsPanel() {
     const iName = head.indexOf("name");
     const iSku = head.indexOf("sku");
     const iStyle = head.indexOf("style");
+    const iStock = head.indexOf("stock_quantity");
+    const iLow = head.indexOf("low_stock_threshold");
     if (iOrient < 0 || (iId < 0 && iSlug < 0)) return toast.error("ה-CSV חייב לכלול orientation וגם id או slug");
     const cells = (line: string) =>
       (line.match(/("([^"]|"")*"|[^,]*)/g) ?? []).filter((_, i) => i % 2 === 0).map((c) => c.replace(/^"|"$/g, "").replace(/""/g, '"'));
@@ -206,7 +208,14 @@ function ProductsPanel() {
       if (!id && !rowSlug) continue;
       if (raw !== "square" && raw !== "rectangle") { bad++; continue; }
       const orientation = raw as Orientation;
-      const core = { orientation, display_mode: orientation === "square" ? "square" : ("portrait" as string) };
+      const stockNum = iStock >= 0 ? Number((c[iStock] ?? "").trim()) : NaN;
+      const lowNum = iLow >= 0 ? Number((c[iLow] ?? "").trim()) : NaN;
+      const core = {
+        orientation,
+        display_mode: orientation === "square" ? "square" : ("portrait" as string),
+        ...(Number.isInteger(stockNum) && stockNum >= 0 ? { stock_quantity: stockNum } : {}),
+        ...(Number.isInteger(lowNum) && lowNum >= 0 ? { low_stock_threshold: lowNum } : {}),
+      };
       const { error } = id
         ? await supabase.from("products").update(core).eq("id", id)
         : await supabase.from("products").upsert(
@@ -289,6 +298,7 @@ function ProductsPanel() {
                 <th className="px-3 py-3 text-right hidden md:table-cell">קטגוריה</th>
                 <th className="px-3 py-3 text-right hidden lg:table-cell">סגנון</th>
                 <th className="px-3 py-3 text-right hidden md:table-cell">פורמט</th>
+                <th className="px-3 py-3 text-right">מלאי</th>
                 <th className="px-3 py-3 text-right">סטטוס</th>
                 <th className="px-3 py-3 text-left">פעולות</th>
               </tr>
@@ -309,6 +319,7 @@ function ProductsPanel() {
                     <td className="px-3 py-3 hidden md:table-cell">{catName}</td>
                     <td className="px-3 py-3 hidden lg:table-cell">{p.style}</td>
                     <td className="px-3 py-3 hidden md:table-cell">{orientationLabel(p.orientation)}</td>
+                    <td className="px-3 py-3"><StockCell product={p} /></td>
                     <td className="px-3 py-3">
                       {p.isHidden ? <span className="text-amber-400">מוסתר</span> : <span className="text-emerald-400">מוצג</span>}
                     </td>
@@ -323,7 +334,7 @@ function ProductsPanel() {
                 );
               })}
               {filtered.length === 0 && (
-                <tr><td colSpan={8} className="p-8 text-center text-sm text-muted-foreground">אין מוצרים להצגה.</td></tr>
+                <tr><td colSpan={9} className="p-8 text-center text-sm text-muted-foreground">אין מוצרים להצגה.</td></tr>
               )}
 
             </tbody>
@@ -334,6 +345,57 @@ function ProductsPanel() {
       {editing && <EditProductDialog product={editing} onClose={() => setEditing(null)} />}
       {creating && <EditProductDialog product={null} onClose={() => setCreating(false)} />}
     </section>
+  );
+}
+
+/** Inline stock editor + status badge for the products table. */
+function StockCell({ product }: { product: Product }) {
+  const qc = useQueryClient();
+  const [value, setValue] = useState(String(product.stockQuantity));
+  const [saving, setSaving] = useState(false);
+  useEffect(() => setValue(String(product.stockQuantity)), [product.stockQuantity]);
+
+  const status = stockStatus(product);
+  const badge =
+    status === "out" ? "text-destructive" : status === "low" ? "text-amber-400" : "text-emerald-400";
+
+  const commit = async () => {
+    const qty = Number(value);
+    if (!Number.isInteger(qty) || qty < 0) {
+      toast.error("כמות מלאי חייבת להיות מספר שלם מ־0 ומעלה");
+      setValue(String(product.stockQuantity));
+      return;
+    }
+    if (qty === product.stockQuantity) return;
+    setSaving(true);
+    const { error } = await supabase.from("products").update({ stock_quantity: qty }).eq("id", product.id);
+    setSaving(false);
+    if (error) {
+      toast.error("שמירת המלאי נכשלה: " + error.message);
+      setValue(String(product.stockQuantity));
+      return;
+    }
+    toast.success("המלאי עודכן");
+    qc.invalidateQueries({ queryKey: ["products"] });
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <input
+        type="number"
+        min={0}
+        step={1}
+        inputMode="numeric"
+        aria-label={`כמות במלאי — ${product.name}`}
+        value={value}
+        disabled={saving}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
+        className="w-16 rounded-lg bg-card border border-border px-2 py-1 text-xs outline-none focus:border-rose-gold"
+      />
+      <span className={`whitespace-nowrap text-[11px] ${badge}`}>{STOCK_STATUS_LABEL[status]}</span>
+    </div>
   );
 }
 
@@ -925,6 +987,7 @@ function OrdersPanel() {
                 <th className="px-3 py-3 text-right">לקוח</th>
                 <th className="px-3 py-3 text-right">אמצעי תשלום</th>
                 <th className="px-3 py-3 text-right">תשלום</th>
+                <th className="px-3 py-3 text-right">מלאי</th>
                 <th className="px-3 py-3 text-right">סטטוס</th>
                 <th className="px-3 py-3 text-left">סה״כ</th>
                 <th className="px-3 py-3 text-left">פרטים</th>
@@ -998,6 +1061,10 @@ type OrderItemRow = {
 };
 
 function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onClose: () => void; onChanged: () => void }) {
+  const { data: allOrders = [] } = useQuery(adminOrdersQuery);
+  const previousOrders = allOrders.filter(
+    (o) => o.id !== order.id && !!order.customer_email && o.customer_email === order.customer_email,
+  );
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["admin_order_items", order.id],
     queryFn: async () => {
@@ -1043,6 +1110,11 @@ function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onC
             <div className="font-medium">{order.customer_name || "—"}</div>
             <div className="text-muted-foreground" dir="ltr">{order.customer_email}</div>
             <div className="text-muted-foreground" dir="ltr">{order.customer_phone}</div>
+            <div className="mt-2 text-xs text-muted-foreground">
+              {previousOrders.length > 0
+                ? `הזמנות קודמות: ${previousOrders.length} (${previousOrders.map((o) => "#" + o.order_number).join(", ")})`
+                : "לקוח חדש — אין הזמנות קודמות"}
+            </div>
           </div>
           <div className="rounded-xl glass p-4 text-sm">
             <div className="mb-2 text-xs uppercase tracking-wider text-rose-gold">אספקה</div>
@@ -1085,6 +1157,7 @@ function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onC
           )}
           <div className="mt-4 space-y-1 border-t border-border/40 pt-3 text-sm">
             <div className="flex justify-between text-muted-foreground"><span>מוצרים</span><span className="text-foreground">{currency(order.subtotal, order.currency)}</span></div>
+            {order.discount > 0 && <div className="flex justify-between text-muted-foreground"><span>הנחה</span><span className="text-emerald-400">−{currency(order.discount, order.currency)}</span></div>}
             {order.installation_fee > 0 && <div className="flex justify-between text-muted-foreground"><span>התקנה</span><span className="text-foreground">{currency(order.installation_fee, order.currency)}</span></div>}
             <div className="flex justify-between text-muted-foreground"><span>{order.fulfillment_type === "pickup" ? "איסוף" : "משלוח"}</span><span className="text-foreground">{order.shipping_fee ? currency(order.shipping_fee, order.currency) : "חינם"}</span></div>
             <div className="flex justify-between border-t border-border pt-2 font-semibold"><span>סה״כ</span><span className="text-rose-gold text-lg">{currency(order.total, order.currency)}</span></div>
