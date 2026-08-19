@@ -163,8 +163,9 @@ export function EditProductDialog({ product, onClose }: { product: Product | nul
           </button>
         </div>
 
-        {/* Scrollable form body */}
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-4">
+        {/* Scrollable form body — visible native scrollbar */}
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-4 visible-scrollbar">
+
         <div className="space-y-3 text-sm">
           <label className="block">
             <span className="text-xs text-muted-foreground">שם המוצר</span>
