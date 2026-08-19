@@ -141,6 +141,8 @@ export type Product = {
   sku: string;
   displayMode: DisplayMode;
   orientation: Orientation;
+  stockQuantity: number;
+  lowStockThreshold: number;
 };
 
 
@@ -170,6 +172,8 @@ type ProductRow = {
   sku: string | null;
   display_mode?: string | null;
   orientation?: string | null;
+  stock_quantity?: number | null;
+  low_stock_threshold?: number | null;
   category?: { slug: string } | null;
 
 };
@@ -206,6 +210,8 @@ function toProduct(r: ProductRow): Product {
     sort_order: r.sort_order,
     sku: r.sku ?? "",
     orientation,
+    stockQuantity: r.stock_quantity ?? 0,
+    lowStockThreshold: r.low_stock_threshold ?? 0,
     // Presentation only — orientation is the authority.
     displayMode: enforceDisplayMode(orientation, r.display_mode),
   };
