@@ -320,3 +320,23 @@ html { scroll-behavior: smooth; }
   transition: transform 0.35s ease;
 }
 .link-underline:hover::after { transform: scaleX(1); transform-origin: left; }
+
+/* Visible native scrollbar — used where overlay/auto-hidden scrollbars are unacceptable */
+@utility visible-scrollbar {
+  scrollbar-width: auto;
+  scrollbar-color: var(--color-muted-foreground) var(--color-muted);
+  &::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: var(--color-muted);
+    border-radius: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-muted-foreground);
+    border-radius: 6px;
+    border: 3px solid var(--color-muted);
+  }
+}
+
