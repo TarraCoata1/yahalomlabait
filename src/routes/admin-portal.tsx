@@ -1061,6 +1061,10 @@ type OrderItemRow = {
 };
 
 function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onClose: () => void; onChanged: () => void }) {
+  const { data: allOrders = [] } = useQuery(adminOrdersQuery);
+  const previousOrders = allOrders.filter(
+    (o) => o.id !== order.id && !!order.customer_email && o.customer_email === order.customer_email,
+  );
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["admin_order_items", order.id],
     queryFn: async () => {
@@ -1106,6 +1110,11 @@ function OrderDetailDialog({ order, onClose, onChanged }: { order: OrderRow; onC
             <div className="font-medium">{order.customer_name || "—"}</div>
             <div className="text-muted-foreground" dir="ltr">{order.customer_email}</div>
             <div className="text-muted-foreground" dir="ltr">{order.customer_phone}</div>
+            <div className="mt-2 text-xs text-muted-foreground">
+              {previousOrders.length > 0
+                ? `הזמנות קודמות: ${previousOrders.length} (${previousOrders.map((o) => "#" + o.order_number).join(", ")})`
+                : "לקוח חדש — אין הזמנות קודמות"}
+            </div>
           </div>
           <div className="rounded-xl glass p-4 text-sm">
             <div className="mb-2 text-xs uppercase tracking-wider text-rose-gold">אספקה</div>
