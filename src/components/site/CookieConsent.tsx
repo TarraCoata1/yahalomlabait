@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Cookie, SlidersHorizontal, X } from "lucide-react";
 import {
   COOKIE_CONSENT_EVENT,
