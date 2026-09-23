@@ -21,7 +21,7 @@ import { CookieConsent } from "@/components/site/CookieConsent";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="flex min-h-[50dvh] items-center justify-center px-4 py-16">
       <div className="max-w-md text-center">
         <h1 className="font-serif text-7xl text-gradient-rose">404</h1>
         <h2 className="mt-4 font-serif text-2xl">העמוד לא נמצא</h2>
@@ -37,7 +37,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
   useEffect(() => { reportLovableError(error, { boundary: "tanstack_root_error_component" }); }, [error]);
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="flex min-h-[50dvh] items-center justify-center px-4 py-16">
       <div className="max-w-md text-center">
         <h1 className="font-serif text-2xl">משהו השתבש</h1>
         <p className="mt-2 text-sm text-muted-foreground">נסה לרענן את הדף.</p>
@@ -228,7 +228,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-dvh flex-col">
         <Header />
-        <main id="main" className="flex-1"><Outlet /></main>
+        <main id="main" className="min-w-0 flex-1"><Outlet /></main>
         <Footer />
       </div>
       <MiniCart />

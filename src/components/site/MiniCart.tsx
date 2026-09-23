@@ -1,11 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+import { useEffect } from "react";
 import { orientationLabel } from "@/lib/catalog";
 import { useCart, cartTotal } from "@/lib/cart";
 
 export function MiniCart() {
   const { items, open, setOpen, remove, setQty } = useCart();
   const total = cartTotal(items);
+
+  useEffect(() => {
+    void useCart.persist.rehydrate();
+  }, []);
 
   return (
     <>
@@ -14,7 +19,7 @@ export function MiniCart() {
         className={`fixed inset-0 z-50 bg-background/70 backdrop-blur-sm transition-opacity ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
       />
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-full max-w-md flex-col glass-strong transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col glass-strong transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"}`}
         aria-label="עגלת קניות"
         role="dialog"
         aria-modal={open}
@@ -22,7 +27,7 @@ export function MiniCart() {
       >
 
 
-        <header className="flex items-center justify-between border-b border-border/50 px-6 py-5">
+        <header className="flex items-center justify-between border-b border-border/50 px-4 py-4 sm:px-6 sm:py-5">
           <div className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5 text-rose-gold" />
             <h2 className="font-serif text-xl">העגלה שלך</h2>
@@ -32,7 +37,7 @@ export function MiniCart() {
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6">
           {items.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground">
               <ShoppingBag className="mb-3 h-10 w-10 text-rose-gold/60" />
@@ -85,7 +90,7 @@ export function MiniCart() {
         </div>
 
         {items.length > 0 && (
-          <footer className="border-t border-border/50 px-6 py-5 space-y-3">
+          <footer className="border-t border-border/50 px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-6 sm:py-5">
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>סה"כ ביניים</span>
               <span className="font-semibold text-foreground">₪{total}</span>

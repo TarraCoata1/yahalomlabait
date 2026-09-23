@@ -65,6 +65,7 @@ export const useCart = create<CartState>()(
     {
       name: "ylb-cart",
       version: 3,
+      skipHydration: true,
       migrate: () => ({ items: [], open: false } as unknown as CartState),
     },
   ),

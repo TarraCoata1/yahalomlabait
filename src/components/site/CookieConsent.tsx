@@ -55,14 +55,14 @@ export function CookieConsent() {
       aria-modal="false"
       aria-labelledby="cookie-consent-title"
       dir="rtl"
-      className="fixed inset-x-0 bottom-0 z-[70] p-3 sm:p-4"
+      className="fixed inset-x-0 bottom-0 z-[70] p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:p-4"
     >
-      <div className="mx-auto max-w-4xl rounded-2xl glass-strong border border-border/60 p-5 shadow-2xl">
-        <div className="flex items-start gap-3">
+      <div className="visible-scrollbar mx-auto max-h-[calc(100dvh-1.5rem-env(safe-area-inset-bottom))] max-w-4xl overflow-y-auto rounded-2xl glass-strong border border-border/60 p-4 shadow-2xl sm:p-5">
+        <div className="flex min-w-0 items-start gap-3">
           <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-rose-gold/15 text-rose-gold">
             <Cookie className="h-5 w-5" aria-hidden />
           </span>
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <h2 id="cookie-consent-title" className="font-serif text-lg">
               אנחנו משתמשים בעוגיות
             </h2>

@@ -35,8 +35,8 @@ export function Header() {
   return (
     <header className={`site-header glass-strong sticky top-0 z-40 ${scrolled ? "is-scrolled" : ""}`}>
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:right-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-background focus:px-4 focus:py-2">דלג לתוכן</a>
-      <div className="site-header-inner mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 md:h-20 md:px-8">
-        <Link to="/" aria-label="יהלום לבית - דף הבית" className="flex items-center gap-3 shrink-0">
+      <div className="site-header-inner mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:gap-4 sm:px-4 md:flex md:h-20 md:px-8">
+        <Link to="/" aria-label="יהלום לבית - דף הבית" className="flex min-w-0 items-center gap-3 md:shrink-0">
           <img src={logo.url} alt="לוגו יהלום לבית - תמונות זכוכית ואמנות קיר יוקרתית לבית" width={44} height={44} className="rounded-full ring-1 ring-rose-gold/40" />
           <div className="hidden sm:block leading-tight">
             <div className="font-serif text-lg tracking-wide text-gradient-rose">יהלום לבית</div>
@@ -53,7 +53,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           {isAdmin && (
             <Link to="/admin-portal" aria-label="פאנל ניהול"
               className="grid h-11 w-11 place-items-center rounded-full glass hover:border-rose-gold/60 transition" title="פאנל ניהול">
