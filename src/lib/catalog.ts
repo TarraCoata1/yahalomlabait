@@ -221,24 +221,32 @@ function toProduct(r: ProductRow): Product {
 export const categoriesQuery = queryOptions({
   queryKey: ["categories"],
   queryFn: async (): Promise<Category[]> => {
-    const { data, error } = await supabase
-      .from("categories")
-      .select("*")
-      .order("sort_order", { ascending: true });
-    if (error) throw error;
-    return (data ?? []).map((r) => toCategory(r as CategoryRow));
+    try {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      if (error) return [];
+      return (data ?? []).map((r) => toCategory(r as CategoryRow));
+    } catch {
+      return [];
+    }
   },
 });
 
 export const productsQuery = queryOptions({
   queryKey: ["products"],
   queryFn: async (): Promise<Product[]> => {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*, category:categories(slug)")
-      .order("sort_order", { ascending: true });
-    if (error) throw error;
-    return (data ?? []).map((r) => toProduct(r as unknown as ProductRow));
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*, category:categories(slug)")
+        .order("sort_order", { ascending: true });
+      if (error) return [];
+      return (data ?? []).map((r) => toProduct(r as unknown as ProductRow));
+    } catch {
+      return [];
+    }
   },
 });
 
@@ -246,13 +254,17 @@ export const productQuery = (slug: string) =>
   queryOptions({
     queryKey: ["product", slug],
     queryFn: async (): Promise<Product | null> => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*, category:categories(slug)")
-        .eq("slug", slug)
-        .maybeSingle();
-      if (error) throw error;
-      return data ? toProduct(data as unknown as ProductRow) : null;
+      try {
+        const { data, error } = await supabase
+          .from("products")
+          .select("*, category:categories(slug)")
+          .eq("slug", slug)
+          .maybeSingle();
+        if (error) return null;
+        return data ? toProduct(data as unknown as ProductRow) : null;
+      } catch {
+        return null;
+      }
     },
   });
 

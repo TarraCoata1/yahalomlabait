@@ -13,7 +13,7 @@ function TikTokIcon({ className }: { className?: string }) {
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-border/50 bg-card/40">
+    <footer data-site-footer className="mt-12 border-t border-border/50 bg-card/40 md:mt-20">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-5 md:px-8">
         <div className="space-y-3 md:col-span-2">
           <img src={logo.url} alt="לוגו יהלום לבית" width={56} height={56} className="rounded-full ring-1 ring-rose-gold/40" />
@@ -73,7 +73,7 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-border/40 py-5 text-center text-xs text-muted-foreground">
+      <div className="border-t border-border/40 px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] text-center text-xs text-muted-foreground">
         © {new Date().getFullYear()} יהלום לבית · כל הזכויות שמורות
       </div>
     </footer>

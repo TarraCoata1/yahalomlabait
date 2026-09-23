@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MessageCircle, Accessibility, X, Type, Contrast, Pause, BookOpen, RotateCcw } from "lucide-react";
+import { useFooterVisible } from "@/hooks/use-footer-visible";
 
 export function FloatingWidgets() {
   const [a11yOpen, setA11yOpen] = useState(false);
@@ -7,6 +8,7 @@ export function FloatingWidgets() {
   const [contrast, setContrast] = useState(false);
   const [stopMotion, setStopMotion] = useState(false);
   const [readable, setReadable] = useState(false);
+  const footerVisible = useFooterVisible();
 
   const applyScale = (v: number) => {
     setScale(v);
@@ -38,19 +40,19 @@ export function FloatingWidgets() {
     <>
       <a href="https://api.whatsapp.com/send?phone=972533206500" target="_blank" rel="noopener noreferrer"
         aria-label="WhatsApp"
-        className="fixed bottom-6 left-6 z-40 grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-elegant transition hover:scale-105">
+        className={`floating-control fixed left-4 z-40 grid h-12 w-12 place-items-center rounded-full bg-[#25D366] text-white shadow-elegant transition hover:scale-105 sm:left-6 sm:h-14 sm:w-14 ${footerVisible ? "pointer-events-none translate-y-3 opacity-0" : "opacity-100"}`}>
         <MessageCircle className="h-6 w-6" />
       </a>
 
       <button onClick={() => setA11yOpen(true)} aria-label="פתח תפריט נגישות"
-        className="sparkle after:sparkle-after fixed bottom-6 right-6 z-40 grid h-14 w-14 place-items-center rounded-full btn-rose hover:btn-rose-hover diamond-border after:diamond-border-after">
+        className={`floating-control sparkle after:sparkle-after fixed right-4 z-40 grid h-12 w-12 place-items-center rounded-full btn-rose hover:btn-rose-hover diamond-border after:diamond-border-after sm:right-6 sm:h-14 sm:w-14 ${footerVisible ? "pointer-events-none translate-y-3 opacity-0" : "opacity-100"}`}>
         <Accessibility className="h-6 w-6 relative z-10" />
       </button>
 
       {a11yOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-end p-4 sm:items-center sm:justify-center">
+        <div className="fixed inset-0 z-50 flex items-end justify-end p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:items-center sm:justify-center sm:p-4">
           <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" onClick={() => setA11yOpen(false)} />
-          <div className="relative w-full max-w-md glass rounded-2xl p-6 diamond-border after:diamond-border-after">
+          <div className="visible-scrollbar relative max-h-[calc(100dvh-1.5rem-env(safe-area-inset-bottom))] w-full max-w-md overflow-y-auto glass rounded-2xl p-5 sm:p-6 diamond-border after:diamond-border-after">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="font-serif text-2xl text-gradient-rose">תפריט נגישות</h3>
               <button onClick={() => setA11yOpen(false)} aria-label="סגור"><X className="h-5 w-5" /></button>

@@ -92,15 +92,20 @@ function Contact() {
             { i: Mail, t: "אימייל", d: "moshemalkaa@gmail.com", href: "mailto:moshemalkaa@gmail.com" },
             { i: MapPin, t: "מיקום", d: "מודיעין, ישראל" },
             { i: Clock, t: "שעות פעילות", d: "א'–ה' · 10:00–18:00" },
-          ].map((c) => (
-            <a key={c.t} href={c.href ?? "#"} className="flex items-start gap-3 rounded-xl glass p-4 hover:border-rose-gold/60">
+          ].map((c) => {
+            const content = <>
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-rose-gold/10"><c.i className="h-5 w-5 text-rose-gold" /></div>
-              <div>
+              <div className="min-w-0">
                 <div className="text-xs text-muted-foreground">{c.t}</div>
-                <div className="font-medium">{c.d}</div>
+                <div className="break-words font-medium">{c.d}</div>
               </div>
-            </a>
-          ))}
+            </>;
+            return c.href ? (
+              <a key={c.t} href={c.href} className="flex items-start gap-3 rounded-xl glass p-4 hover:border-rose-gold/60">{content}</a>
+            ) : (
+              <div key={c.t} className="flex items-start gap-3 rounded-xl glass p-4">{content}</div>
+            );
+          })}
         </aside>
       </div>
     </div>

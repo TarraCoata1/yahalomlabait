@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
       routePath: "/",
       seo: loaderData?.[0] ?? null,
       extraLinks: [
-        { rel: "preload", as: "image", href: heroAvif, type: "image/avif", fetchpriority: "high" } as unknown as { rel: string; href: string },
+        { rel: "preload", as: "image", href: heroAvif, type: "image/avif", fetchPriority: "high" } as unknown as { rel: string; href: string },
       ],
       extraScripts: [
         jsonLd({
@@ -75,7 +75,7 @@ function Home() {
           <img src={hero} alt="תמונות לבית מודרניות בסלון מעוצב - יהלום לבית" fetchPriority="high" width={1920} height={1080} decoding="async" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-60" />
         </picture>
         <div className="absolute inset-0 -z-10 bg-gradient-to-l from-background via-background/60 to-background/30" />
-        <div className="mx-auto max-w-7xl px-4 py-28 md:px-8 md:py-44">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:py-24 md:px-8 md:py-44">
           <div className="max-w-2xl">
             <span className="inline-block rounded-full glass px-4 py-1.5 text-xs tracking-[0.3em] text-rose-gold">YAHALOM · LA · BAIT</span>
             <h1 className="mt-6 font-serif text-4xl leading-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
