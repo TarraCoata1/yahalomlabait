@@ -310,7 +310,7 @@ html { scroll-behavior: smooth; }
 }
 @media (min-width: 640px) {
   .floating-control { bottom: max(1.5rem, env(safe-area-inset-bottom)); }
-  button.floating-control { bottom: max(6rem, calc(1.5rem + env(safe-area-inset-bottom))); }
+  .back-to-top-control { bottom: max(6rem, calc(1.5rem + env(safe-area-inset-bottom))); }
 }
 
 /* Shrinking sticky header */
