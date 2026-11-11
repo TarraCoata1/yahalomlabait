@@ -19,6 +19,8 @@ import { FloatingWidgets } from "@/components/site/FloatingWidgets";
 import { BackToTop } from "@/components/site/BackToTop";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/site/CookieConsent";
+import { SITE_SUSPENDED } from "@/lib/suspension";
+import { SuspensionScreen } from "@/components/site/SuspensionScreen";
 
 function NotFoundComponent() {
   return (
@@ -53,6 +55,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   loader: async ({ context }) => {
+    if (SITE_SUSPENDED) return { settings: undefined };
     const { fetchSiteSettings, siteSettingsQuery } = await import("@/lib/site-settings");
     try {
       return { settings: await context.queryClient.ensureQueryData(siteSettingsQuery) };
@@ -87,6 +90,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     const meta: Array<Record<string, string>> = [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      ...(SITE_SUSPENDED ? [{ name: "robots", content: "noindex, nofollow" }] : []),
       { name: "author", content: s.company_name },
       { name: "theme-color", content: "#b98a5e" },
       { title: s.site_title },
@@ -218,7 +222,7 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="he" dir="rtl">
       <head><HeadContent /></head>
-      <body>{children}<Scripts /></body>
+      <body>{SITE_SUSPENDED ? <SuspensionScreen /> : children}<Scripts /></body>
     </html>
   );
 }
