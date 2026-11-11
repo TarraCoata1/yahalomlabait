@@ -1,5 +1,8 @@
-import { describe, expect, it } from "bun:test";
+import { describe, it } from "node:test";
+import { strict as assert } from "node:assert";
 import { SITE_SUSPENDED, SUSPENSION_CONTACT } from "./suspension";
+
+const expect = (actual: unknown) => ({ toBe: (expected: unknown) => assert.equal(actual, expected) });
 
 describe("suspension rules", () => {
   it("enables the centralized suspension", () => expect(SITE_SUSPENDED).toBe(true));
